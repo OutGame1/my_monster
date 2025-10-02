@@ -1,22 +1,24 @@
+import { ReactNode } from 'react'
+import Header from '@components/ui/Header'
+import Footer from '@components/ui/Footer'
+import HeroSection from '@/components/sections/HeroSection'
+import BenefitsSection from '@/components/sections/BenefitsSection'
+import MonstersSection from '@/components/sections/MonstersSection'
+import FeaturesSection from '@/components/sections/FeaturesSection'
+import NewsletterSection from '@/components/sections/NewsletterSection'
 
-import MainHeader from '@/components/MainHeader'
-import HeroSection from '@/components/HeroSection'
-import BenefitsSection from '@/components/BenefitsSection'
-import MonstersSection from '@/components/MonstersSection'
-import ActionsSection from '@/components/ActionsSection'
-import NewsletterSection from '@/components/NewsletterSection'
-import MainFooter from '@/components/MainFooter'
-
-export default function Home (): React.ReactNode {
+export default function Home (): ReactNode {
   return (
-    <div className='font-sans bg-[var(--color-background)] text-[var(--color-foreground)] min-h-screen flex flex-col'>
-      <MainHeader />
-      <HeroSection />
-      <BenefitsSection />
-      <MonstersSection />
-      <ActionsSection />
-      <NewsletterSection />
-      <MainFooter />
+    <div className='h-screen flex flex-col w-full'>
+      <Header />
+      <main className='flex-grow flex flex-col w-full'>
+        <HeroSection />
+        <BenefitsSection />
+        <MonstersSection />
+        <FeaturesSection />
+        <NewsletterSection />
+      </main>
+      <Footer />
     </div>
   )
 }

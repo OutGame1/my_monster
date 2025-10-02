@@ -1,17 +1,17 @@
 import { betterAuth } from 'better-auth'
 import { mongodbAdapter } from 'better-auth/adapters/mongodb'
-import { client } from '../db' // your mongodb client
+import { client } from '@/db'
+import env from '@lib/env'
 
 export const auth = betterAuth({
-  database: mongodbAdapter(client.db(process.env.MONGODB_DATABASE_NAME as string)), // your database instance
+  database: mongodbAdapter(client.db(env.MONGODB_DB_NAME)),
   emailAndPassword: {
     enabled: true
   },
   socialProviders: {
     github: {
-      enabled: true,
-      clientId: process.env.GITHUB_CLIENT_ID as string,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET as string
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET
     }
   }
 })
