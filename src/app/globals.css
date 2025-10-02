@@ -6,6 +6,46 @@
 }
 
 @theme inline {
+  --color-blood-50: #fff0f1;
+  --color-blood-100: #ffdedf;
+  --color-blood-200: #ffc3c5;
+  --color-blood-300: #ff999d;
+  --color-blood-400: #ff5f65;
+  --color-blood-500: #ff2d34;
+  --color-blood-600: #ec0a12;
+  --color-blood-700: #ce070e;
+  --color-blood-800: #aa0a10;
+  --color-blood-900: #8c1014;
+  --color-blood-950: #4d0205;
+
+  --color-tolopea-50: #f1f1ff;
+  --color-tolopea-100: #e6e6ff;
+  --color-tolopea-200: #d0d0ff;
+  --color-tolopea-300: #adabff;
+  --color-tolopea-400: #857cff;
+  --color-tolopea-500: #5f47ff;
+  --color-tolopea-600: #4921ff;
+  --color-tolopea-700: #3b0ff2;
+  --color-tolopea-800: #300ccb;
+  --color-tolopea-900: #2a0ca6;
+  --color-tolopea-950: #0f0350;
+
+  --color-aqua-forest-50: #f1f8f2;
+  --color-aqua-forest-100: #ddeedd;
+  --color-aqua-forest-200: #bedcc0;
+  --color-aqua-forest-300: #92c39a;
+  --color-aqua-forest-400: #6ca977;
+  --color-aqua-forest-500: #428751;
+  --color-aqua-forest-600: #306b3e;
+  --color-aqua-forest-700: #265632;
+  --color-aqua-forest-800: #204529;
+  --color-aqua-forest-900: #1b3923;
+  --color-aqua-forest-950: #0e2013;
+
+
+
+
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
