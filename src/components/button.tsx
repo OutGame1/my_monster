@@ -7,21 +7,21 @@ function getSize (size: 'sm' | 'md' | 'lg' | 'xl'): string {
   }
 }
 
-function getVariant (variant: 'primary' | 'ghost' | 'underline' | 'outline'): string {
+function getVariant (variant: 'primary' | 'ghost' | 'underline' | 'outline', disabled: boolean): string {
   switch (variant) {
-    case 'primary': return 'bg-aqua-forest-500 hover:bg-aqua-forest-600'
-    case 'ghost': return 'bg-transparent text-aqua-forest-500 hover:bg-aqua-forest-100'
-    case 'underline': return 'underline hover:no-underline underline-offset-6'
-    case 'outline': return 'border border-aqua-forest-200 text-aqua-forest-400'
+    case 'primary': return disabled ? 'bg-aqua-forest-200 text-aqua-forest-400' : 'bg-aqua-forest-500 hover:bg-aqua-forest-700 text-white'
+    case 'ghost': return disabled ? 'bg-transparent text-aqua-forest-200' : 'bg-transparent text-aqua-forest-500 hover:bg-aqua-forest-100/10'
+    case 'underline': return disabled ? 'underline text-aqua-forest-200' : 'underline hover:no-underline underline-offset-6'
+    case 'outline': return disabled ? 'border border-aqua-forest-200 text-aqua-forest-400' : 'border border-aqua-forest-500 text-aqua-forest-500 hover:bg-aqua-forest-100/10'
   }
 }
 
 function Button ({
-  children = 'click me',
+  children = 'Click me',
   onClick,
   size = 'md',
   variant = 'primary',
-  disabled = true
+  disabled = false
 }: {
   children: React.ReactNode
   onClick?: () => void
@@ -31,8 +31,8 @@ function Button ({
 }): React.ReactNode {
   return (
     <button
-      className={`rounded-md ${disabled ? '' : 'transition-all duration-300 cursor-pointer active:scale-95'} ${getSize(size)} ${getVariant(variant)}`}
-      onClick={onclick}
+      className={`rounded-md  ${disabled ? '' : 'transition-all duration-300 cursor-pointer active:scale-95'} ${getSize(size)} ${getVariant(variant, disabled)}`}
+      onClick={onClick}
     >
       {children}
     </button>
