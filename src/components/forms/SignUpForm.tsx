@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, ReactNode, FormEvent } from 'react'
+import { useRouter } from 'next/navigation'
 import { toast } from 'react-toastify'
 import { authClient } from '@/lib/auth-client'
 import InputField from '@components/ui/InputField'
@@ -13,6 +14,7 @@ interface Credentials {
 }
 
 export default function SignUpForm (): ReactNode {
+  const router = useRouter()
   const [credentials, setCredentials] = useState<Credentials>({
     email: '',
     password: '',
@@ -40,6 +42,7 @@ export default function SignUpForm (): ReactNode {
           isLoading: false,
           autoClose: 3000
         })
+        router.push('/dashboard')
       },
       onError: (ctx) => {
         toast.update('signup', {
