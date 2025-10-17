@@ -1,10 +1,10 @@
 import { betterAuth } from 'better-auth'
 import { mongodbAdapter } from 'better-auth/adapters/mongodb'
-import { db } from '@/db'
+import { getDatabase } from '@/db'
 import env from '@lib/env'
 
 export const auth = betterAuth({
-  database: mongodbAdapter(db),
+  database: mongodbAdapter(getDatabase()),
   emailAndPassword: {
     enabled: true
   },

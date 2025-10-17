@@ -14,7 +14,7 @@ const TYPE_EMOJIS: Record<MonsterType, string> = {
   [MonsterType.NORMAL]: '⭐'
 }
 
-const TYPE_COLORS: Record<MonsterType, { primary: string; secondary: string }> = {
+const TYPE_COLORS: Record<MonsterType, { primary: string, secondary: string }> = {
   [MonsterType.FIRE]: { primary: '#FF6B35', secondary: '#FF9F66' },
   [MonsterType.WATER]: { primary: '#4ECDC4', secondary: '#95E1D3' },
   [MonsterType.NATURE]: { primary: '#6BCF7F', secondary: '#A8E6B8' },
@@ -24,7 +24,7 @@ const TYPE_COLORS: Record<MonsterType, { primary: string; secondary: string }> =
   [MonsterType.NORMAL]: { primary: '#9333EA', secondary: '#C084FC' }
 }
 
-const ABILITY_TEMPLATES: Record<MonsterType, Array<{ name: string; description: string }>> = {
+const ABILITY_TEMPLATES: Record<MonsterType, Array<{ name: string, description: string }>> = {
   [MonsterType.FIRE]: [
     { name: 'Boule de feu', description: 'Lance une boule de feu sur l\'ennemi' },
     { name: 'Rage incandescente', description: 'Augmente l\'attaque grâce à la chaleur' },
@@ -106,15 +106,15 @@ const DESCRIPTIONS_BY_TYPE: Record<MonsterType, string[]> = {
 // FONCTIONS UTILITAIRES
 // ========================================
 
-function randomInt(min: number, max: number): number {
+function randomInt (min: number, max: number): number {
   return Math.floor(Math.random() * (max - min + 1)) + min
 }
 
-function randomElement<T>(array: T[]): T {
+function randomElement<T> (array: T[]): T {
   return array[Math.floor(Math.random() * array.length)]
 }
 
-function randomBoolean(probability = 0.5): boolean {
+function randomBoolean (probability = 0.5): boolean {
   return Math.random() < probability
 }
 
@@ -122,23 +122,23 @@ function randomBoolean(probability = 0.5): boolean {
 // GÉNÉRATEURS SPÉCIFIQUES
 // ========================================
 
-export function generateRandomType(): MonsterType {
+export function generateRandomType (): MonsterType {
   const types = Object.values(MonsterType)
   return randomElement(types)
 }
 
-export function generateRandomRarity(): MonsterRarity {
+export function generateRandomRarity (): MonsterRarity {
   const random = Math.random()
 
   // Distribution pondérée
-  if (random < 0.50) return MonsterRarity.COMMON        // 50%
-  if (random < 0.75) return MonsterRarity.UNCOMMON      // 25%
-  if (random < 0.90) return MonsterRarity.RARE          // 15%
-  if (random < 0.97) return MonsterRarity.EPIC          // 7%
-  return MonsterRarity.LEGENDARY                         // 3%
+  if (random < 0.50) return MonsterRarity.COMMON // 50%
+  if (random < 0.75) return MonsterRarity.UNCOMMON // 25%
+  if (random < 0.90) return MonsterRarity.RARE // 15%
+  if (random < 0.97) return MonsterRarity.EPIC // 7%
+  return MonsterRarity.LEGENDARY // 3%
 }
 
-export function generateRandomStats(rarity: MonsterRarity): {
+export function generateRandomStats (rarity: MonsterRarity): {
   health: number
   maxHealth: number
   attack: number
@@ -175,7 +175,7 @@ export function generateRandomStats(rarity: MonsterRarity): {
   }
 }
 
-export function generateRandomAbilities(type: MonsterType, rarity: MonsterRarity): MonsterAbility[] {
+export function generateRandomAbilities (type: MonsterType, rarity: MonsterRarity): MonsterAbility[] {
   const templates = ABILITY_TEMPLATES[type]
   const numAbilities = rarity === MonsterRarity.LEGENDARY ? 2 : 1
 
@@ -203,7 +203,7 @@ export function generateRandomAbilities(type: MonsterType, rarity: MonsterRarity
   return abilities
 }
 
-export function generateRandomAppearance(type: MonsterType): MonsterAppearance {
+export function generateRandomAppearance (type: MonsterType): MonsterAppearance {
   const colors = TYPE_COLORS[type]
 
   return {
@@ -214,7 +214,7 @@ export function generateRandomAppearance(type: MonsterType): MonsterAppearance {
   }
 }
 
-export function generateRandomEvolution(type: MonsterType, rarity: MonsterRarity): MonsterEvolution | undefined {
+export function generateRandomEvolution (type: MonsterType, rarity: MonsterRarity): MonsterEvolution | undefined {
   // Seulement 60% des monstres peuvent évoluer
   if (!randomBoolean(0.6)) {
     return undefined
@@ -234,12 +234,12 @@ export function generateRandomEvolution(type: MonsterType, rarity: MonsterRarity
   }
 }
 
-export function isShiny(): boolean {
+export function isShiny (): boolean {
   // 5% de chance d'être shiny
   return randomBoolean(0.05)
 }
 
-export function generateRandomDescription(type: MonsterType): string {
+export function generateRandomDescription (type: MonsterType): string {
   const descriptions = DESCRIPTIONS_BY_TYPE[type]
   return randomElement(descriptions)
 }
@@ -251,12 +251,10 @@ export function generateRandomDescription(type: MonsterType): string {
 export interface GenerateMonsterInput {
   name: string
   ownerId: string
-  nickname?: string
 }
 
 export interface GeneratedMonsterData {
   name: string
-  nickname?: string
   type: MonsterType
   rarity: MonsterRarity
   level: number
@@ -284,14 +282,13 @@ export interface GeneratedMonsterData {
   achievements: string[]
 }
 
-export function generateRandomMonster(input: GenerateMonsterInput): GeneratedMonsterData {
+export function generateRandomMonster (input: GenerateMonsterInput): GeneratedMonsterData {
   const type = generateRandomType()
   const rarity = generateRandomRarity()
   const shiny = isShiny()
 
   return {
     name: input.name,
-    nickname: input.nickname,
     type,
     rarity,
     level: 1,
@@ -309,4 +306,3 @@ export function generateRandomMonster(input: GenerateMonsterInput): GeneratedMon
     achievements: []
   }
 }
-

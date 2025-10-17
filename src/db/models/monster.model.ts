@@ -69,13 +69,13 @@ export interface MonsterAppearance {
   primaryColor: string
   secondaryColor: string
   emoji: string
-  bodyType: 'small' | 'medium' | 'large' | 'giant'
+  bodyShape: 'round' | 'oval' | 'serpent' | 'humanoid' | 'blob'
 }
 
 // Interface principale du modèle Monster
-export interface MonsterModel {
+export interface IMonsterModel {
+  _id: Types.ObjectId
   name: string
-  nickname?: string
   type: MonsterType
   rarity: MonsterRarity
   level: number
@@ -109,7 +109,7 @@ export interface MonsterMethods {
 }
 
 // Interface pour les documents Mongoose
-export type MonsterDocument = Document & MonsterModel & MonsterMethods
+export type MonsterDocument = Document & IMonsterModel & MonsterMethods
 
 // Interface pour les méthodes statiques
 export interface MonsterModelType extends Model<MonsterDocument> {
@@ -268,11 +268,11 @@ const MonsterAppearanceSchema = new Schema<MonsterAppearance>(
       required: true,
       default: '👾'
     },
-    bodyType: {
+    bodyShape: {
       type: String,
-      enum: ['small', 'medium', 'large', 'giant'],
+      enum: ['round', 'oval', 'serpent', 'humanoid', 'blob'],
       required: true,
-      default: 'medium'
+      default: 'round'
     }
   },
   { _id: false }
@@ -286,11 +286,6 @@ const monsterSchema = new Schema<MonsterDocument, MonsterModelType>(
       trim: true,
       minlength: [2, 'Le nom doit contenir au moins 2 caractères'],
       maxlength: [50, 'Le nom ne peut pas dépasser 50 caractères']
-    },
-    nickname: {
-      type: String,
-      trim: true,
-      maxlength: [30, 'Le surnom ne peut pas dépasser 30 caractères']
     },
     type: {
       type: String,
@@ -509,7 +504,7 @@ monsterSchema.methods.heal = function (this: MonsterDocument, amount: number): v
 
 monsterSchema.methods.canEvolve = function (this: MonsterDocument): boolean {
   // Pas d'évolution définie
-  if (!this.evolution) {
+  if (this.evolution == null) {
     return false
   }
 
@@ -520,7 +515,7 @@ monsterSchema.methods.canEvolve = function (this: MonsterDocument): boolean {
 
   // Pas de requirements : peut évoluer
   const requirements = this.evolution.requirements
-  if (!requirements) {
+  if (requirements == null) {
     return true
   }
 
@@ -596,6 +591,6 @@ monsterSchema.pre('save', function (this: MonsterDocument, next) {
 // EXPORT DU MODÈLE
 // ========================================
 
-const Monster = (models.Monster as MonsterModelType) || model<MonsterDocument, MonsterModelType>('Monster', monsterSchema)
+const Monster = (models?.Monster as MonsterModelType) || model<MonsterDocument, MonsterModelType>('Monster', monsterSchema)
 
 export default Monster

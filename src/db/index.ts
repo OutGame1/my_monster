@@ -1,14 +1,26 @@
-import mongoose from 'mongoose'
-import { ServerApiVersion } from 'mongodb'
+import mongoose, { ConnectOptions } from 'mongoose'
+import { Db, ServerApiVersion } from 'mongodb'
 import env from '@lib/env'
 
-export const conn = await mongoose.connect(env.MONGODB_HOST, {
+const connectOptions: ConnectOptions = {
   dbName: env.MONGODB_DB_NAME,
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true
   }
-})
+}
 
-export const db = conn.connection.getClient().db(env.MONGODB_DB_NAME)
+export async function connectToDatabase (): Promise<void> {
+  try {
+    await mongoose.connect(env.MONGODB_HOST, connectOptions)
+    console.log('Mongoose connected to MongoDB database')
+  } catch (error) {
+    console.error('Error connecting to the database:', error)
+  }
+}
+
+export function getDatabase (): Db {
+  const conn = mongoose.createConnection(env.MONGODB_HOST, connectOptions)
+  return conn.getClient().db(env.MONGODB_DB_NAME)
+}

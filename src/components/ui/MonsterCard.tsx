@@ -41,7 +41,7 @@ const getMoodEmoji = (mood: string): string => {
   return MOOD_EMOJIS[normalized] || '😊'
 }
 
-export default function MonsterCard({ monster }: MonsterCardProps): ReactNode {
+export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
   const healthPercentage = Math.min(100, Math.floor((monster.stats.health / monster.stats.maxHealth) * 100))
   const happinessPercentage = Math.min(100, monster.stats.happiness)
   const energyPercentage = Math.min(100, monster.stats.energy)
@@ -68,11 +68,8 @@ export default function MonsterCard({ monster }: MonsterCardProps): ReactNode {
         </div>
         <div className='flex-1'>
           <h3 className='text-2xl font-bold text-tolopea-900'>
-            {monster.nickname || monster.name}
+            {monster.name}
           </h3>
-          {monster.nickname && (
-            <p className='text-sm text-gray-500'>({monster.name})</p>
-          )}
           <div className='flex items-center gap-2 mt-1'>
             <span className={`text-xs font-semibold px-2 py-1 rounded-full text-white ${getRarityColor(monster.rarity)}`}>
               {monster.rarity}
@@ -147,7 +144,7 @@ interface StatBarProps {
   suffix?: string
 }
 
-function StatBar({ icon, label, value, maxValue, percentage, color, suffix = '' }: StatBarProps): ReactNode {
+function StatBar ({ icon, label, value, maxValue, percentage, color, suffix = '' }: StatBarProps): ReactNode {
   const displayValue = maxValue !== undefined ? `${value}/${maxValue}` : `${value}${suffix}`
 
   return (

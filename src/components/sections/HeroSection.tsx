@@ -1,7 +1,13 @@
+'use client'
+
 import { ReactNode } from 'react'
 import Link from 'next/link'
+import MonsterAvatar from '@/presentation/components/monster/MonsterAvatar'
+import { useRandomMonster } from '@/presentation/hooks/useRandomMonster'
 
 export default function HeroSection (): ReactNode {
+  const heroMonsterProfile = useRandomMonster()
+
   return (
     <section className='w-full min-h-screen pt-24 pb-16 bg-gradient-to-b from-tolopea-50 to-white flex items-center'>
       <div className='container mx-auto px-4 w-full'>
@@ -28,8 +34,27 @@ export default function HeroSection (): ReactNode {
               </a>
             </div>
           </div>
-          <div className='md:w-1/2 w-full relative h-[400px]'>
-            <div className='absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-aqua-forest-100 rounded-full animate-float' />
+          <div className='md:w-1/2 w-full relative h-[400px] flex items-center justify-center'>
+            {/* Cercle de fond animé */}
+            <div className='absolute w-80 h-80 bg-gradient-to-br from-aqua-forest-100 to-tolopea-100 rounded-full animate-pulse opacity-50' />
+            <div className='absolute w-72 h-72 bg-gradient-to-br from-blood-100 to-purple-100 rounded-full animate-ping opacity-30' style={{ animationDuration: '3s' }} />
+
+            {/* Monstre héros - affiché uniquement quand généré côté client */}
+            <div className='relative z-10'>
+              {(heroMonsterProfile != null) ? (
+                <MonsterAvatar
+                  visualProfile={heroMonsterProfile}
+                  animation='happy'
+                  size={350}
+                  interactive={false}
+                />
+              ) : (
+                // Placeholder pendant le chargement
+                <div className='w-[350px] h-[350px] flex items-center justify-center'>
+                  <div className='animate-pulse text-6xl'>🥚</div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

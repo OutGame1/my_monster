@@ -40,6 +40,10 @@ export default function DashboardContent ({ user, monsters = [] }: DashboardCont
     setIsAdoptModalOpen(false)
   }
 
+  const handleMonsterClick = (monster: SerializedMonster): void => {
+    router.push(`/dashboard/monster/${monster._id}`)
+  }
+
   // Calculer les statistiques
   const averageLevel = monsters.length > 0
     ? Math.round(monsters.reduce((sum, m) => sum + m.level, 0) / monsters.length)
@@ -141,26 +145,34 @@ export default function DashboardContent ({ user, monsters = [] }: DashboardCont
             Vos Monstres ({monsters.length})
           </h2>
 
-          {monsters.length === 0 ? (
-            <div className='bg-white/90 backdrop-blur-sm rounded-xl p-12 shadow-lg border border-tolopea-100 text-center'>
-              <span className='text-6xl mb-4 block'>🦕</span>
-              <h3 className='text-2xl font-semibold text-tolopea-900 mb-2'>
-                Aucun monstre pour le moment
-              </h3>
-              <p className='text-gray-600 text-lg mb-6'>
-                Commencez par en adopter un pour démarrer votre aventure !
-              </p>
-              <Button variant='primary' onClick={handleOpenAdoptModal}>
-                Adopter mon premier monstre
-              </Button>
-            </div>
-          ) : (
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-              {monsters.map((monster) => (
-                <MonsterCard key={monster._id} monster={monster} />
-              ))}
-            </div>
-          )}
+          {monsters.length === 0
+            ? (
+              <div className='bg-white/90 backdrop-blur-sm rounded-xl p-12 shadow-lg border border-tolopea-100 text-center'>
+                <span className='text-6xl mb-4 block'>🦕</span>
+                <h3 className='text-2xl font-semibold text-tolopea-900 mb-2'>
+                  Aucun monstre pour le moment
+                </h3>
+                <p className='text-gray-600 text-lg mb-6'>
+                  Commencez par en adopter un pour démarrer votre aventure !
+                </p>
+                <Button variant='primary' onClick={handleOpenAdoptModal}>
+                  Adopter mon premier monstre
+                </Button>
+              </div>
+              )
+            : (
+              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+                {monsters.map((monster) => (
+                  <div
+                    key={monster._id}
+                    onClick={() => handleMonsterClick(monster)}
+                    className='cursor-pointer transform transition-transform hover:scale-105'
+                  >
+                    <MonsterCard monster={monster} />
+                  </div>
+                ))}
+              </div>
+              )}
         </div>
       </div>
 

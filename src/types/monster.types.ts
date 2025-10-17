@@ -1,7 +1,6 @@
 export interface SerializedMonster {
   _id: string
   name: string
-  nickname?: string
   type: string
   rarity: string
   level: number
@@ -29,7 +28,7 @@ export interface SerializedMonster {
     primaryColor: string
     secondaryColor: string
     emoji: string
-    bodyType: string
+    bodyShape: string
   }
   mood: string
   description: string
@@ -51,4 +50,3 @@ export interface SerializedMonster {
   createdAt?: string
   updatedAt?: string
 }
-
