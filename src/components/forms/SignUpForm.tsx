@@ -2,9 +2,9 @@
 
 import { useState, ReactNode, FormEvent } from 'react'
 import { toast } from 'react-toastify'
+import { authClient } from '@/lib/auth-client'
 import InputField from '@components/ui/InputField'
 import Button from '@components/ui/Button'
-import { authClient } from '@/lib/auth-client'
 
 interface Credentials {
   email: string
@@ -26,7 +26,7 @@ export default function SignUpForm (): ReactNode {
 
     void authClient.signUp.email({
       ...credentials,
-      callbackURL: '/sign-in'
+      callbackURL: '/dashboard'
     }, {
       onRequest: () => {
         toast.loading('Création de votre compte... 🐣', {
