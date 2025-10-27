@@ -1,12 +1,13 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { ToastContainer } from 'react-toastify'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { Jersey_10, Geist_Mono } from 'next/font/google'
 import type { Metadata } from 'next'
 import './globals.css'
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin']
+const geistSans = Jersey_10({
+  variable: '--font-jersey10',
+  subsets: ['latin'],
+  weight: '400'
 })
 
 const geistMono = Geist_Mono({

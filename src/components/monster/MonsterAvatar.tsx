@@ -1,166 +1,89 @@
 // ========================================
-// COMPOSANT AVATAR PRINCIPAL - PRÉSENTATION
+// MONSTER AVATAR COMPONENT
 // ========================================
-// Orchestration des parties du monstre avec animations
+// Main monster renderer composing all trait parts
 
-'use client'
-
-import { ReactNode } from 'react'
-import { motion } from 'framer-motion'
-import type { MonsterVisualProfile, AnimationType } from '@/core/models/monster-visual.model'
-import MonsterBody from './parts/MonsterBody'
-import MonsterEyes from './parts/MonsterEyes'
-import MonsterMouth from './parts/MonsterMouth'
-import MonsterAccessories from './parts/MonsterAccessories'
+import type { ReactNode } from 'react'
+import type { MonsterTraits, AnimationState } from '@/monster/types'
+import Body from './parts/Body'
+import Head from './parts/Head'
+import Eyes from './parts/Eyes'
+import Mouth from './parts/Mouth'
+import Arms from './parts/Arms'
+import Legs from './parts/Legs'
 
 interface MonsterAvatarProps {
-  visualProfile: MonsterVisualProfile
-  animation?: AnimationType
-  interactive?: boolean
-  size?: number
+  traits: MonsterTraits
+  animation?: AnimationState
+  size?: number // SVG container size in pixels
   className?: string
 }
 
 export default function MonsterAvatar ({
-  visualProfile,
+  traits,
   animation = 'idle',
-  interactive = false,
   size = 200,
   className = ''
 }: MonsterAvatarProps): ReactNode {
-  const animations: Record<AnimationType, any> = {
-    idle: {
-      y: [0, -5, 0],
-      transition: { duration: 2, repeat: Infinity, ease: 'easeInOut' }
-    },
-    happy: {
-      scale: [1, 1.1, 1],
-      rotate: [0, -5, 5, 0],
-      transition: { duration: 0.6, repeat: 2 }
-    },
-    attack: {
-      x: [0, 10, -5, 0],
-      scale: [1, 1.15, 1],
-      transition: { duration: 0.4 }
-    },
-    hurt: {
-      x: [-5, 5, -5, 5, 0],
-      filter: [
-        'brightness(1)',
-        'brightness(1.5) hue-rotate(180deg)',
-        'brightness(1)'
-      ],
-      transition: { duration: 0.5 }
-    },
-    celebrate: {
-      y: [0, -20, 0],
-      rotate: [0, 360],
-      scale: [1, 1.2, 1],
-      transition: { duration: 1, repeat: 2 }
-    },
-    sleep: {
-      y: [0, 2, 0],
-      opacity: [1, 0.8, 1],
-      transition: { duration: 3, repeat: Infinity, ease: 'easeInOut' }
-    },
-    hungry: {
-      scale: [1, 0.98, 1],
-      transition: { duration: 1.5, repeat: Infinity }
-    }
-  }
+  // Use size as a scale factor for all body parts to maintain proportions
+  const scale = traits.size / 100
 
   return (
-    <div className={`inline-block ${className}`}>
-      <motion.svg
-        width={size}
-        height={size}
-        viewBox='0 0 200 200'
-        className={interactive ? 'cursor-pointer hover:scale-110 transition-transform' : ''}
-        animate={animations[animation]}
-        style={{ filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))' }}
-      >
-        {/* Accessoires derrière (aura, ailes arrière) */}
-        <g id='back-accessories'>
-          {visualProfile.traits.hasAura && (
-            <MonsterAccessories
-              hasHorns={false}
-              hasWings={false}
-              hasTail={false}
-              tailStyle='none'
-              hasSpikes={false}
-              hasAura={visualProfile.traits.hasAura}
-              colors={visualProfile.colorPalette}
-              animation={animation}
-            />
-          )}
-        </g>
-
-        {/* Queue */}
-        {visualProfile.traits.hasTail && (
-          <MonsterAccessories
-            hasHorns={false}
-            hasWings={false}
-            hasTail={visualProfile.traits.hasTail}
-            tailStyle={visualProfile.traits.tailStyle}
-            hasSpikes={false}
-            hasAura={false}
-            colors={visualProfile.colorPalette}
-            animation={animation}
-          />
-        )}
-
-        {/* Corps principal */}
-        <MonsterBody
-          shape={visualProfile.traits.bodyShape}
-          colors={visualProfile.colorPalette}
-          pattern={visualProfile.traits.pattern}
-          size={visualProfile.size}
-        />
-
-        {/* Yeux */}
-        <MonsterEyes
-          style={visualProfile.traits.eyeStyle}
-          color={visualProfile.colorPalette.eye}
+    <svg
+      width={size}
+      height={size}
+      viewBox='0 0 200 200'
+      className={`block ${className}`}
+    >
+      <g transform={`scale(${scale}) translate(${(100 - 100 * scale) / scale}, ${(100 - 100 * scale) / scale})`}>
+        {/* Legs behind body */}
+        <Legs
+          type={traits.legType}
+          primaryColor={traits.primaryColor}
+          secondaryColor={traits.secondaryColor}
+          outlineColor={traits.outlineColor}
           animation={animation}
         />
 
-        {/* Bouche */}
-        <MonsterMouth
-          style={visualProfile.traits.mouthStyle}
-          color={visualProfile.colorPalette.secondary}
+        {/* Arms behind body */}
+        <Arms
+          type={traits.armType}
+          bodyShape={traits.bodyShape}
+          primaryColor={traits.primaryColor}
+          outlineColor={traits.outlineColor}
           animation={animation}
         />
 
-        {/* Accessoires devant (cornes, ailes, pics) */}
-        <MonsterAccessories
-          hasHorns={visualProfile.traits.hasHorns}
-          hasWings={visualProfile.traits.hasWings}
-          hasTail={false}
-          tailStyle='none'
-          hasSpikes={visualProfile.traits.hasSpikes}
-          hasAura={false}
-          colors={visualProfile.colorPalette}
+        {/* Body in middle */}
+        <Body
+          shape={traits.bodyShape}
+          primaryColor={traits.primaryColor}
+          secondaryColor={traits.secondaryColor}
+          outlineColor={traits.outlineColor}
           animation={animation}
         />
 
-        {/* Badge Shiny */}
-        {visualProfile.isShiny && (
-          <g id='shiny-indicator'>
-            <motion.text
-              x='170'
-              y='30'
-              fontSize='20'
-              animate={{
-                scale: [1, 1.2, 1],
-                rotate: [0, 10, -10, 0]
-              }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              ✨
-            </motion.text>
-          </g>
-        )}
-      </motion.svg>
-    </div>
+        {/* Head with facial features on top */}
+        <Head
+          bodyShape={traits.bodyShape}
+          primaryColor={traits.primaryColor}
+          secondaryColor={traits.secondaryColor}
+          outlineColor={traits.outlineColor}
+        />
+
+        {/* Eyes and mouth render on the head */}
+        <Eyes
+          type={traits.eyeType}
+          outlineColor={traits.outlineColor}
+          animation={animation}
+        />
+
+        <Mouth
+          type={traits.mouthType}
+          outlineColor={traits.outlineColor}
+          animation={animation}
+        />
+      </g>
+    </svg>
   )
 }

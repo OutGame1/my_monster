@@ -1,12 +1,10 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 import { Metadata, Viewport } from 'next'
 import Header from '@components/ui/Header'
 import Footer from '@components/ui/Footer'
-import HeroSection from '@/components/sections/HeroSection'
-import BenefitsSection from '@/components/sections/BenefitsSection'
-import MonstersSection from '@/components/sections/MonstersSection'
-import FeaturesSection from '@/components/sections/FeaturesSection'
-import NewsletterSection from '@/components/sections/NewsletterSection'
+import HeroSection from '@components/home/HeroSection'
+import HighlightsSection from '@components/home/HighlightsSection'
+import GettingStartedSection from '@components/home/GettingStartedSection'
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -40,7 +38,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false
   },
-  metadataBase: new URL('https://mymonster.app'),
+  metadataBase: 'https://mymonster.app',
   alternates: {
     canonical: '/'
   },
@@ -105,14 +103,12 @@ export const metadata: Metadata = {
 
 export default function Home (): ReactNode {
   return (
-    <div className='h-screen flex flex-col w-full'>
+    <div className='min-h-screen flex flex-col bg-white text-gray-900'>
       <Header />
-      <main className='flex-grow flex flex-col w-full'>
+      <main className='flex-1 flex flex-col'>
         <HeroSection />
-        <BenefitsSection />
-        <MonstersSection />
-        <FeaturesSection />
-        <NewsletterSection />
+        <HighlightsSection />
+        <GettingStartedSection />
       </main>
       <Footer />
     </div>

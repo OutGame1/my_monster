@@ -55,57 +55,35 @@
   }
 }
 
-@keyframes float {
-  0% {
-    transform: translateY(0) rotate(0);
-  }
-  33% {
-    transform: translateY(-10px) rotate(5deg);
-  }
-  66% {
-    transform: translateY(5px) rotate(-5deg);
-  }
-  100% {
-    transform: translateY(0) rotate(0);
-  }
-}
-
-/* Animations personnalisées */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@layer utilities {
-  .animate-float {
-    animation: float 6s ease-in-out infinite;
-  }
-  .animate-fadeIn {
-    animation: fadeIn 0.2s ease-out;
-  }
-
-  .animate-slideUp {
-    animation: slideUp 0.3s ease-out;
-  }
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  --font-sans: var(--font-jersey10);
+  --font-mono: var(--font-geist-mono);
+  font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont;
+}
+
+@keyframes wave-arms {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(15deg); }
+  75% { transform: rotate(-15deg); }
+}
+
+@keyframes wiggle-arms {
+  0%, 100% { transform: rotate(0deg); }
+  10% { transform: rotate(5deg); }
+  20% { transform: rotate(-5deg); }
+  30% { transform: rotate(5deg); }
+  40% { transform: rotate(-5deg); }
+  50% { transform: rotate(0deg); }
+}
+
+.animate-wave-arms {
+  animation: wave-arms 1s ease-in-out infinite;
+  transform-origin: center;
+}
+
+.animate-wiggle-arms {
+  animation: wiggle-arms 2s ease-in-out infinite;
+  transform-origin: center;
 }

@@ -1,24 +1,20 @@
-import { ReactNode } from 'react'
-import AuthFormContent from '@/components/forms/AuthFormContent'
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
+import type { ReactNode } from 'react'
+import Link from 'next/link'
+import AuthPageLayout from '@/components/forms/AuthPageLayout'
+import SignInForm from '@/components/forms/SignInForm'
 
 export default function SignInPage (): ReactNode {
   return (
-    <>
-      <AuthFormContent />
-      <ToastContainer
-        position='bottom-right'
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='light'
-      />
-    </>
+    <AuthPageLayout
+      title='Bienvenue !'
+      subtitle='Retrouvez votre petit monstre'
+      footer={(
+        <Link href='/sign-up' className='hover:text-tolopea-800 transition-colors'>
+          Pas encore de compte ? Créez-en un !
+        </Link>
+      )}
+    >
+      <SignInForm />
+    </AuthPageLayout>
   )
 }
