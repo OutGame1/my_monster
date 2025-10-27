@@ -10,13 +10,13 @@ import { MonsterVisualProfile } from '@/core/models/monster-visual.model'
 import { MonsterVisualGenerator } from '@/core/generators/monster-visual.generator'
 import { SerializedMonster } from '@/types/monster.types'
 
-export function useMonsterVisual (monster: SerializedMonster | null) {
+export function useMonsterVisual (monster: SerializedMonster | null): MonsterVisualProfile | null {
   const [visualProfile, setVisualProfile] = useState<MonsterVisualProfile | null>(null)
 
   const generator = useMemo(() => new MonsterVisualGenerator(), [])
 
   useEffect(() => {
-    if (monster != null) {
+    if (monster !== null) {
       const profile = generator.generateFromMonster(monster)
       setVisualProfile(profile)
     }
@@ -25,7 +25,7 @@ export function useMonsterVisual (monster: SerializedMonster | null) {
   return visualProfile
 }
 
-export function useMonsterPreview (name: string, type?: string) {
+export function useMonsterPreview (name: string, type?: string): MonsterVisualProfile | null {
   const [visualProfile, setVisualProfile] = useState<MonsterVisualProfile | null>(null)
 
   const generator = useMemo(() => new MonsterVisualGenerator(), [])

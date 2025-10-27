@@ -30,7 +30,7 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
   const shadowId = `shadow-${Math.random().toString(36).substring(2, 9)}`
 
   // Composant réutilisable pour les oreilles mignonnes
-  const renderEars = (type: 'round' | 'pointy' | 'long') => {
+  const renderEars = (type: 'round' | 'pointy' | 'long'): ReactNode => {
     if (type === 'round') {
       return (
         <g id='ears-round'>
@@ -49,7 +49,7 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           <path d='M 133 82 L 136 70 L 127 80 Z' fill={colors.accent} opacity='0.5' />
         </g>
       )
-    } else { // long
+    } else {
       return (
         <g id='ears-long'>
           <ellipse cx='65' cy='75' rx={8 * scale} ry={20 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' transform='rotate(-20 65 75)' />
@@ -61,10 +61,8 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
     }
   }
 
-  // Bras/pattes mignonnes
-  const renderLimbs = () => (
+  const renderLimbs = (): ReactNode => (
     <g id='limbs'>
-      {/* Bras gauche */}
       <ellipse
         cx='70'
         cy='120'
@@ -77,7 +75,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
       />
       <circle cx='65' cy='130' r={6 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
 
-      {/* Bras droit */}
       <ellipse
         cx='130'
         cy='120'
@@ -90,11 +87,9 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
       />
       <circle cx='135' cy='130' r={6 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
 
-      {/* Pattes */}
       <ellipse cx='85' cy='160' rx={12 * scale} ry={8 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
       <ellipse cx='115' cy='160' rx={12 * scale} ry={8 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
 
-      {/* Petits orteils mignons */}
       <g opacity='0.7'>
         <circle cx='80' cy='162' r={2 * scale} fill={colors.secondary} />
         <circle cx='85' cy='163' r={2 * scale} fill={colors.secondary} />
@@ -110,10 +105,8 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
   const bodyShapes: Record<BodyShape, ReactNode> = {
     round: (
       <g>
-        {/* Oreilles rondes */}
         {renderEars('round')}
 
-        {/* Corps rond mignon */}
         <circle
           cx='100'
           cy='110'
@@ -124,7 +117,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           filter={`url(#${shadowId})`}
         />
 
-        {/* Brillance */}
         <ellipse
           cx='85'
           cy='95'
@@ -134,7 +126,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           opacity='0.5'
         />
 
-        {/* Ventre clair */}
         <ellipse
           cx='100'
           cy='120'
@@ -144,16 +135,13 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           opacity='0.3'
         />
 
-        {/* Membres */}
         {renderLimbs()}
       </g>
     ),
     oval: (
       <g>
-        {/* Oreilles longues */}
         {renderEars('long')}
 
-        {/* Corps ovale */}
         <ellipse
           cx='100'
           cy='110'
@@ -165,7 +153,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           filter={`url(#${shadowId})`}
         />
 
-        {/* Brillance */}
         <ellipse
           cx='90'
           cy='90'
@@ -175,7 +162,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           opacity='0.5'
         />
 
-        {/* Ventre */}
         <ellipse
           cx='100'
           cy='120'
@@ -185,13 +171,11 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           opacity='0.25'
         />
 
-        {/* Membres */}
         {renderLimbs()}
       </g>
     ),
     serpent: (
       <g>
-        {/* Corps serpentin avec tête mignonne */}
         <path
           d={`M 100 ${50 * scale} Q 120 ${80 * scale}, 100 ${110 * scale} Q 80 ${140 * scale}, 100 ${170 * scale}`}
           fill='none'
@@ -201,7 +185,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           filter={`url(#${shadowId})`}
         />
 
-        {/* Tête ronde au sommet */}
         <circle
           cx='100'
           cy={50 * scale}
@@ -212,11 +195,9 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           filter={`url(#${shadowId})`}
         />
 
-        {/* Petites oreilles pointues */}
         <circle cx='88' cy={45 * scale} r={6 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='1.5' />
         <circle cx='112' cy={45 * scale} r={6 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='1.5' />
 
-        {/* Brillance sur le corps */}
         <path
           d={`M 92 ${60 * scale} Q 112 ${85 * scale}, 92 ${115 * scale} Q 75 ${145 * scale}, 92 ${165 * scale}`}
           fill='none'
@@ -226,7 +207,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           opacity='0.3'
         />
 
-        {/* Petites pattes le long du corps */}
         <g opacity='0.8'>
           <ellipse cx='75' cy='100' rx='5' ry='8' fill={colors.secondary} />
           <ellipse cx='125' cy='100' rx='5' ry='8' fill={colors.secondary} />
@@ -237,10 +217,8 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
     ),
     humanoid: (
       <g>
-        {/* Oreilles pointues */}
         {renderEars('pointy')}
 
-        {/* Tête mignonne */}
         <ellipse
           cx='100'
           cy='85'
@@ -252,7 +230,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           filter={`url(#${shadowId})`}
         />
 
-        {/* Corps */}
         <ellipse
           cx='100'
           cy='135'
@@ -264,14 +241,11 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           filter={`url(#${shadowId})`}
         />
 
-        {/* Brillances */}
         <ellipse cx='88' cy='75' rx={12 * scale} ry={16 * scale} fill={`url(#${shineId})`} opacity='0.5' />
         <ellipse cx='92' cy='125' rx={10 * scale} ry={15 * scale} fill={`url(#${shineId})`} opacity='0.4' />
 
-        {/* Ventre */}
         <ellipse cx='100' cy='140' rx={18 * scale} ry={28 * scale} fill='white' opacity='0.3' />
 
-        {/* Bras plus détaillés */}
         <g id='detailed-arms'>
           <ellipse cx='70' cy='115' rx={8 * scale} ry={20 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' transform='rotate(-25 70 115)' />
           <circle cx='62' cy='128' r={7 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
@@ -280,12 +254,10 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           <circle cx='138' cy='128' r={7 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
         </g>
 
-        {/* Jambes */}
         <g id='legs'>
           <ellipse cx='88' cy='165' rx={10 * scale} ry={18 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
           <ellipse cx='112' cy='165' rx={10 * scale} ry={18 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
 
-          {/* Pieds */}
           <ellipse cx='85' cy='178' rx={13 * scale} ry={7 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
           <ellipse cx='115' cy='178' rx={13 * scale} ry={7 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
         </g>
@@ -293,10 +265,8 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
     ),
     blob: (
       <g>
-        {/* Oreilles rondes qui dépassent */}
         {renderEars('round')}
 
-        {/* Corps gélatineux mignon */}
         <path
           d={`M 100,${65 * scale} 
               Q ${135 * scale},${72 * scale} ${132 * scale},${110 * scale}
@@ -309,21 +279,17 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
           filter={`url(#${shadowId})`}
         />
 
-        {/* Effets gélatineux multiples */}
         <ellipse cx='80' cy='90' rx={28 * scale} ry={32 * scale} fill={`url(#${shineId})`} opacity='0.6' />
         <circle cx='110' cy='115' r={12 * scale} fill='white' opacity='0.25' />
         <circle cx='90' cy='125' r={8 * scale} fill='white' opacity='0.2' />
 
-        {/* Ventre très clair */}
         <ellipse cx='100' cy='120' rx={30 * scale} ry={35 * scale} fill='white' opacity='0.3' />
 
-        {/* Petites pattes qui dépassent */}
         <g opacity='0.9'>
           <ellipse cx='75' cy='145' rx={10 * scale} ry={8 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
           <ellipse cx='125' cy='145' rx={10 * scale} ry={8 * scale} fill={colors.primary} stroke={colors.secondary} strokeWidth='2' />
         </g>
 
-        {/* Petits bras gélatineux */}
         <ellipse cx='65' cy='110' rx={6 * scale} ry={12 * scale} fill={colors.primary} opacity='0.8' />
         <ellipse cx='135' cy='110' rx={6 * scale} ry={12 * scale} fill={colors.primary} opacity='0.8' />
       </g>
@@ -340,7 +306,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
             <circle cx='95' cy='125' r={7 * scale} fill={colors.secondary} />
             <circle cx='110' cy='90' r={6 * scale} fill={colors.secondary} />
             <circle cx='78' cy='115' r={9 * scale} fill={colors.secondary} />
-            {/* Contours des spots pour plus de définition */}
             <circle cx='85' cy='95' r={8 * scale} fill='none' stroke='white' strokeWidth='1' opacity='0.3' />
             <circle cx='115' cy='105' r={10 * scale} fill='none' stroke='white' strokeWidth='1' opacity='0.3' />
           </g>
@@ -389,22 +354,18 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
 
   return (
     <g id='body'>
-      {/* Définitions SVG (dégradés et filtres) */}
       <defs>
-        {/* Dégradé principal plus doux */}
         <linearGradient id={gradientId} x1='0%' y1='0%' x2='100%' y2='100%'>
           <stop offset='0%' stopColor={colors.primary} />
           <stop offset='50%' stopColor={colors.primary} stopOpacity='0.95' />
           <stop offset='100%' stopColor={colors.secondary} stopOpacity='0.9' />
         </linearGradient>
 
-        {/* Dégradé de brillance */}
         <radialGradient id={shineId}>
           <stop offset='0%' stopColor='white' stopOpacity='0.9' />
           <stop offset='100%' stopColor='white' stopOpacity='0' />
         </radialGradient>
 
-        {/* Filtre d'ombre douce */}
         <filter id={shadowId}>
           <feGaussianBlur in='SourceAlpha' stdDeviation='2' />
           <feOffset dx='1' dy='2' result='offsetblur' />
@@ -418,7 +379,6 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
         </filter>
       </defs>
 
-      {/* Ombre au sol plus douce */}
       <ellipse
         cx='100'
         cy='185'
@@ -428,13 +388,9 @@ export default function MonsterBody ({ shape, colors, pattern, size }: MonsterBo
         opacity='0.4'
       />
 
-      {/* Corps principal */}
       {bodyShapes[shape]}
-
-      {/* Motif par-dessus */}
       {renderPattern()}
 
-      {/* Joues roses mignonnes */}
       <g id='cute-cheeks' opacity='0.6'>
         <ellipse cx='70' cy='110' rx={8 * scale} ry={6 * scale} fill='#FF69B4' />
         <ellipse cx='130' cy='110' rx={8 * scale} ry={6 * scale} fill='#FF69B4' />

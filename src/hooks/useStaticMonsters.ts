@@ -45,12 +45,12 @@ interface MonsterWithProfile extends StaticMonster {
   visualProfile: MonsterVisualProfile
 }
 
-export function useStaticMonsters () {
+export function useStaticMonsters (): { monsters: MonsterWithProfile[], loading: boolean } {
   const [monsters, setMonsters] = useState<MonsterWithProfile[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const generateMonsters = async () => {
+    const generateMonsters = async (): Promise<void> => {
       try {
         const monstersWithProfiles = await Promise.all(
           STATIC_MONSTERS.map(async (monster) => {
@@ -66,10 +66,10 @@ export function useStaticMonsters () {
               isShiny: false
             })
 
-            if (result.success && (result.visualProfile != null)) {
+            if (result.success) {
               return {
                 ...monster,
-                visualProfile: result.visualProfile
+                visualProfile: result.data
               }
             }
             return null
@@ -85,7 +85,7 @@ export function useStaticMonsters () {
       }
     }
 
-    generateMonsters()
+    void generateMonsters()
   }, [])
 
   return { monsters, loading }

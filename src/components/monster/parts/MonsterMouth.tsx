@@ -21,10 +21,42 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
   const isHungry = animation === 'hungry'
   const isAttack = animation === 'attack'
 
-  // IDs uniques basés sur le style pour éviter les conflits
   const mouthGradientId = `mouth-gradient-${style}`
   const beakGradientId = `beak-gradient-${style}`
   const openMouthGradientId = `open-mouth-gradient-${style}`
+
+  const renderOpenEllipse = (): ReactNode => {
+    if (isAttack) {
+      return (
+        <motion.ellipse
+          cx='100'
+          cy='122'
+          rx={isHungry ? 12 : 10}
+          ry={isHungry ? 10 : 8}
+          fill={`url(#${openMouthGradientId})`}
+          stroke={color}
+          strokeWidth='2'
+          animate={{
+            ry: [8, 15, 8],
+            rx: [10, 13, 10]
+          }}
+          transition={{ duration: 0.3 }}
+        />
+      )
+    }
+
+    return (
+      <ellipse
+        cx='100'
+        cy='122'
+        rx={isHungry ? 12 : 10}
+        ry={isHungry ? 10 : 8}
+        fill={`url(#${openMouthGradientId})`}
+        stroke={color}
+        strokeWidth='2'
+      />
+    )
+  }
 
   const mouthVariants: Record<MouthStyle, ReactNode> = {
     smile: (
@@ -56,7 +88,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
               strokeLinecap='round'
             />
             )}
-        {/* Langue visible si content */}
         {isHappy && (
           <ellipse
             cx='100'
@@ -67,7 +98,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
             opacity='0.7'
           />
         )}
-        {/* Fossettes */}
         {isHappy && (
           <>
             <circle cx='78' cy='123' r='3' fill={color} opacity='0.2' />
@@ -78,7 +108,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
     ),
     fangs: (
       <g id='mouth-fangs'>
-        {/* Bouche ouverte */}
         {isAttack
           ? (
             <motion.path
@@ -107,7 +136,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
             />
             )}
 
-        {/* Intérieur de la bouche */}
         {isAttack && (
           <ellipse
             cx='100'
@@ -118,7 +146,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
           />
         )}
 
-        {/* Crocs */}
         {isAttack
           ? (
             <motion.g
@@ -156,7 +183,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
             </g>
             )}
 
-        {/* Dents secondaires */}
         <g opacity='0.8'>
           <rect x='94' y='119' width='3' height='6' fill='white' rx='1' />
           <rect x='103' y='119' width='3' height='6' fill='white' rx='1' />
@@ -165,7 +191,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
     ),
     beak: (
       <g id='mouth-beak'>
-        {/* Partie supérieure du bec */}
         {isHungry
           ? (
             <motion.path
@@ -194,7 +219,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
             />
             )}
 
-        {/* Partie inférieure du bec */}
         {isHungry
           ? (
             <motion.path
@@ -219,7 +243,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
             />
             )}
 
-        {/* Ligne de séparation */}
         <line x1='100' y1='118' x2='100' y2='125' stroke={color} strokeWidth='1' opacity='0.5' />
       </g>
     ),
@@ -246,10 +269,8 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
               fill={color}
             />
             )}
-        {/* Petit reflet */}
         <circle cx='101' cy='119' r='1' fill='white' opacity='0.6' />
 
-        {/* Si affamé, ajouter des signes */}
         {isHungry && (
           <>
             <text x='85' y='125' fontSize='10' opacity='0.5'>💧</text>
@@ -260,37 +281,8 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
     ),
     open: (
       <g id='mouth-open'>
-        {/* Bouche ouverte */}
-        {isAttack
-          ? (
-            <motion.ellipse
-              cx='100'
-              cy='122'
-              rx={isHungry ? 12 : 10}
-              ry={isHungry ? 10 : 8}
-              fill={`url(#${openMouthGradientId})`}
-              stroke={color}
-              strokeWidth='2'
-              animate={{
-                ry: [8, 15, 8],
-                rx: [10, 13, 10]
-              }}
-              transition={{ duration: 0.3 }}
-            />
-            )
-          : (
-            <ellipse
-              cx='100'
-              cy='122'
-              rx={isHungry ? 12 : 10}
-              ry={isHungry ? 10 : 8}
-              fill={`url(#${openMouthGradientId})`}
-              stroke={color}
-              strokeWidth='2'
-            />
-            )}
+        {renderOpenEllipse()}
 
-        {/* Langue */}
         <ellipse
           cx='100'
           cy='125'
@@ -300,14 +292,12 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
           opacity='0.8'
         />
 
-        {/* Dents du haut */}
         <g opacity='0.9'>
           <rect x='92' y='115' width='3' height='5' fill='white' rx='1' />
           <rect x='97' y='115' width='3' height='5' fill='white' rx='1' />
           <rect x='102' y='115' width='3' height='5' fill='white' rx='1' />
         </g>
 
-        {/* Reflet humide */}
         <ellipse cx='95' cy='120' rx='3' ry='2' fill='white' opacity='0.3' />
       </g>
     )
@@ -315,7 +305,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
 
   return (
     <g>
-      {/* Définitions SVG communes pour tous les types de bouche */}
       <defs>
         <radialGradient id={mouthGradientId}>
           <stop offset='0%' stopColor='rgba(0,0,0,0.5)' />
@@ -333,7 +322,6 @@ export default function MonsterMouth ({ style, color, animation }: MonsterMouthP
         </radialGradient>
       </defs>
 
-      {/* Rendu de la bouche selon le style */}
       {mouthVariants[style]}
     </g>
   )

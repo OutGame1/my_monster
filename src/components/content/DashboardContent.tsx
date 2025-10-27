@@ -2,11 +2,11 @@
 
 import { ReactNode, useState } from 'react'
 import Button from '@components/ui/Button'
-import MonsterCard from '@components/ui/MonsterCard'
 import AdoptMonsterModal from '@components/modals/AdoptMonsterModal'
 import { authClient } from '@lib/auth-client'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
+import MonsterOverview from '@/components/dashboard/MonsterOverview'
 import type { SerializedMonster } from '@/types/monster.types'
 
 interface DashboardContentProps {
@@ -38,10 +38,6 @@ export default function DashboardContent ({ user, monsters = [] }: DashboardCont
 
   const handleCloseAdoptModal = (): void => {
     setIsAdoptModalOpen(false)
-  }
-
-  const handleMonsterClick = (monster: SerializedMonster): void => {
-    router.push(`/dashboard/monster/${monster._id}`)
   }
 
   // Calculer les statistiques
@@ -93,7 +89,7 @@ export default function DashboardContent ({ user, monsters = [] }: DashboardCont
                 Monstres adoptés <span className='font-semibold'>{monsters.length}</span>
               </p>
               <p className='text-gray-600 text-lg flex justify-between'>
-                Niveau moyen <span className='font-semibold'>{averageLevel || '-'}</span>
+                Niveau moyen <span className='font-semibold'>{averageLevel > 0 ? averageLevel : '-'}</span>
               </p>
               <p className='text-gray-600 text-lg flex justify-between'>
                 Bonheur moyen <span className='font-semibold'>{averageHappiness > 0 ? `${averageHappiness}%` : '-'}</span>
@@ -140,39 +136,11 @@ export default function DashboardContent ({ user, monsters = [] }: DashboardCont
         </div>
 
         {/* Section des monstres */}
-        <div className='mb-8'>
-          <h2 className='text-3xl font-bold text-tolopea-900 mb-6'>
-            Vos Monstres ({monsters.length})
-          </h2>
-
-          {monsters.length === 0
-            ? (
-              <div className='bg-white/90 backdrop-blur-sm rounded-xl p-12 shadow-lg border border-tolopea-100 text-center'>
-                <span className='text-6xl mb-4 block'>🦕</span>
-                <h3 className='text-2xl font-semibold text-tolopea-900 mb-2'>
-                  Aucun monstre pour le moment
-                </h3>
-                <p className='text-gray-600 text-lg mb-6'>
-                  Commencez par en adopter un pour démarrer votre aventure !
-                </p>
-                <Button variant='primary' onClick={handleOpenAdoptModal}>
-                  Adopter mon premier monstre
-                </Button>
-              </div>
-              )
-            : (
-              <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-                {monsters.map((monster) => (
-                  <div
-                    key={monster._id}
-                    onClick={() => handleMonsterClick(monster)}
-                    className='cursor-pointer transform transition-transform hover:scale-105'
-                  >
-                    <MonsterCard monster={monster} />
-                  </div>
-                ))}
-              </div>
-              )}
+        <div className='mb-16'>
+          <MonsterOverview
+            monsters={monsters}
+            onOpenAdoptModal={handleOpenAdoptModal}
+          />
         </div>
       </div>
 

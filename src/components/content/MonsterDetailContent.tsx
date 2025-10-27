@@ -9,8 +9,8 @@ import { ReactNode, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Button from '@components/ui/Button'
 import { SerializedMonster } from '@/types/monster.types'
-import { useMonsterVisual } from '@/presentation/hooks/useMonsterVisual'
-import MonsterAvatar from '@/presentation/components/monster/MonsterAvatar'
+import { useMonsterVisual } from '@/hooks/useMonsterVisual'
+import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import { AnimationType } from '@/core/models/monster-visual.model'
 import { toast } from 'react-toastify'
 
@@ -90,7 +90,7 @@ export default function MonsterDetailContent ({ monster }: MonsterDetailContentP
           <div className='space-y-6'>
             {/* Avatar grand format */}
             <div className='bg-white/90 backdrop-blur-sm rounded-xl p-12 flex items-center justify-center border-2 border-tolopea-100 shadow-xl'>
-              {(visualProfile != null)
+              {(visualProfile !== null)
                 ? (
                   <MonsterAvatar
                     visualProfile={visualProfile}
@@ -107,7 +107,7 @@ export default function MonsterDetailContent ({ monster }: MonsterDetailContentP
             {/* Boutons d'interaction */}
             <div className='grid grid-cols-2 gap-4'>
               <button
-                onClick={handlePet}
+                onClick={() => { void handlePet() }}
                 className='p-6 bg-aqua-forest/10 hover:bg-aqua-forest/20
                          text-aqua-forest-700 rounded-xl transition-all font-semibold
                          flex flex-col items-center gap-3 border-2 border-aqua-forest/30
@@ -117,7 +117,7 @@ export default function MonsterDetailContent ({ monster }: MonsterDetailContentP
                 <span className='text-lg'>Caresser</span>
               </button>
               <button
-                onClick={handleFeed}
+                onClick={() => { void handleFeed() }}
                 className='p-6 bg-blood/10 hover:bg-blood/20
                          text-red-700 rounded-xl transition-all font-semibold
                          flex flex-col items-center gap-3 border-2 border-blood/30
@@ -127,7 +127,7 @@ export default function MonsterDetailContent ({ monster }: MonsterDetailContentP
                 <span className='text-lg'>Nourrir</span>
               </button>
               <button
-                onClick={handleCelebrate}
+                onClick={() => { void handleCelebrate() }}
                 className='p-6 bg-tolopea/10 hover:bg-tolopea/20
                          text-tolopea-700 rounded-xl transition-all font-semibold
                          flex flex-col items-center gap-3 border-2 border-tolopea/30
@@ -137,7 +137,7 @@ export default function MonsterDetailContent ({ monster }: MonsterDetailContentP
                 <span className='text-lg'>Célébrer</span>
               </button>
               <button
-                onClick={handleBattle}
+                onClick={() => { void handleBattle() }}
                 className='p-6 bg-orange-500/10 hover:bg-orange-500/20
                          text-orange-700 rounded-xl transition-all font-semibold
                          flex flex-col items-center gap-3 border-2 border-orange-500/30
@@ -283,7 +283,7 @@ export default function MonsterDetailContent ({ monster }: MonsterDetailContentP
             </div>
 
             {/* Capacités */}
-            {monster.abilities && monster.abilities.length > 0 && (
+            {monster.abilities !== null && monster.abilities.length > 0 && (
               <div className='bg-white/90 backdrop-blur-sm rounded-xl border-2 border-tolopea-100 p-6 shadow-lg'>
                 <h3 className='text-2xl font-bold text-gray-900 mb-6'>Capacités</h3>
                 <div className='space-y-4'>
@@ -316,7 +316,7 @@ export default function MonsterDetailContent ({ monster }: MonsterDetailContentP
             </div>
 
             {/* Achievements */}
-            {monster.achievements && monster.achievements.length > 0 && (
+            {monster.achievements !== null && monster.achievements.length > 0 && (
               <div className='bg-white/90 backdrop-blur-sm rounded-xl border-2 border-tolopea-100 p-6 shadow-lg'>
                 <h3 className='text-2xl font-bold text-gray-900 mb-4'>Succès</h3>
                 <div className='flex flex-wrap gap-3'>

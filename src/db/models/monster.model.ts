@@ -504,7 +504,7 @@ monsterSchema.methods.heal = function (this: MonsterDocument, amount: number): v
 
 monsterSchema.methods.canEvolve = function (this: MonsterDocument): boolean {
   // Pas d'évolution définie
-  if (this.evolution == null) {
+  if (this.evolution === undefined) {
     return false
   }
 
@@ -515,7 +515,7 @@ monsterSchema.methods.canEvolve = function (this: MonsterDocument): boolean {
 
   // Pas de requirements : peut évoluer
   const requirements = this.evolution.requirements
-  if (requirements == null) {
+  if (requirements === undefined) {
     return true
   }
 

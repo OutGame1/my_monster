@@ -1,12 +1,12 @@
 'use client'
 
-import { useState } from 'react'
-import MonsterAvatar from '@/presentation/components/monster/MonsterAvatar'
+import { ReactNode, useState } from 'react'
+import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import { MonsterVisualService } from '@/core/services/monster-visual.service'
 import { MonsterType } from '@/db/models/monster.model'
 import type { AnimationType } from '@/core/models/monster-visual.model'
 
-export default function MonsterGeneratorTestPage () {
+export default function MonsterGeneratorTestPage (): ReactNode {
   const [name, setName] = useState('Pikachu')
   const [type, setType] = useState<MonsterType>(MonsterType.ELECTRIC)
   const [level, setLevel] = useState(50)

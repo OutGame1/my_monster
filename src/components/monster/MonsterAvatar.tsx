@@ -5,6 +5,7 @@
 
 'use client'
 
+import { ReactNode } from 'react'
 import { motion } from 'framer-motion'
 import type { MonsterVisualProfile, AnimationType } from '@/core/models/monster-visual.model'
 import MonsterBody from './parts/MonsterBody'
@@ -26,7 +27,7 @@ export default function MonsterAvatar ({
   interactive = false,
   size = 200,
   className = ''
-}: MonsterAvatarProps) {
+}: MonsterAvatarProps): ReactNode {
   const animations: Record<AnimationType, any> = {
     idle: {
       y: [0, -5, 0],

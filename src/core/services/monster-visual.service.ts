@@ -110,7 +110,7 @@ export class MonsterVisualService {
       large: 'large',
       giant: 'huge'
     }
-    return mapping[bodyType] || 'medium'
+    return mapping[bodyType] ?? 'medium'
   }
 
   private generateTraits (

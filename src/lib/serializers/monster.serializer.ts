@@ -47,11 +47,11 @@ export function serializeMonster (
     },
     mood: doc.mood,
     description: doc.description,
-    evolution: (doc.evolution != null)
+    evolution: (doc.evolution !== undefined)
       ? {
           level: doc.evolution.level,
           evolvesInto: doc.evolution.evolvesInto,
-          requirements: (doc.evolution.requirements != null)
+          requirements: (doc.evolution.requirements !== undefined)
             ? {
                 minHappiness: doc.evolution.requirements.minHappiness,
                 minLevel: doc.evolution.requirements.minLevel,

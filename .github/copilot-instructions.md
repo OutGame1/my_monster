@@ -4,54 +4,118 @@
 
 Ce projet suit **Clean Architecture** et **Clean Code** de manière stricte.
 
-### 📁 Structure du Projet (MISE À JOUR)
+### 📁 Structure du Projet (RÉELLE - Janvier 2025)
 
 ```
 src/
 ├── actions/                # ⚡ SERVER ACTIONS (Next.js)
 │   └── monsters.actions.ts # Actions serveur pour les monstres
-├── app/                    # Next.js App Router (routes uniquement, pas d'API)
+│
+├── app/                    # 📱 NEXT.JS APP ROUTER
+│   ├── page.tsx           # Page d'accueil
+│   ├── layout.tsx         # Layout racine
+│   ├── globals.css        # Styles globaux (Tailwind + couleurs)
+│   ├── dashboard/         # Dashboard utilisateur
+│   │   ├── page.tsx
+│   │   └── monster/[id]/  # Détail d'un monstre
+│   ├── sign-in/           # Authentification
+│   ├── temp/              # Page temporaire (création monstre)
+│   ├── test/              # Pages de test
+│   │   └── monster-generator/  # Test génération visuelle
+│   └── api/
+│       └── auth/[...all]/ # Better-Auth endpoints
+│
+├── components/             # 🧩 TOUS LES COMPOSANTS UI
+│   ├── ui/                # Composants de base réutilisables
+│   │   ├── Button.tsx
+│   │   ├── Card.tsx
+│   │   ├── Header.tsx
+│   │   ├── Footer.tsx
+│   │   ├── InputField.tsx
+│   │   ├── Modal.tsx
+│   │   └── MonsterCard.tsx
+│   │
+│   ├── monster/           # Composants spécifiques aux monstres
+│   │   ├── MonsterAvatar.tsx        # Avatar SVG animé
+│   │   ├── MonsterCardInteractive.tsx
+│   │   └── parts/         # Parties du monstre (SVG)
+│   │       ├── MonsterBody.tsx
+│   │       ├── MonsterEyes.tsx
+│   │       ├── MonsterMouth.tsx
+│   │       └── MonsterAccessories.tsx
+│   │
+│   ├── dashboard/         # Composants dashboard
+│   │   └── MonsterOverview.tsx  # Vue spotlight + grille
+│   │
+│   ├── forms/             # Formulaires
+│   │   ├── AuthFormContent.tsx
+│   │   ├── SignInForm.tsx
+│   │   └── SignUpForm.tsx
+│   │
+│   ├── modals/            # Modales
+│   │   └── AdoptMonsterModal.tsx
+│   │
+│   ├── sections/          # Sections de pages (homepage)
+│   │   ├── HeroSection.tsx
+│   │   ├── BenefitsSection.tsx
+│   │   ├── FeaturesSection.tsx
+│   │   ├── MonstersSection.tsx
+│   │   └── NewsletterSection.tsx
+│   │
+│   └── content/           # Contenus de pages complexes
+│       ├── DashboardContent.tsx
+│       └── MonsterDetailContent.tsx
+│
 ├── core/                   # 🎯 LOGIQUE MÉTIER PURE
-│   ├── models/            # Types et interfaces
-│   ├── repositories/      # Interfaces repositories (contrats)
+│   ├── models/            # Types et interfaces métier
+│   │   └── monster-visual.model.ts
 │   ├── services/          # Services métier
-│   └── use-cases/         # Scénarios métier (1 action = 1 use case)
-├── infrastructure/         # 🔧 IMPLÉMENTATIONS TECHNIQUES
-│   ├── repositories/      # Implémentations repositories (MongoDB, etc.)
-│   └── generators/        # Générateurs (visuel, random, etc.)
-├── presentation/          # 🎨 LOGIQUE DE PRÉSENTATION
-│   ├── components/        # Composants métier (ex: MonsterAvatar)
-│   └── hooks/            # Custom hooks
-├── components/            # 🧩 COMPOSANTS UI RÉUTILISABLES
-│   ├── ui/               # Composants de base (Button, Card, etc.)
-│   ├── forms/            # Formulaires
-│   ├── modals/           # Modals
-│   ├── sections/         # Sections de pages
-│   └── content/          # Contenus de pages complexes
-├── db/                    # 📦 BASE DE DONNÉES
-│   ├── index.ts          # Connexion
-│   └── models/           # Modèles Mongoose
-├── lib/                   # 🛠️ UTILITAIRES
-│   ├── auth.ts           # Configuration
-│   ├── env.ts            # Variables d'env
-│   ├── serializers/      # Sérializers type-safe (Mongoose → Types)
-│   └── zod_schemas/      # Validation
-└── types/                 # 📝 TYPES GLOBAUX
+│   │   └── monster-visual.service.ts
+│   ├── generators/        # Générateurs (visuel, random)
+│   │   └── monster-visual.generator.ts
+│   └── use-cases/         # Scénarios métier
+│       └── create-monster.use-case.ts
+│
+├── db/                     # 📦 BASE DE DONNÉES
+│   ├── index.ts           # Connexion MongoDB
+│   └── models/            # Modèles Mongoose
+│       └── monster.model.ts
+│
+├── hooks/                  # 🎣 CUSTOM HOOKS
+│   ├── useMonsterVisual.ts    # Génération profil visuel
+│   ├── useRandomMonster.ts    # Monstre aléatoire (homepage)
+│   └── useStaticMonsters.ts   # Galerie statique
+│
+├── lib/                    # 🛠️ UTILITAIRES
+│   ├── auth.ts            # Configuration Better-Auth
+│   ├── auth-client.ts     # Client auth
+│   ├── env.ts             # Variables d'environnement
+│   ├── monster-generator.ts
+│   ├── serializers/       # Sérializers type-safe
+│   │   └── monster.serializer.ts
+│   └── zod_schemas/       # Validation
+│       ├── env.schema.ts
+│       └── monster.schema.ts
+│
+└── types/                  # 📝 TYPES GLOBAUX
+    └── monster.types.ts
 ```
 
-### 🎯 Règle des Dépendances (IMPÉRATIF)
+### 🎯 Règle des Dépendances (SIMPLIFIÉE)
 
 ```
-APP ROUTER → SERVER ACTIONS → PRESENTATION → CORE ← INFRASTRUCTURE
+APP ROUTER → SERVER ACTIONS → COMPONENTS → CORE
+                                ↓
+                              HOOKS
 ```
 
-**JAMAIS l'inverse !**
+**Principe de base : Les dépendances vont toujours vers l'intérieur**
 
-- `core/` : Ne dépend de RIEN (logique pure)
-- `infrastructure/` : Dépend du `core/` (implémente les interfaces)
-- `presentation/` : Dépend du `core/` (utilise les interfaces)
-- `actions/` : Utilise core + infrastructure (Server Actions Next.js)
-- `app/` : Utilise actions + presentation (orchestration)
+- `core/` : Ne dépend de RIEN (logique métier pure, services, générateurs)
+- `hooks/` : Dépend du `core/` (encapsule la logique réutilisable)
+- `components/` : Dépend du `core/` et `hooks/` (UI pure + logique visuelle)
+- `actions/` : Utilise `core/` + `db/` (Server Actions Next.js)
+- `app/` : Utilise `actions/` + `components/` (orchestration des pages)
 
 ### ⚡ Server Actions - Règles Strictes
 
@@ -247,6 +311,7 @@ function validateMonster(monster: MonsterModel): boolean {
 - **DRY** : Extraire code dupliqué dans des fonctions/hooks
 - **KISS** : Solution la plus simple qui fonctionne
 - **YAGNI** : Ne pas anticiper des besoins futurs
+- **Strict Equality** : TOUJOURS === et !==, JAMAIS == ou !=
 - **Commentaires** : Expliquer le "pourquoi", pas le "quoi"
 ```typescript
 // ✅ BON - Commentaire utile
@@ -256,6 +321,14 @@ await delay(100);
 // ❌ MAUVAIS - Commentaire inutile
 // Incrémente le compteur de 1
 counter++;
+
+// ✅ BON - Strict equality
+if (monster.level === 0) { /* ... */ }
+if (user !== null) { /* ... */ }
+
+// ❌ MAUVAIS - Loose equality
+if (monster.level == 0) { /* ... */ }  // INTERDIT !
+if (user != null) { /* ... */ }  // INTERDIT !
 ```
 
 ##### Gestion des Erreurs
@@ -277,33 +350,34 @@ try {
 #### 3. **Clean Architecture - Couches et Flux**
 
 ##### Règle des Dépendances
-- **Flux** : `Server Actions → Presentation → Core ← Infrastructure`
-- **Core** : Ne dépend de RIEN (logique métier pure)
-- **Infrastructure** : Dépend du Core (implémente les interfaces)
-- **Presentation** : Dépend du Core (utilise les interfaces)
-- **Actions** : Orchestrent tout (auth + repositories + services)
+- **Flux** : `App Router → Server Actions → Components/Hooks → Core`
+- **Core** : Ne dépend de RIEN (logique métier pure, services, générateurs)
+- **Hooks** : Dépend du Core (logique réutilisable)
+- **Components** : Dépend du Core et Hooks (UI + logique visuelle)
+- **Actions** : Utilise Core + DB (Server Actions Next.js)
+- **App** : Utilise Actions + Components (orchestration des pages)
 
 ##### Structure des Fichiers par Feature
 ```
 feature/
   ├── core/
   │   ├── models/
-  │   │   └── monster.model.ts          # Types/Interfaces
-  │   ├── repositories/
-  │   │   └── monster.repository.interface.ts
-  │   └── services/
-  │       └── monster.service.ts         # Logique métier pure
-  ├── infrastructure/
-  │   ├── repositories/
-  │   │   └── monster.repository.mongo.ts
-  │   └── api/
-  │       └── monsters/
-  │           └── route.ts               # API handlers
-  └── presentation/
-      ├── components/
-      │   └── MonsterCard.tsx
-      └── hooks/
-          └── useMonsters.ts
+  │   │   └── monster-visual.model.ts    # Types/Interfaces
+  │   ├── services/
+  │   │   └── monster-visual.service.ts   # Logique métier pure
+  │   └── generators/
+  │       └── monster-visual.generator.ts # Génération procédurale
+  ├── db/
+  │   └── models/
+  │       └── monster.model.ts            # Modèle Mongoose
+  ├── hooks/
+  │   └── useMonsterVisual.ts             # Hook réutilisable
+  ├── components/
+  │   └── monster/
+  │       ├── MonsterAvatar.tsx           # Composant UI
+  │       └── MonsterCardInteractive.tsx
+  └── actions/
+      └── monsters.actions.ts             # Server Actions
 ```
 
 ##### Use Cases
@@ -338,18 +412,16 @@ export class CreateMonsterUseCase {
 ```
 
 ##### Repositories Pattern
-- **Interface** : `src/core/repositories/`
-- **Implémentation** : `src/infrastructure/repositories/`
-- **Méthodes standard** :
-  - `findById(id: string): Promise<T | null>`
-  - `findAll(): Promise<T[]>`
-  - `save(entity: T): Promise<T>`
-  - `update(id: string, entity: Partial<T>): Promise<T>`
-  - `delete(id: string): Promise<void>`
+- **Pas de couche Repository distincte** : Utilisation directe de Mongoose dans les Server Actions
+- **Modèles** : `src/db/models/` (Mongoose schemas)
+- **Serializers** : `src/lib/serializers/` (conversion Mongoose → Types)
+- **Accès données** : Directement dans les Server Actions avec gestion d'erreurs
 
 ##### Services vs Use Cases
-- **Services** : Opérations techniques réutilisables (email, crypto, cache)
-- **Use Cases** : Scénarios métier complets (créer un monstre, combattre)
+- **Services** : Dans `core/services/` - Logique métier pure réutilisable (génération visuelle, calculs)
+- **Generators** : Dans `core/generators/` - Génération procédurale (monstres, avatars)
+- **Use Cases** : Dans `core/use-cases/` - Scénarios métier complets (créer un monstre, combattre)
+- **Hooks** : Dans `src/hooks/` - Logique réutilisable côté client (état, effets)
 
 #### 4. **React/Next.js - Bonnes Pratiques**
 
@@ -402,7 +474,9 @@ export default async function Page({ params }: { params: { id: string } }) {
 - **❌ JAMAIS de 'any'** : Utiliser types appropriés ou 'unknown'
 - **❌ JAMAIS de 'as' (type assertion)** : Créer des fonctions de conversion
 - **❌ JAMAIS de JSON.parse(JSON.stringify())** : Utiliser serializers
+- **❌ JAMAIS de == ou !=** : TOUJOURS utiliser === ou !== (strict equality)
 - **✅ Serializers dédiés** : Pour convertir documents Mongoose
+- **✅ TypeScript Standard Linting** : Suivre strictement les règles ESLint/TypeScript
 - **Types explicites** : Pour paramètres et retours de fonction
 - **Interfaces pour objets** : Types pour unions/primitives
 - **Génériques** : Pour composants/fonctions réutilisables
@@ -424,6 +498,14 @@ return serializeMonsters(monsters)  // Type-safe !
 // ❌ MAUVAIS - Type assertion ou any
 return JSON.parse(JSON.stringify(monsters)) as Monster[]  // Pas de vérification !
 return monsters as any  // Très mauvais !
+
+// ✅ BON - Strict equality
+if (value === null) { /* ... */ }
+if (monster.level !== 0) { /* ... */ }
+
+// ❌ MAUVAIS - Loose equality (JAMAIS utiliser)
+if (value == null) { /* ... */ }  // NON !
+if (monster.level != 0) { /* ... */ }  // NON !
 ```
 
 #### 6. **Testing - À Implémenter**
@@ -513,30 +595,33 @@ __tests__/
 
 ### Workflow de Développement d'une Feature
 
-1. **Core - Définir les Contrats**
+1. **Core - Définir les Modèles et Services**
 ```typescript
-// core/repositories/feature.repository.interface.ts
-export interface IFeatureRepository {
-  findById(id: string): Promise<Feature | null>
+// core/models/feature.model.ts
+export interface FeatureProfile {
+  id: string
+  name: string
 }
 
-// core/use-cases/do-something.use-case.ts
-export class DoSomethingUseCase {
-  constructor(private repo: IFeatureRepository) {}
-  async execute(input: Input): Promise<Output> {
+// core/services/feature.service.ts
+export class FeatureService {
+  generateProfile(input: Input): FeatureProfile {
     // Logique métier pure
   }
 }
 ```
 
-2. **Infrastructure - Implémenter**
+2. **Database - Modèle Mongoose**
 ```typescript
-// infrastructure/repositories/mongo-feature.repository.ts
-export class MongoFeatureRepository implements IFeatureRepository {
-  async findById(id: string) {
-    // Implémentation MongoDB
-  }
-}
+// db/models/feature.model.ts
+import mongoose from 'mongoose'
+
+const FeatureSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  // ... autres champs
+})
+
+export const Feature = mongoose.model('Feature', FeatureSchema)
 ```
 
 3. **Actions - Server Action**
@@ -544,36 +629,58 @@ export class MongoFeatureRepository implements IFeatureRepository {
 // actions/features.actions.ts
 'use server'
 
-export async function doSomething(input: Input) {
+import { Feature } from '@/db/models/feature.model'
+import { serializeFeature } from '@/lib/serializers/feature.serializer'
+
+export async function createFeature(input: Input) {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session?.user) return { success: false, error: 'Not authenticated' }
   
-  const repo = new MongoFeatureRepository()
-  const useCase = new DoSomethingUseCase(repo)
-  const result = await useCase.execute(input)
+  const feature = await Feature.create(input)
   
-  revalidatePath('/relevant-path')
-  return { success: true, data: result }
+  revalidatePath('/features')
+  return { success: true, data: serializeFeature(feature) }
 }
 ```
 
-4. **Presentation - Hook**
+4. **Hooks - Custom Hook**
 ```typescript
-// presentation/hooks/useFeature.ts
-export function useFeature() {
-  const doSomething = async (input: Input) => {
-    return await doSomethingAction(input)  // Appel direct à l'action
-  }
-  return { doSomething }
+// hooks/useFeature.ts
+import { useEffect, useState } from 'react'
+import { FeatureService } from '@/core/services/feature.service'
+
+export function useFeature(input: Input) {
+  const [profile, setProfile] = useState<FeatureProfile | null>(null)
+  
+  useEffect(() => {
+    const service = new FeatureService()
+    setProfile(service.generateProfile(input))
+  }, [input])
+  
+  return profile
 }
 ```
 
 5. **Components - UI**
 ```typescript
-// components/modals/FeatureModal.tsx
+// components/feature/FeatureCard.tsx
 'use client'
 
-const { doSomething } = useFeature()
+import { createFeature } from '@/actions/features.actions'
+import { useFeature } from '@/hooks/useFeature'
+
+export default function FeatureCard() {
+  const profile = useFeature(data)
+  
+  const handleCreate = async () => {
+    const result = await createFeature(profile)
+    if (result.success) {
+      toast.success('Feature created!')
+    }
+  }
+  
+  return <div>{/* UI */}</div>
+}
 ```
 
 ### 📋 Checklist Avant Commit (MISE À JOUR 2025)
@@ -581,11 +688,13 @@ const { doSomething } = useFeature()
 - [ ] **Architecture** : Respect du flux de dépendances
 - [ ] **Server Actions** : Toutes les mutations via actions (pas d'API routes)
 - [ ] **Typage strict** : Pas de `any`, pas de `as`, serializers pour Mongoose
+- [ ] **Equality** : TOUJOURS === et !==, JAMAIS == ou !=
+- [ ] **TypeScript Standard** : Suivre strictement les règles ESLint (explicit return types, indent, etc.)
 - [ ] **Params Next.js 15** : Toujours await les params dynamiques
-- [ ] **Use Cases** : Une action métier = un use case
-- [ ] **Repositories** : Interface dans core/, implémentation dans infrastructure/
-- [ ] **Hooks** : Logique réutilisable isolée dans presentation/hooks/
-- [ ] **Components** : UI pure dans components/, logique métier dans presentation/
+- [ ] **Services** : Logique métier pure dans `core/services/`
+- [ ] **Generators** : Génération procédurale dans `core/generators/`
+- [ ] **Hooks** : Logique réutilisable dans `hooks/`
+- [ ] **Components** : UI dans `components/`, organisés par fonctionnalité
 - [ ] **SOLID** : Chaque principe vérifié
 - [ ] **Clean Code** : Fonctions < 20 lignes, nommage explicite
 - [ ] **Erreurs** : Try/catch avec messages explicites
@@ -651,17 +760,24 @@ export default async function Page({ params }: { params: Promise<{ id: string }>
 - `actions/` : Server Actions Next.js (remplacement des API routes)
 - `core/models/` : Interfaces métier
 - `core/services/` : Services métier
-- `infrastructure/generators/` : Générateurs
-- `infrastructure/repositories/` : Repositories MongoDB
-- `presentation/components/monster/` : Composants métier
-- `presentation/hooks/` : Custom hooks
+- `core/generators/` : Générateurs procéduraux
+- `core/use-cases/` : Scénarios métier complets
+- `components/monster/` : Composants métier spécifiques aux monstres
+- `components/dashboard/` : Composants dashboard
 - `components/ui/` : Composants UI génériques
+- `components/sections/` : Sections de pages
+- `components/content/` : Contenus de pages complexes
+- `hooks/` : Custom hooks réutilisables
 - `lib/serializers/` : Fonctions de sérialisation type-safe
+- `db/models/` : Modèles Mongoose
 
 ✅ **Nouvellement ajoutés**
 - `actions/monsters.actions.ts` : Toutes les Server Actions pour monstres
 - `lib/serializers/monster.serializer.ts` : Sérialisation Mongoose → Types
+- `components/monster/` : MonsterAvatar, MonsterCardInteractive, parts (SVG)
+- `components/monstersOverview.tsx` : Vue spotlight + grille
 - Suppression complète de `app/api/monsters/` (remplacé par actions)
+- Suppression de `presentation/` (fonctionnalités intégrées dans components/ et hooks/)
 
 ### 🎨 Design System
 
@@ -718,3 +834,5 @@ interface IMonsterModel {
 5. ✅ Correction `bodyShape` vs `bodyType` (cohérence visuelle)
 6. ✅ Amélioration lisibilité (couleurs de texte ajustées)
 7. ✅ Métadonnées SEO sur page d'accueil
+8. ✅ **STRICT EQUALITY ONLY** : Interdiction totale de == et !=, uniquement === et !==
+9. ✅ **TypeScript Standard Linting** : Respect strict des règles ESLint (return types explicites, indentation correcte, ternaires formatés)

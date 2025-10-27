@@ -88,7 +88,7 @@ export default function Modal ({
         </div>
 
         {/* Footer avec boutons */}
-        {(showCancel || (onConfirm != null)) && (
+        {(showCancel || onConfirm !== undefined) && (
           <div className='px-6 py-4 border-t border-gray-200 flex gap-4 sticky bottom-0 bg-white'>
             {showCancel && (
               <Button
@@ -99,7 +99,7 @@ export default function Modal ({
                 Fermer
               </Button>
             )}
-            {(onConfirm != null) && (
+            {onConfirm !== undefined && (
               <button
                 onClick={onConfirm}
                 disabled={isConfirmDisabled}

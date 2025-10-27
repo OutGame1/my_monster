@@ -8,6 +8,8 @@ import { revalidatePath } from 'next/cache'
 import { headers } from 'next/headers'
 import { SerializedMonster } from '@/types/monster.types'
 import { serializeMonster, serializeMonsters } from '@/lib/serializers/monster.serializer'
+import { MonsterVisualProfile } from '@/core/models/monster-visual.model'
+import { Types } from 'mongoose'
 
 // ========================================
 // ACTIONS SERVEUR - MONSTRES
@@ -21,10 +23,14 @@ interface CreateMonsterInput {
   level?: number
 }
 
+type ActionOutput<T> =
+  | { success: true, data: T }
+  | { success: false, error: string }
+
 /**
  * Crée un nouveau monstre et l'enregistre en base de données
  */
-export async function createMonster (monsterData: CreateMonsterInput): Promise<{ success: boolean, monsterId?: string, error?: string }> {
+export async function createMonster (monsterData: CreateMonsterInput): Promise<ActionOutput<string>> {
   try {
     await connectToDatabase()
 
@@ -99,7 +105,7 @@ export async function createMonster (monsterData: CreateMonsterInput): Promise<{
 
     return {
       success: true,
-      monsterId: monster._id.toString()
+      data: monster._id.toString()
     }
   } catch (error) {
     console.error('Error creating monster:', error)
@@ -140,6 +146,11 @@ export async function getMonsters (): Promise<SerializedMonster[]> {
  */
 export async function getMonsterById (monsterId: string): Promise<SerializedMonster | null> {
   try {
+    if (!Types.ObjectId.isValid(monsterId)) {
+      console.error('Invalid monster ID format', monsterId)
+      return null
+    }
+
     await connectToDatabase()
 
     const session = await auth.api.getSession({
@@ -157,11 +168,13 @@ export async function getMonsterById (monsterId: string): Promise<SerializedMons
       ownerId: user.id
     }).exec()
 
-    return (monster != null) ? serializeMonster(monster) : null
+    if (monster !== null) {
+      return serializeMonster(monster)
+    }
   } catch (error) {
     console.error('Error fetching monster:', error)
-    return null
   }
+  return null
 }
 
 /**
@@ -194,7 +207,7 @@ export async function updateMonsterStats (
       ownerId: user.id
     })
 
-    if (monster == null) {
+    if (monster === null) {
       return { success: false, error: 'Monster not found' }
     }
 
@@ -204,7 +217,7 @@ export async function updateMonsterStats (
     await monster.save()
 
     revalidatePath('/dashboard')
-    revalidatePath(`/dashboard/monster/${monsterId}`)
+    revalidatePath(`/monsters/${monsterId}`)
 
     return { success: true }
   } catch (error) {
@@ -238,7 +251,7 @@ export async function feedMonster (monsterId: string): Promise<{ success: boolea
       ownerId: user.id
     })
 
-    if (monster == null) {
+    if (monster === null) {
       return { success: false, error: 'Monster not found' }
     }
 
@@ -250,7 +263,7 @@ export async function feedMonster (monsterId: string): Promise<{ success: boolea
     await monster.save()
 
     revalidatePath('/dashboard')
-    revalidatePath(`/dashboard/monster/${monsterId}`)
+    revalidatePath(`/monsters/${monsterId}`)
 
     return { success: true }
   } catch (error) {
@@ -284,7 +297,7 @@ export async function playWithMonster (monsterId: string): Promise<{ success: bo
       ownerId: user.id
     })
 
-    if (monster == null) {
+    if (monster === null) {
       return { success: false, error: 'Monster not found' }
     }
 
@@ -296,7 +309,7 @@ export async function playWithMonster (monsterId: string): Promise<{ success: bo
     await monster.save()
 
     revalidatePath('/dashboard')
-    revalidatePath(`/dashboard/monster/${monsterId}`)
+    revalidatePath(`/monsters/${monsterId}`)
 
     return { success: true }
   } catch (error) {
@@ -359,7 +372,7 @@ export async function generateMonsterVisual (params: {
   defense?: number
   speed?: number
   isShiny?: boolean
-}) {
+}): Promise<ActionOutput<MonsterVisualProfile>> {
   try {
     const visualService = new MonsterVisualService()
 
@@ -374,7 +387,7 @@ export async function generateMonsterVisual (params: {
       params.isShiny || false
     )
 
-    return { success: true, visualProfile }
+    return { success: true, data: visualProfile }
   } catch (error) {
     console.error('Error generating monster visual:', error)
     return {
