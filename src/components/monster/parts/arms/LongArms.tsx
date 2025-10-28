@@ -35,7 +35,7 @@ export default function LongArms ({
         />
       )
 
-    case 'tall':
+    case 'blocky':
       return (
         <LongArmsWithSpecificBody
           armsXPos={100}

@@ -18,7 +18,7 @@ export default function MonsterDisplay ({ monster }: MonsterDisplayProps): React
         <div className='rounded-full bg-gradient-to-br from-tolopea-50 to-aqua-forest-50 p-8'>
           <MonsterAvatar
             traits={monster.traits}
-            animation={monster.state}
+            state={monster.state}
             size={320}
           />
         </div>

@@ -8,15 +8,17 @@ interface PearBodyProps {
   primaryColor: string
   secondaryColor: string
   outlineColor: string
+  className?: string
 }
 
 export default function PearBody ({
   primaryColor,
   secondaryColor,
-  outlineColor
+  outlineColor,
+  className
 }: PearBodyProps): ReactNode {
   return (
-    <g>
+    <g className={className}>
       {/* Neck connector - rectangular for pear shape */}
       <rect
         x='88'

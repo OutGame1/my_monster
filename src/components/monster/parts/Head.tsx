@@ -79,7 +79,7 @@ export default function Head ({
     )
   }
 
-  // Square head for tall body
+  // Square head for blocky body
   return (
     <g>
       {/* Square head */}

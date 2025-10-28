@@ -15,7 +15,7 @@ interface ArmsProps {
   bodyShape: MonsterBodyShape
   primaryColor: string
   outlineColor: string
-  animation: MonsterState | null
+  state: MonsterState | null
 }
 
 export interface SpecificArmsProps {
@@ -40,15 +40,17 @@ export default function Arms ({
   bodyShape,
   primaryColor,
   outlineColor,
-  animation
+  state
 }: ArmsProps): ReactNode {
   // CSS animation class based on animation state
-  const animationClass = invoke(() => {
-    switch (animation) {
+  const stateClass = invoke(() => {
+    switch (state) {
       case 'happy':
         return 'animate-wave-arms'
       case 'gamester':
         return 'animate-wiggle-arms'
+      case 'hungry':
+        return 'animate-shake-arms-hungry'
     }
   })
 
@@ -59,7 +61,7 @@ export default function Arms ({
           bodyShape={bodyShape}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
-          className={animationClass}
+          className={stateClass}
         />
       )
     case 'short':
@@ -68,7 +70,7 @@ export default function Arms ({
           bodyShape={bodyShape}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
-          className={animationClass}
+          className={stateClass}
         />
       )
 
@@ -78,7 +80,7 @@ export default function Arms ({
           bodyShape={bodyShape}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
-          className={animationClass}
+          className={stateClass}
         />
       )
   }

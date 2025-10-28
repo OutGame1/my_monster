@@ -14,7 +14,7 @@ interface LegsProps {
   primaryColor: string
   secondaryColor: string
   outlineColor: string
-  animation: MonsterState | null
+  state: MonsterState | null
 }
 
 export default function Legs ({
@@ -22,7 +22,7 @@ export default function Legs ({
   primaryColor,
   secondaryColor,
   outlineColor,
-  animation
+  state
 }: LegsProps): ReactNode {
   // Animation could affect leg position in the future
   // For now, just route to the appropriate leg component

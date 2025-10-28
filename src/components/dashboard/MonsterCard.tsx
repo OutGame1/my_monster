@@ -37,7 +37,7 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
         <div className='rounded-full bg-gradient-to-br from-tolopea-50 to-aqua-forest-50 p-4'>
           <MonsterAvatar
             traits={monster.traits}
-            animation={monster.state}
+            state={monster.state}
             size={180}
           />
         </div>

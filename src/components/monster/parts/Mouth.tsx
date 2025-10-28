@@ -5,25 +5,38 @@
 
 import type { ReactNode } from 'react'
 import type { MonsterState, MonsterMouthType } from '@/db/models/monster.model'
-import SmileMouth from './mouths/SmileMouth'
-import NeutralMouth from './mouths/NeutralMouth'
-import OpenMouth from './mouths/OpenMouth'
+import SimpleMouth from './mouths/SimpleMouth'
+import ToothyMouth from './mouths/ToothyMouth'
+import WavyMouth from './mouths/WavyMouth'
+import SadMouth from './mouths/SadMouth'
 
 interface MouthProps {
   type: MonsterMouthType
   outlineColor: string
-  animation: MonsterState | null
+  state: MonsterState | null
 }
 
-export default function Mouth ({ type, outlineColor, animation }: MouthProps): ReactNode {
+export default function Mouth ({ type, outlineColor, state }: MouthProps): ReactNode {
+  const strokeWidth = 3.5
+
+  // Sad state is the same for all mouth types
+  if (state === 'sad') {
+    return (
+      <SadMouth
+        outlineColor={outlineColor}
+        strokeWidth={strokeWidth}
+      />
+    )
+  }
+
   switch (type) {
-    case 'smile':
-      return <SmileMouth outlineColor={outlineColor} animation={animation} />
+    case 'simple':
+      return <SimpleMouth outlineColor={outlineColor} state={state} />
 
-    case 'neutral':
-      return <NeutralMouth outlineColor={outlineColor} animation={animation} />
+    case 'toothy':
+      return <ToothyMouth outlineColor={outlineColor} state={state} />
 
-    case 'open':
-      return <OpenMouth outlineColor={outlineColor} animation={animation} />
+    case 'wavy':
+      return <WavyMouth outlineColor={outlineColor} state={state} />
   }
 }

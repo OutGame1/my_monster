@@ -12,18 +12,18 @@ import StarEyes from './eyes/StarEyes'
 interface EyesProps {
   type: MonsterEyeShape
   outlineColor: string
-  animation: MonsterState | null
+  state: MonsterState | null
 }
 
-export default function Eyes ({ type, outlineColor, animation }: EyesProps): ReactNode {
+export default function Eyes ({ type, outlineColor, state }: EyesProps): ReactNode {
   switch (type) {
     case 'dot':
-      return <DotEyes outlineColor={outlineColor} animation={animation} />
+      return <DotEyes outlineColor={outlineColor} state={state} />
 
     case 'round':
-      return <RoundEyes outlineColor={outlineColor} animation={animation} />
+      return <RoundEyes outlineColor={outlineColor} state={state} />
 
     case 'star':
-      return <StarEyes outlineColor={outlineColor} animation={animation} />
+      return <StarEyes outlineColor={outlineColor} state={state} />
   }
 }

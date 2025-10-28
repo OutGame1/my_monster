@@ -40,7 +40,7 @@ export default function ShortArms ({
         />
       )
 
-    case 'tall':
+    case 'blocky':
       return (
         <ShortArmsWithSpecificBody
           armsXPos={100}

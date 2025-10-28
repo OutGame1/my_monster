@@ -1,5 +1,5 @@
 // ========================================
-// LONG LEGS - TALL LANKY STYLE
+// LONG LEGS - blocky LANKY STYLE
 // ========================================
 
 import type { ReactNode } from 'react'

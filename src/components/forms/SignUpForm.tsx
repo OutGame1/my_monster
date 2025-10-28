@@ -94,7 +94,7 @@ export default function SignUpForm (): ReactNode {
       <Button
         type='submit'
         variant='primary'
-        className={isLoading ? 'opacity-75 cursor-not-allowed' : ''}
+        disabled={isLoading}
       >
         Créer mon compte
       </Button>

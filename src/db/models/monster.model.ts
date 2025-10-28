@@ -1,9 +1,9 @@
 import { Schema, models, model, Types, Model } from 'mongoose'
 
 export type MonsterState = 'happy' | 'sad' | 'gamester' | 'angry' | 'hungry' | 'sleepy'
-export type MonsterBodyShape = 'round' | 'pear' | 'tall'
+export type MonsterBodyShape = 'round' | 'pear' | 'blocky'
 export type MonsterEyeShape = 'dot' | 'round' | 'star'
-export type MonsterMouthType = 'smile' | 'neutral' | 'open'
+export type MonsterMouthType = 'simple' | 'toothy' | 'wavy'
 export type MonsterArmType = 'short' | 'long' | 'tiny'
 export type MonsterLegType = 'stumpy' | 'long' | 'feet'
 
@@ -45,7 +45,7 @@ const monsterTraitsSchema = new Schema<MonsterTraits>({
   bodyShape: {
     type: String,
     required: true,
-    enum: ['round', 'pear', 'tall']
+    enum: ['round', 'pear', 'blocky']
   },
   eyeType: {
     type: String,
@@ -55,7 +55,7 @@ const monsterTraitsSchema = new Schema<MonsterTraits>({
   mouthType: {
     type: String,
     required: true,
-    enum: ['smile', 'neutral', 'open']
+    enum: ['simple', 'toothy', 'wavy']
   },
   armType: {
     type: String,

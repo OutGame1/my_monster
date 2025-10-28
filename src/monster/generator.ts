@@ -5,12 +5,12 @@
 
 import type {
   MonsterTraits,
-  BodyShape,
-  EyeType,
-  MouthType,
-  ArmType,
-  LegType
-} from './types'
+  MonsterBodyShape as BodyShape,
+  MonsterEyeShape as EyeType,
+  MonsterMouthType as MouthType,
+  MonsterArmType as ArmType,
+  MonsterLegType as LegType
+} from '@/db/models/monster.model'
 
 /**
  * Simple seeded random number generator (LCG algorithm)
@@ -45,9 +45,9 @@ function pickRandom<T> (array: T[], random: () => number): T {
   return array[index]
 }
 
-const BODY_SHAPES: BodyShape[] = ['round', 'pear', 'tall']
+const BODY_SHAPES: BodyShape[] = ['round', 'pear', 'blocky']
 const EYE_TYPES: EyeType[] = ['dot', 'round', 'star']
-const MOUTH_TYPES: MouthType[] = ['smile', 'neutral', 'open']
+const MOUTH_TYPES: MouthType[] = ['simple', 'toothy', 'wavy']
 const ARM_TYPES: ArmType[] = ['short', 'long', 'tiny']
 const LEG_TYPES: LegType[] = ['stumpy', 'long', 'feet']
 

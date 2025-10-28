@@ -27,16 +27,16 @@ const ANIMATIONS: AnimationEntry[] = [
   { state: 'sad', label: 'Triste', emoji: '😢' }
 ]
 
-const BODY_SHAPES: MonsterBodyShape[] = ['round', 'pear', 'tall']
+const BODY_SHAPES: MonsterBodyShape[] = ['round', 'pear', 'blocky']
 const ARM_TYPES: MonsterArmType[] = ['short', 'long', 'tiny']
 const LEG_TYPES: MonsterLegType[] = ['stumpy', 'long', 'feet']
 const EYE_TYPES: MonsterEyeShape[] = ['dot', 'round', 'star']
-const MOUTH_TYPES: MonsterMouthType[] = ['smile', 'neutral', 'open']
+const MOUTH_TYPES: MonsterMouthType[] = ['simple', 'toothy', 'wavy']
 
 export default function TestMonsterPage (): ReactNode {
   const [selectedName, setSelectedName] = useState('Fluffy')
   const [customName, setCustomName] = useState('')
-  const [animation, setAnimation] = useState<MonsterState | null>(null)
+  const [currentState, setCurrentState] = useState<MonsterState | null>(null)
   const [manualMode, setManualMode] = useState(false)
 
   // Manual trait selection
@@ -44,7 +44,7 @@ export default function TestMonsterPage (): ReactNode {
   const [manualArms, setManualArms] = useState<MonsterArmType>('short')
   const [manualLegs, setManualLegs] = useState<MonsterLegType>('stumpy')
   const [manualEyes, setManualEyes] = useState<MonsterEyeShape>('round')
-  const [manualMouth, setManualMouth] = useState<MonsterMouthType>('smile')
+  const [manualMouth, setManualMouth] = useState<MonsterMouthType>('simple')
 
   const displayName = customName.trim() !== '' ? customName : selectedName
   const generatedTraits = generateMonsterTraits(displayName)
@@ -76,7 +76,7 @@ export default function TestMonsterPage (): ReactNode {
             <h2 className='mb-4 text-xl font-semibold text-tolopea-800'>{displayName}</h2>
             <MonsterAvatar
               traits={traits}
-              animation={animation}
+              state={currentState}
               size={280}
             />
             <div className='mt-4 text-center text-sm text-gray-600'>
@@ -254,9 +254,9 @@ export default function TestMonsterPage (): ReactNode {
                 {ANIMATIONS.map(({ state, label, emoji }) => (
                   <button
                     key={state}
-                    onClick={() => setAnimation(state)}
+                    onClick={() => setCurrentState(state)}
                     className={`rounded-lg border-2 px-4 py-3 text-sm font-medium transition-colors ${
-                      animation === state
+                      currentState === state
                         ? 'border-blood-500 bg-blood-50 text-blood-900'
                         : 'border-gray-200 bg-white text-gray-700 hover:border-blood-300'
                     }`}

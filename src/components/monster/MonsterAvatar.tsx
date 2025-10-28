@@ -14,14 +14,14 @@ import Legs from './parts/Legs'
 
 interface MonsterAvatarProps {
   traits: MonsterTraits
-  animation: MonsterState | null
+  state: MonsterState | null
   size?: number // SVG container size in pixels
   className?: string
 }
 
 export default function MonsterAvatar ({
   traits,
-  animation,
+  state,
   size = 200,
   className = ''
 }: MonsterAvatarProps): ReactNode {
@@ -42,7 +42,7 @@ export default function MonsterAvatar ({
           primaryColor={traits.primaryColor}
           secondaryColor={traits.secondaryColor}
           outlineColor={traits.outlineColor}
-          animation={animation}
+          state={state}
         />
 
         {/* Arms behind body */}
@@ -51,7 +51,7 @@ export default function MonsterAvatar ({
           bodyShape={traits.bodyShape}
           primaryColor={traits.primaryColor}
           outlineColor={traits.outlineColor}
-          animation={animation}
+          state={state}
         />
 
         {/* Body in middle */}
@@ -60,7 +60,7 @@ export default function MonsterAvatar ({
           primaryColor={traits.primaryColor}
           secondaryColor={traits.secondaryColor}
           outlineColor={traits.outlineColor}
-          animation={animation}
+          state={state}
         />
 
         {/* Head with facial features on top */}
@@ -75,13 +75,13 @@ export default function MonsterAvatar ({
         <Eyes
           type={traits.eyeType}
           outlineColor={traits.outlineColor}
-          animation={animation}
+          state={state}
         />
 
         <Mouth
           type={traits.mouthType}
           outlineColor={traits.outlineColor}
-          animation={animation}
+          state={state}
         />
       </g>
     </svg>

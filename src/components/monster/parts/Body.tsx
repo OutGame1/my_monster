@@ -14,7 +14,7 @@ interface BodyProps {
   primaryColor: string
   secondaryColor: string
   outlineColor: string
-  animation: MonsterState | null
+  state: MonsterState | null
 }
 
 export default function Body ({
@@ -22,37 +22,38 @@ export default function Body ({
   primaryColor,
   secondaryColor,
   outlineColor,
-  animation
+  state
 }: BodyProps): ReactNode {
-  // Animation could affect body posture in the future
-  // For now, just route to the appropriate body component
+  // Determine animation class based on state
+  const stateClass = state === 'gamester' ? 'animate-bounce-body' : undefined
 
   switch (shape) {
-    case 'round':
-      return (
-        <RoundBody
-          primaryColor={primaryColor}
-          secondaryColor={secondaryColor}
-          outlineColor={outlineColor}
-        />
-      )
-
-    case 'pear':
-      return (
-        <PearBody
-          primaryColor={primaryColor}
-          secondaryColor={secondaryColor}
-          outlineColor={outlineColor}
-        />
-      )
-
-    case 'tall':
-      return (
-        <TallBody
-          primaryColor={primaryColor}
-          secondaryColor={secondaryColor}
-          outlineColor={outlineColor}
-        />
-      )
-  }
+      case 'round':
+        return (
+          <RoundBody
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
+            outlineColor={outlineColor}
+            className={stateClass}
+          />
+        )
+      case 'pear':
+        return (
+          <PearBody
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
+            outlineColor={outlineColor}
+            className={stateClass}
+          />
+        )
+      case 'blocky':
+        return (
+          <TallBody
+            primaryColor={primaryColor}
+            secondaryColor={secondaryColor}
+            outlineColor={outlineColor}
+            className={stateClass}
+          />
+        )
+    }
 }

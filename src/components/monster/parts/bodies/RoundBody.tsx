@@ -8,15 +8,17 @@ interface RoundBodyProps {
   primaryColor: string
   secondaryColor: string
   outlineColor: string
+  className?: string
 }
 
 export default function RoundBody ({
   primaryColor,
   secondaryColor,
-  outlineColor
+  outlineColor,
+  className
 }: RoundBodyProps): ReactNode {
   return (
-    <g>
+    <g className={className}>
       {/* Neck connector */}
       <ellipse
         cx='100'

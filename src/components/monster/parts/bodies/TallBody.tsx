@@ -1,5 +1,5 @@
 // ========================================
-// TALL BODY - ELONGATED STYLE
+// blocky BODY - ELONGATED STYLE
 // ========================================
 
 import type { ReactNode } from 'react'
@@ -8,15 +8,17 @@ interface TallBodyProps {
   primaryColor: string
   secondaryColor: string
   outlineColor: string
+  className?: string
 }
 
 export default function TallBody ({
   primaryColor,
   secondaryColor,
-  outlineColor
+  outlineColor,
+  className
 }: TallBodyProps): ReactNode {
   return (
-    <g>
+    <g className={className}>
       {/* Neck connector - rectangular */}
       <rect
         x='88'
@@ -29,7 +31,7 @@ export default function TallBody ({
         strokeWidth='3'
       />
 
-      {/* Main tall body - vertical rectangle with rounded corners */}
+      {/* Main blocky body - vertical rectangle with rounded corners */}
       <rect
         x='70'
         y='82'

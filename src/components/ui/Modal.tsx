@@ -94,7 +94,6 @@ export default function Modal ({
               <Button
                 variant='secondary'
                 onClick={onClose}
-                className='flex-1'
               >
                 Fermer
               </Button>

@@ -3,10 +3,10 @@ import { getMonsterById } from '@/actions/monsters.actions'
 import { notFound } from 'next/navigation'
 import AppLayout from '@/components/navigation/AppLayout'
 import Link from 'next/link'
-import MonsterDisplay from '@/components/monster-detail/MonsterDisplay'
-import MonsterXPBar from '@/components/monster-detail/MonsterXPBar'
-import MonsterStateInfo from '@/components/monster-detail/MonsterStateInfo'
-import MonsterActions from '@/components/monster-detail/MonsterActions'
+import MonsterDisplay from '@/components/monster/MonsterDisplay'
+import MonsterXPBar from '@/components/monster/MonsterXPBar'
+import MonsterStateInfo from '@/components/monster/MonsterStateInfo'
+import MonsterActions from '@/components/monster/MonsterActions'
 
 interface MonsterPageProps {
   params: Promise<{
