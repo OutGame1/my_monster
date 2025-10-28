@@ -3,7 +3,7 @@
 import type { ReactNode } from 'react'
 import type { IMonster } from '@/db/models/monster.model'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
-import { getStateEmoji, getStateColor } from './monster-state.utils'
+import { stateInfoMap } from './monster-state.utils'
 import { useRouter } from 'next/navigation'
 
 interface MonsterCardProps {
@@ -17,8 +17,11 @@ interface MonsterCardProps {
  */
 export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
   const router = useRouter()
-  const stateEmoji = getStateEmoji(monster.state)
-  const stateColor = getStateColor(monster.state)
+  const {
+    label,
+    emoji,
+    color
+  } = stateInfoMap[monster.state]
 
   const handleCardClick = (): void => {
     router.push(`/monster/${monster._id}`)
@@ -29,11 +32,6 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
       onClick={handleCardClick}
       className='group relative cursor-pointer overflow-hidden rounded-2xl border border-tolopea-200 bg-white/90 p-6 shadow-xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl'
     >
-      {/* State Badge - Top Right Corner */}
-      <div className={`absolute right-4 top-4 rounded-full border px-3 py-1 text-xs font-semibold ${stateColor}`}>
-        {stateEmoji} {monster.state}
-      </div>
-
       {/* Monster Avatar - Center Display */}
       <div className='mb-4 flex justify-center'>
         <div className='rounded-full bg-gradient-to-br from-tolopea-50 to-aqua-forest-50 p-4'>
@@ -53,6 +51,11 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
         <div className='mb-4 flex items-center justify-center gap-2'>
           <span className='rounded-full bg-blood-100 px-3 py-1 text-sm font-semibold text-blood-700'>
             Niveau {monster.level}
+          </span>
+
+          {/* State Badge */}
+          <span className={`rounded-full px-3 py-1 text-sm font-semibold ${color}`}>
+            {label} {emoji}
           </span>
         </div>
       </div>
