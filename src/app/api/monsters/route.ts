@@ -1,12 +1,9 @@
 import { connectMongooseToDatabase } from '@/db'
 import Monster from '@/db/models/monster.model'
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
+import { getSession } from '@/lib/auth'
 
 export async function GET (): Promise<Response> {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  const session = await getSession()
 
   if (session === null) {
     return new Response('Unauthorized', { status: 401 })

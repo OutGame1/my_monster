@@ -18,14 +18,14 @@ export const auth = betterAuth({
   }
 })
 
-export async function getSession (onNull: () => never = () => {
-  throw new Error('User not authenticated')
-}): Promise<Session> {
+export async function getSession (): Promise<Session | null>
+export async function getSession (onNull: () => never): Promise<Session>
+export async function getSession (onNull?: () => never): Promise<Session | null> {
   const session = await auth.api.getSession({
     headers: await headers()
   })
 
-  if (session === null) {
+  if (session === null && onNull !== undefined) {
     return onNull()
   }
 

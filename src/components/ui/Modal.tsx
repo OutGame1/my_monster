@@ -1,6 +1,6 @@
 'use client'
 
-import { ReactNode, MouseEvent, useEffect } from 'react'
+import { type ReactNode, type MouseEvent, useEffect } from 'react'
 import Button from './Button'
 
 interface ModalProps {

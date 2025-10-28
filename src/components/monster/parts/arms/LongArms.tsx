@@ -1,42 +1,50 @@
-// ========================================
-// LONG ARMS - MAIN SWITCH
-// ========================================
-// Routes to body-specific long arm variations
-
 import type { ReactNode } from 'react'
-import type { SpecificArmsProps } from '../Arms'
-import LongArmsWithRoundBody from './long/LongArmsWithRoundBody'
-import LongArmsWithPearBody from './long/LongArmsWithPearBody'
-import LongArmsWithTallBody from './long/LongArmsWithTallBody'
+import type { SpecificArmsProps } from '@/components/monster/parts/Arms'
+import LongArmsWithSpecificBody from './LongArmsWithSpecificBody'
 
 export default function LongArms ({
   bodyShape,
   primaryColor,
   outlineColor,
-  animation
+  className
 }: SpecificArmsProps): ReactNode {
   switch (bodyShape) {
     case 'round':
       return (
-        <LongArmsWithRoundBody
+        <LongArmsWithSpecificBody
+          armsXPos={100}
+          armsYPos={105}
+          armsSpacing={45}
+          armsRotationDegree={25}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
+          className={className}
         />
       )
 
     case 'pear':
       return (
-        <LongArmsWithPearBody
+        <LongArmsWithSpecificBody
+          armsXPos={100}
+          armsYPos={100}
+          armsSpacing={43}
+          armsRotationDegree={45}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
+          className={className}
         />
       )
 
     case 'tall':
       return (
-        <LongArmsWithTallBody
+        <LongArmsWithSpecificBody
+          armsXPos={100}
+          armsYPos={105}
+          armsSpacing={40}
+          armsRotationDegree={15}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
+          className={className}
         />
       )
   }

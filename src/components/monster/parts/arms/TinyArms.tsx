@@ -4,14 +4,14 @@
 // Routes to body-specific tiny arm variations
 
 import type { ReactNode } from 'react'
-import type { SpecificArmsProps } from '../Arms'
+import type { SpecificArmsProps } from '@/components/monster/parts/Arms'
 import TinyArmsWithSpecificBody from './TinyArmsWithSpecificBody'
 
 export default function TinyArms ({
   bodyShape,
   primaryColor,
   outlineColor,
-  animation
+  className
 }: SpecificArmsProps): ReactNode {
   switch (bodyShape) {
     case 'round':
@@ -23,7 +23,7 @@ export default function TinyArms ({
           armsRotationDegree={45}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
-          animation={animation}
+          className={className}
         />
       )
 
@@ -36,7 +36,7 @@ export default function TinyArms ({
           armsRotationDegree={75}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
-          animation={animation}
+          className={className}
         />
       )
 
@@ -49,7 +49,7 @@ export default function TinyArms ({
           armsRotationDegree={155}
           primaryColor={primaryColor}
           outlineColor={outlineColor}
-          animation={animation}
+          className={className}
         />
       )
   }

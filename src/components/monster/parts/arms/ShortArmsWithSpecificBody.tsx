@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import type { SpecificBodyArmsProps } from '@/components/monster/parts/Arms'
 
-export default function TinyArmsWithSpecificBody ({
+export default function ShortArmsWithSpecificBody ({
   armsXPos,
   armsYPos,
   armsSpacing,
@@ -10,32 +10,33 @@ export default function TinyArmsWithSpecificBody ({
   outlineColor,
   className
 }: SpecificBodyArmsProps): ReactNode {
-  // Specific values for tiny arms
+  // Specific values for short arms
   const armsCx = 8
-  const armsCy = 18
-  const handRadius = 5
-  const fingersRadius = 2.5
+  const armsCy = 20
+  const handsRx = 9
+  const handsRy = 7
+  const fingersRadius = 3
 
   const leftArmCx = armsXPos - armsSpacing
-  const leftArmTransform = `rotate(${-armsRotationDegree} ${leftArmCx} ${armsYPos})`
+  const leftArmTransform = `rotate(${armsRotationDegree} ${leftArmCx} ${armsYPos})`
   const rightArmCx = armsXPos + armsSpacing
-  const rightArmTransform = `rotate(${armsRotationDegree} ${rightArmCx} ${armsYPos})`
+  const rightArmTransform = `rotate(${-armsRotationDegree} ${rightArmCx} ${armsYPos})`
 
-  const handsCy = armsYPos - armsCy
+  const leftHandCx = armsXPos - armsSpacing
+  const rightHandCx = armsXPos + armsSpacing
+  const handsCy = armsYPos + armsCy + handsRy - 2
 
-  const leftFinger1Cx = leftArmCx - handRadius + 1
-  const leftFinger2Cx = leftArmCx + handRadius - 1
-  const leftFingersCy = handsCy - handRadius
-
-  const rightFinger1Cx = rightArmCx - handRadius + 1
-  const rightFinger2Cx = rightArmCx + handRadius - 1
-  const rightFingersCy = handsCy - handRadius
+  const leftFinger1Cx = leftArmCx - handsRy + 1
+  const leftFinger2Cx = leftArmCx + handsRy - 1
+  const rightFinger1Cx = rightArmCx - handsRy + 1
+  const rightFinger2Cx = rightArmCx + handsRy - 1
+  const fingersCy = handsCy + handsRx
 
   return (
     <g>
-      {/* Left tiny arm */}
+      {/* Left arm */}
       <g className={className}>
-        {/* Arm nub - positioned on round body side */}
+        {/* Upper arm - attached to round body side */}
         <ellipse
           cx={leftArmCx}
           cy={armsYPos}
@@ -46,36 +47,39 @@ export default function TinyArmsWithSpecificBody ({
           strokeWidth={3}
           transform={leftArmTransform}
         />
-        {/* Little hand */}
-        <circle
-          cx={leftArmCx}
+        {/* Hand/paw */}
+        <ellipse
+          cx={leftHandCx}
           cy={handsCy}
-          r={handRadius}
+          rx={handsRx}
+          ry={handsRy}
           fill={primaryColor}
           stroke={outlineColor}
-          strokeWidth={2}
+          strokeWidth={3}
           transform={leftArmTransform}
         />
-        {/* Tiny finger dots */}
+        {/* Finger nubs */}
         <circle
           cx={leftFinger1Cx}
-          cy={leftFingersCy}
+          cy={fingersCy}
           r={fingersRadius}
           fill={outlineColor}
+          opacity={0.4}
           transform={leftArmTransform}
         />
         <circle
           cx={leftFinger2Cx}
-          cy={leftFingersCy}
+          cy={fingersCy}
           r={fingersRadius}
           fill={outlineColor}
+          opacity={0.4}
           transform={leftArmTransform}
         />
       </g>
 
-      {/* Right tiny arm */}
+      {/* Right arm */}
       <g className={className}>
-        {/* Arm nub - positioned on round body side */}
+        {/* Upper arm - attached to round body side */}
         <ellipse
           cx={rightArmCx}
           cy={armsYPos}
@@ -86,29 +90,32 @@ export default function TinyArmsWithSpecificBody ({
           strokeWidth={3}
           transform={rightArmTransform}
         />
-        {/* Little hand */}
-        <circle
-          cx={rightArmCx}
+        {/* Hand/paw */}
+        <ellipse
+          cx={rightHandCx}
           cy={handsCy}
-          r={handRadius}
+          rx={handsRx}
+          ry={handsRy}
           fill={primaryColor}
           stroke={outlineColor}
-          strokeWidth={2.5}
+          strokeWidth={3}
           transform={rightArmTransform}
         />
-        {/* Tiny finger dots */}
+        {/* Finger nubs */}
         <circle
           cx={rightFinger1Cx}
-          cy={rightFingersCy}
+          cy={fingersCy}
           r={fingersRadius}
           fill={outlineColor}
+          opacity={0.4}
           transform={rightArmTransform}
         />
         <circle
           cx={rightFinger2Cx}
-          cy={rightFingersCy}
+          cy={fingersCy}
           r={fingersRadius}
           fill={outlineColor}
+          opacity={0.4}
           transform={rightArmTransform}
         />
       </g>
