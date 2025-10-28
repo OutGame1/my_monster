@@ -4,17 +4,17 @@
 // Routes to specific leg type sub-components
 
 import type { ReactNode } from 'react'
-import { type LegType, type AnimationState } from '@/monster/types'
 import StumpyLegs from './legs/StumpyLegs'
 import LongLegs from './legs/LongLegs'
 import BigFeetLegs from './legs/BigFeetLegs'
+import type { MonsterLegType, MonsterState } from '@/db/models/monster.model'
 
 interface LegsProps {
-  type: LegType
+  type: MonsterLegType
   primaryColor: string
   secondaryColor: string
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export default function Legs ({

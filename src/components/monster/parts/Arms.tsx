@@ -4,17 +4,17 @@
 // Routes to specific arm type sub-components
 
 import type { ReactNode } from 'react'
-import type { ArmType, AnimationState, BodyShape } from '@/monster/types'
+import type { MonsterArmType, MonsterBodyShape, MonsterState } from '@/db/models/monster.model'
 import ShortArms from './arms/ShortArms'
 import LongArms from './arms/LongArms'
 import TinyArms from './arms/TinyArms'
 
 interface ArmsProps {
-  type: ArmType
-  bodyShape: BodyShape
+  type: MonsterArmType
+  bodyShape: MonsterBodyShape
   primaryColor: string
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export type SpecificArmsProps = Omit<ArmsProps, 'type'>

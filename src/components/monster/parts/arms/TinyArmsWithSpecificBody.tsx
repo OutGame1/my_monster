@@ -1,4 +1,5 @@
 import { invoke } from '@/lib/utilities'
+import type { MonsterState } from '@/db/models/monster.model'
 import type { ReactNode } from 'react'
 
 interface TinyArmsWithSpecificBodyProps {
@@ -8,7 +9,7 @@ interface TinyArmsWithSpecificBodyProps {
   armsRotationDegree: number
   primaryColor: string
   outlineColor: string
-  animation: string
+  animation: MonsterState | null
 }
 
 export default function TinyArmsWithSpecificBody ({
@@ -36,7 +37,7 @@ export default function TinyArmsWithSpecificBody ({
     switch (animation) {
       case 'happy':
         return 'animate-wave-arms'
-      case 'playing':
+      case 'gamester':
         return 'animate-wiggle-arms'
     }
   })

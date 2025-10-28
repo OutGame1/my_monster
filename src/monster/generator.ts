@@ -3,13 +3,13 @@
 // ========================================
 // Generates consistent, reproducible monster traits from a name seed
 
-import {
-  type MonsterTraits,
-  type BodyShape,
-  type EyeType,
-  type MouthType,
-  type ArmType,
-  type LegType
+import type {
+  MonsterTraits,
+  BodyShape,
+  EyeType,
+  MouthType,
+  ArmType,
+  LegType
 } from './types'
 
 /**

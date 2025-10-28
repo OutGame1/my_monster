@@ -3,18 +3,18 @@
 // ========================================
 
 import type { ReactNode } from 'react'
-import { type AnimationState } from '@/monster/types'
+import type { MonsterState } from '@/db/models/monster.model'
 
 interface DotEyesProps {
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export default function DotEyes ({
   outlineColor,
   animation
 }: DotEyesProps): ReactNode {
-  if (animation === 'sleeping') {
+  if (animation === 'sleepy') {
     return (
       <g>
         <line x1='85' y1='48' x2='95' y2='48' stroke={outlineColor} strokeWidth='4' strokeLinecap='round' />

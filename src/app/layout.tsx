@@ -1,7 +1,7 @@
-import type { ReactNode } from 'react'
+import type { PropsWithChildren, ReactNode } from 'react'
+import type { Metadata } from 'next'
 import { ToastContainer } from 'react-toastify'
 import { Jersey_10, Geist_Mono } from 'next/font/google'
-import type { Metadata } from 'next'
 import './globals.css'
 
 const geistSans = Jersey_10({
@@ -26,9 +26,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout ({
   children
-}: Readonly<{
-  children: ReactNode
-}>): ReactNode {
+}: PropsWithChildren): ReactNode {
   return (
     <html lang='fr'>
       <body

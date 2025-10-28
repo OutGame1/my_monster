@@ -4,15 +4,15 @@
 // Routes to specific eye type sub-components
 
 import type { ReactNode } from 'react'
-import { type EyeType, type AnimationState } from '@/monster/types'
+import type { MonsterEyeShape, MonsterState } from '@/db/models/monster.model'
 import DotEyes from './eyes/DotEyes'
 import RoundEyes from './eyes/RoundEyes'
 import StarEyes from './eyes/StarEyes'
 
 interface EyesProps {
-  type: EyeType
+  type: MonsterEyeShape
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export default function Eyes ({ type, outlineColor, animation }: EyesProps): ReactNode {

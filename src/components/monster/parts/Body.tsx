@@ -4,17 +4,17 @@
 // Routes to specific body type sub-components
 
 import type { ReactNode } from 'react'
-import { type BodyShape, type AnimationState } from '@/monster/types'
+import type { MonsterBodyShape, MonsterState } from '@/db/models/monster.model'
 import RoundBody from './bodies/RoundBody'
 import PearBody from './bodies/PearBody'
 import TallBody from './bodies/TallBody'
 
 interface BodyProps {
-  shape: BodyShape
+  shape: MonsterBodyShape
   primaryColor: string
   secondaryColor: string
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export default function Body ({

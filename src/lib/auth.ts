@@ -1,10 +1,12 @@
+import type { Session } from './auth-client'
 import { betterAuth } from 'better-auth'
 import { mongodbAdapter } from 'better-auth/adapters/mongodb'
-import { getDatabase } from '@/db'
+import db from '@/db'
 import env from '@lib/env'
+import { headers } from 'next/headers'
 
 export const auth = betterAuth({
-  database: mongodbAdapter(getDatabase()),
+  database: mongodbAdapter(db),
   emailAndPassword: {
     enabled: true
   },
@@ -15,3 +17,17 @@ export const auth = betterAuth({
     }
   }
 })
+
+export async function getSession (onNull: () => never = () => {
+  throw new Error('User not authenticated')
+}): Promise<Session> {
+  const session = await auth.api.getSession({
+    headers: await headers()
+  })
+
+  if (session === null) {
+    return onNull()
+  }
+
+  return session
+}

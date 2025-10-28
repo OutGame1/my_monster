@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react'
-import { Metadata, Viewport } from 'next'
-import Header from '@components/ui/Header'
+import type { Metadata, Viewport } from 'next'
+import Header from '@/components/ui/Header'
+import GettingStartedSection from '@/components/home/GettingStartedSection'
+import HeroSection from '@/components/home/HeroSection'
+import HighlightsSection from '@/components/home/HighlightsSection'
 import Footer from '@components/ui/Footer'
-import HeroSection from '@components/home/HeroSection'
-import HighlightsSection from '@components/home/HighlightsSection'
-import GettingStartedSection from '@components/home/GettingStartedSection'
 
 export const viewport: Viewport = {
   width: 'device-width',

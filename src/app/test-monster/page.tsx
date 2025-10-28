@@ -1,40 +1,50 @@
 'use client'
 
-import { ReactNode, useState } from 'react'
+import { type ReactNode, useState } from 'react'
 import { generateMonsterTraits } from '@/monster/generator'
-import { type AnimationState, type BodyShape, type ArmType, type LegType, type EyeType, type MouthType, type MonsterTraits } from '@/monster/types'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import Card from '@/components/ui/Card'
+import type {
+  MonsterArmType, MonsterBodyShape, MonsterEyeShape,
+  MonsterLegType, MonsterState, MonsterTraits,
+  MonsterMouthType
+} from '@/db/models/monster.model'
+
+interface AnimationEntry {
+  state: MonsterState | null
+  label: string
+  emoji: string
+}
 
 const SAMPLE_NAMES = ['Fluffy', 'Sparkle', 'Shadow', 'Bubbles', 'Thunder', 'Cookie']
 
-const ANIMATIONS: Array<{ state: AnimationState, label: string, emoji: string }> = [
-  { state: 'idle', label: 'Calme', emoji: '😐' },
+const ANIMATIONS: AnimationEntry[] = [
+  { state: null, label: 'Calme', emoji: '😐' },
   { state: 'happy', label: 'Joyeux', emoji: '😄' },
-  { state: 'eating', label: 'Manger', emoji: '🍔' },
-  { state: 'playing', label: 'Jouer', emoji: '🎮' },
-  { state: 'sleeping', label: 'Dormir', emoji: '😴' },
+  { state: 'hungry', label: 'Manger', emoji: '🍔' },
+  { state: 'gamester', label: 'Jouer', emoji: '🎮' },
+  { state: 'sleepy', label: 'Dormir', emoji: '😴' },
   { state: 'sad', label: 'Triste', emoji: '😢' }
 ]
 
-const BODY_SHAPES: BodyShape[] = ['round', 'pear', 'tall']
-const ARM_TYPES: ArmType[] = ['short', 'long', 'tiny']
-const LEG_TYPES: LegType[] = ['stumpy', 'long', 'feet']
-const EYE_TYPES: EyeType[] = ['dot', 'round', 'star']
-const MOUTH_TYPES: MouthType[] = ['smile', 'neutral', 'open']
+const BODY_SHAPES: MonsterBodyShape[] = ['round', 'pear', 'tall']
+const ARM_TYPES: MonsterArmType[] = ['short', 'long', 'tiny']
+const LEG_TYPES: MonsterLegType[] = ['stumpy', 'long', 'feet']
+const EYE_TYPES: MonsterEyeShape[] = ['dot', 'round', 'star']
+const MOUTH_TYPES: MonsterMouthType[] = ['smile', 'neutral', 'open']
 
 export default function TestMonsterPage (): ReactNode {
   const [selectedName, setSelectedName] = useState('Fluffy')
   const [customName, setCustomName] = useState('')
-  const [animation, setAnimation] = useState<AnimationState>('idle')
+  const [animation, setAnimation] = useState<MonsterState | null>(null)
   const [manualMode, setManualMode] = useState(false)
 
   // Manual trait selection
-  const [manualBody, setManualBody] = useState<BodyShape>('round')
-  const [manualArms, setManualArms] = useState<ArmType>('short')
-  const [manualLegs, setManualLegs] = useState<LegType>('stumpy')
-  const [manualEyes, setManualEyes] = useState<EyeType>('round')
-  const [manualMouth, setManualMouth] = useState<MouthType>('smile')
+  const [manualBody, setManualBody] = useState<MonsterBodyShape>('round')
+  const [manualArms, setManualArms] = useState<MonsterArmType>('short')
+  const [manualLegs, setManualLegs] = useState<MonsterLegType>('stumpy')
+  const [manualEyes, setManualEyes] = useState<MonsterEyeShape>('round')
+  const [manualMouth, setManualMouth] = useState<MonsterMouthType>('smile')
 
   const displayName = customName.trim() !== '' ? customName : selectedName
   const generatedTraits = generateMonsterTraits(displayName)

@@ -3,21 +3,18 @@
 // ========================================
 
 import type { ReactNode } from 'react'
-import { type AnimationState } from '@/monster/types'
+import type { MonsterState } from '@/db/models/monster.model'
 
 interface StarEyesProps {
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export default function StarEyes ({
   outlineColor,
   animation
 }: StarEyesProps): ReactNode {
-  const isAsleep = animation === 'sleeping'
-  const isSad = animation === 'sad'
-
-  if (isAsleep) {
+  if (animation === 'sleepy') {
     return (
       <g>
         <line x1='82' y1='48' x2='98' y2='48' stroke={outlineColor} strokeWidth='4' strokeLinecap='round' />
@@ -26,7 +23,7 @@ export default function StarEyes ({
     )
   }
 
-  const starY = isSad ? 50 : 48
+  const starY = animation === 'sad' ? 50 : 48
 
   return (
     <g>

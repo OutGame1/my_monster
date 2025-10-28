@@ -4,7 +4,7 @@
 // Main monster renderer composing all trait parts
 
 import type { ReactNode } from 'react'
-import type { MonsterTraits, AnimationState } from '@/monster/types'
+import type { MonsterState, MonsterTraits } from '@/db/models/monster.model'
 import Body from './parts/Body'
 import Head from './parts/Head'
 import Eyes from './parts/Eyes'
@@ -14,14 +14,14 @@ import Legs from './parts/Legs'
 
 interface MonsterAvatarProps {
   traits: MonsterTraits
-  animation?: AnimationState
+  animation: MonsterState | null
   size?: number // SVG container size in pixels
   className?: string
 }
 
 export default function MonsterAvatar ({
   traits,
-  animation = 'idle',
+  animation,
   size = 200,
   className = ''
 }: MonsterAvatarProps): ReactNode {

@@ -20,11 +20,4 @@ export async function connectMongooseToDatabase (): Promise<void> {
   }
 }
 
-export async function connectToDatabase (): Promise<void> {
-  try {
-    await client.connect()
-    console.log('Connected to MongoDB database')
-  } catch (error) {
-    console.error('Error connecting to the database:', error)
-  }
-}
+export default client.db()

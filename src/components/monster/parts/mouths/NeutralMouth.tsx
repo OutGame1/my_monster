@@ -3,11 +3,11 @@
 // ========================================
 
 import type { ReactNode } from 'react'
-import { type AnimationState } from '@/monster/types'
+import { MonsterState } from '@/db/models/monster.model'
 
 interface NeutralMouthProps {
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export default function NeutralMouth ({
@@ -27,7 +27,7 @@ export default function NeutralMouth ({
           strokeLinecap='round'
         />
       )
-    case 'eating':
+    case 'hungry':
       return (
         <g>
           <ellipse cx='100' cy='60' rx='8' ry='5' fill={outlineColor} />

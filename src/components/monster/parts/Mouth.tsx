@@ -4,15 +4,15 @@
 // Routes to specific mouth type sub-components
 
 import type { ReactNode } from 'react'
-import { type MouthType, type AnimationState } from '@/monster/types'
+import type { MonsterState, MonsterMouthType } from '@/db/models/monster.model'
 import SmileMouth from './mouths/SmileMouth'
 import NeutralMouth from './mouths/NeutralMouth'
 import OpenMouth from './mouths/OpenMouth'
 
 interface MouthProps {
-  type: MouthType
+  type: MonsterMouthType
   outlineColor: string
-  animation: AnimationState
+  animation: MonsterState | null
 }
 
 export default function Mouth ({ type, outlineColor, animation }: MouthProps): ReactNode {
