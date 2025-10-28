@@ -41,6 +41,52 @@ export interface IMonster {
   updatedAt: string
 }
 
+const monsterTraitsSchema = new Schema<MonsterTraits>({
+  bodyShape: {
+    type: String,
+    required: true,
+    enum: ['round', 'pear', 'tall']
+  },
+  eyeType: {
+    type: String,
+    required: true,
+    enum: ['dot', 'round', 'star']
+  },
+  mouthType: {
+    type: String,
+    required: true,
+    enum: ['smile', 'neutral', 'open']
+  },
+  armType: {
+    type: String,
+    required: true,
+    enum: ['short', 'long', 'tiny']
+  },
+  legType: {
+    type: String,
+    required: true,
+    enum: ['stumpy', 'long', 'feet']
+  },
+  primaryColor: {
+    type: String,
+    required: true
+  },
+  secondaryColor: {
+    type: String,
+    required: true
+  },
+  outlineColor: {
+    type: String,
+    required: true
+  },
+  size: {
+    type: Number,
+    required: true,
+    min: 80,
+    max: 120
+  }
+}, { _id: false })
+
 const monsterSchema = new Schema<IDocumentMonster>({
   name: {
     type: String,
@@ -52,51 +98,7 @@ const monsterSchema = new Schema<IDocumentMonster>({
     default: 1
   },
   traits: {
-    type: {
-      bodyShape: {
-        type: String,
-        required: true,
-        enum: ['round', 'pear', 'tall']
-      },
-      eyeType: {
-        type: String,
-        required: true,
-        enum: ['dot', 'round', 'star']
-      },
-      mouthType: {
-        type: String,
-        required: true,
-        enum: ['smile', 'neutral', 'open']
-      },
-      armType: {
-        type: String,
-        required: true,
-        enum: ['short', 'long', 'tiny']
-      },
-      legType: {
-        type: String,
-        required: true,
-        enum: ['stumpy', 'long', 'feet']
-      },
-      primaryColor: {
-        type: String,
-        required: true
-      },
-      secondaryColor: {
-        type: String,
-        required: true
-      },
-      outlineColor: {
-        type: String,
-        required: true
-      },
-      size: {
-        type: Number,
-        required: true,
-        min: 80,
-        max: 120
-      }
-    },
+    type: monsterTraitsSchema,
     required: true
   },
   state: {

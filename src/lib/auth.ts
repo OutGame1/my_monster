@@ -18,16 +18,8 @@ export const auth = betterAuth({
   }
 })
 
-export async function getSession (): Promise<Session | null>
-export async function getSession (onNull: () => never): Promise<Session>
-export async function getSession (onNull?: () => never): Promise<Session | null> {
-  const session = await auth.api.getSession({
+export async function getSession (): Promise<Session | null> {
+  return await auth.api.getSession({
     headers: await headers()
   })
-
-  if (session === null && onNull !== undefined) {
-    return onNull()
-  }
-
-  return session
 }

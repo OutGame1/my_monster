@@ -37,9 +37,11 @@ export async function createMonster (monsterData: CreateMonsterFormValues): Prom
   await connectMongooseToDatabase()
 
   // Vérification de l'authentification
-  const session = await getSession(() => {
+  const session = await getSession()
+
+  if (session === null) {
     throw new Error('User not authenticated')
-  })
+  }
 
   // Création et sauvegarde du monstre
   const monster = new Monster({
@@ -80,9 +82,11 @@ export async function getMonsters (): Promise<IMonster[]> {
     await connectMongooseToDatabase()
 
     // Vérification de l'authentification
-    const session = await getSession(() => {
+    const session = await getSession()
+
+    if (session === null) {
       throw new Error('User not authenticated')
-    })
+    }
 
     // Récupération des monstres de l'utilisateur
     const monsters = await Monster.find({ ownerId: session.user.id }).lean().exec()
@@ -124,9 +128,11 @@ export async function getMonsterById (_id: string): Promise<IMonster | null> {
     await connectMongooseToDatabase()
 
     // Vérification de l'authentification
-    const session = await getSession(() => {
+    const session = await getSession()
+
+    if (session === null) {
       throw new Error('User not authenticated')
-    })
+    }
 
     // Validation du format ObjectId MongoDB
     if (!Types.ObjectId.isValid(_id)) {

@@ -6,12 +6,10 @@ import { authClient, type Session } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
 
 interface HeaderProps {
-  session?: Session | null
+  session: Session | null
 }
 
-export default function Header ({
-  session = null
-}: HeaderProps): ReactNode {
+export default function Header ({ session }: HeaderProps): ReactNode {
   const router = useRouter()
 
   const handleSignOut = (): void => {

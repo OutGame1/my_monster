@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
-import Header from '@/components/ui/Header'
+import AppLayout from '@/components/navigation/AppLayout'
 import GettingStartedSection from '@/components/home/GettingStartedSection'
 import HeroSection from '@/components/home/HeroSection'
 import HighlightsSection from '@/components/home/HighlightsSection'
-import Footer from '@components/ui/Footer'
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -103,14 +102,10 @@ export const metadata: Metadata = {
 
 export default function Home (): ReactNode {
   return (
-    <div className='min-h-screen flex flex-col bg-white text-gray-900'>
-      <Header />
-      <main className='flex-1 flex flex-col'>
-        <HeroSection />
-        <HighlightsSection />
-        <GettingStartedSection />
-      </main>
-      <Footer />
-    </div>
+    <AppLayout>
+      <HeroSection />
+      <HighlightsSection />
+      <GettingStartedSection />
+    </AppLayout>
   )
 }

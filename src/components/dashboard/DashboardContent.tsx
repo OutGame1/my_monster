@@ -75,6 +75,14 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
           {/* Statistics Overview Section */}
           <DashboardStats monsters={monsters} />
 
+          {/* Section Title */}
+          <div className='mb-6 flex items-center gap-3'>
+            <h2 className='text-3xl font-bold text-tolopea-800'>
+              Mes monstres
+            </h2>
+            <div className='h-1 flex-1 rounded-full bg-gradient-to-r from-tolopea-300 via-aqua-forest-300 to-transparent' />
+          </div>
+
           {/* Monsters Collection Grid Section */}
           <MonstersGrid monsters={monsters} onCreateMonster={handleOpenModal} />
         </div>

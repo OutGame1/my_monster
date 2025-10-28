@@ -4,6 +4,7 @@ import type { ReactNode } from 'react'
 import type { IMonster } from '@/db/models/monster.model'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import { getStateEmoji, getStateColor } from './monster-state.utils'
+import { useRouter } from 'next/navigation'
 
 interface MonsterCardProps {
   monster: IMonster
@@ -12,13 +13,22 @@ interface MonsterCardProps {
 /**
  * Individual monster card component
  * Displays monster avatar, info, state badge and action buttons
+ * Clickable to navigate to monster detail page
  */
 export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
+  const router = useRouter()
   const stateEmoji = getStateEmoji(monster.state)
   const stateColor = getStateColor(monster.state)
 
+  const handleCardClick = (): void => {
+    router.push(`/monster/${monster._id}`)
+  }
+
   return (
-    <div className='group relative overflow-hidden rounded-2xl border border-tolopea-200 bg-white/90 p-6 shadow-xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl'>
+    <div
+      onClick={handleCardClick}
+      className='group relative cursor-pointer overflow-hidden rounded-2xl border border-tolopea-200 bg-white/90 p-6 shadow-xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl'
+    >
       {/* State Badge - Top Right Corner */}
       <div className={`absolute right-4 top-4 rounded-full border px-3 py-1 text-xs font-semibold ${stateColor}`}>
         {stateEmoji} {monster.state}
@@ -44,16 +54,6 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
           <span className='rounded-full bg-blood-100 px-3 py-1 text-sm font-semibold text-blood-700'>
             Niveau {monster.level}
           </span>
-        </div>
-
-        {/* Action Buttons */}
-        <div className='flex gap-2'>
-          <button className='flex-1 rounded-lg bg-tolopea-500 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-tolopea-600 active:scale-95'>
-            Nourrir
-          </button>
-          <button className='flex-1 rounded-lg bg-aqua-forest-500 px-4 py-2 text-sm font-semibold text-white transition-all duration-300 hover:bg-aqua-forest-600 active:scale-95'>
-            Jouer
-          </button>
         </div>
       </div>
 
