@@ -37,7 +37,7 @@ export default async function MonsterPage ({ params }: MonsterPageProps): Promis
           Retour au dashboard
         </Link>
 
-        <MonsterPageClient monster={monster} />
+        <MonsterPageClient initialMonster={monster} />
       </div>
     </AppLayout>
   )

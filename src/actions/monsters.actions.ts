@@ -4,26 +4,52 @@ import { connectMongooseToDatabase } from '@/db'
 import Monster, { monsterBaseXp, type MonsterState } from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
-import type { CreateMonsterFormValues } from '@/types/forms/create-monster-form'
 import { Types } from 'mongoose'
 import monsterSerizalizer, { type ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import { updateWalletBalance } from './wallet.actions'
+import { generateMonsterTraits } from '@/monster/generator'
+
+/**
+ * Calculate the cost to create a new monster (SERVER-SIDE ONLY)
+ * Uses a logarithmic function to keep costs reasonable
+ *
+ * Formula: cost = floor(100 * log2(monsterCount + 1))
+ * - First monster (count = 0): 0 coins (free)
+ * - Second monster (count = 1): 100 coins
+ * - Third monster (count = 2): 158 coins
+ * - Fourth monster (count = 3): 200 coins
+ * - Fifth monster (count = 4): 232 coins
+ *
+ * The logarithmic growth ensures costs increase slowly
+ *
+ * @param currentMonsterCount - Number of monsters the user already owns
+ * @returns Cost in coins to create the next monster
+ */
+export async function calculateMonsterCreationCost (currentMonsterCount: number): Promise<number> {
+  if (currentMonsterCount === 0) {
+    return 0 // First monster is free
+  }
+
+  return Math.floor(100 * Math.log2(currentMonsterCount + 1))
+}
 
 /**
  * Crée un nouveau monstre pour l'utilisateur authentifié
  *
  * Cette server action :
  * 1. Vérifie l'authentification de l'utilisateur
- * 2. Crée un nouveau document Monster dans MongoDB
- * 3. Revalide le cache de la page dashboard
+ * 2. Calcule et vérifie le coût de création
+ * 3. Déduit les pièces du portefeuille
+ * 4. Crée un nouveau document Monster dans MongoDB
+ * 5. Revalide le cache de la page dashboard
  *
  * Responsabilité unique : orchestrer la création d'un monstre
  * en coordonnant l'authentification, la persistence et le cache.
  *
  * @async
  * @param {CreateMonsterFormValues} monsterData - Données validées du monstre à créer
- * @returns {Promise<void>} Promise résolue une fois le monstre créé
- * @throws {Error} Si l'utilisateur n'est pas authentifié
+ * @returns {Promise<number>} Promise résolue une fois le monstre créé, renvoie le coût de création
+ * @throws {Error} Si l'utilisateur n'est pas authentifié ou n'a pas assez de pièces
  *
  * @example
  * await createMonster({
@@ -33,7 +59,7 @@ import { updateWalletBalance } from './wallet.actions'
  *   level: 1
  * })
  */
-export async function createMonster (monsterData: CreateMonsterFormValues): Promise<void> {
+export async function createMonster (monsterName: string): Promise<number> {
   // Connexion à la base de données
   await connectMongooseToDatabase()
 
@@ -44,19 +70,28 @@ export async function createMonster (monsterData: CreateMonsterFormValues): Prom
     throw new Error('User not authenticated')
   }
 
+  // Count current monsters to calculate cost
+  const currentMonsterCount = await Monster.countDocuments({ ownerId: session.user.id }).exec()
+  const creationCost = await calculateMonsterCreationCost(currentMonsterCount)
+
+  // Deduct coins if not the first monster (server-side validation)
+  if (creationCost > 0) {
+    await updateWalletBalance(-creationCost) // This will throw if insufficient balance
+  }
+
   // Création et sauvegarde du monstre
   const monster = new Monster({
     ownerId: session.user.id,
-    name: monsterData.name,
-    traits: monsterData.traits,
-    state: monsterData.state,
-    level: monsterData.level
+    name: monsterName,
+    traits: generateMonsterTraits(monsterName)
   })
 
   await monster.save()
 
   // Revalidation du cache pour rafraîchir le dashboard
   revalidatePath('/dashboard')
+
+  return creationCost
 }
 
 /**
@@ -71,7 +106,7 @@ export async function createMonster (monsterData: CreateMonsterFormValues): Prom
  * de l'utilisateur depuis la base de données.
  *
  * @async
- * @returns {Promise<IMonster[]>} Liste des monstres ou tableau vide en cas d'erreur
+ * @returns {Promise<ISerializedMonster[]>} Liste des monstres ou tableau vide en cas d'erreur
  *
  * @example
  * const monsters = await getMonsters()
@@ -113,7 +148,7 @@ export async function getMonsters (): Promise<ISerializedMonster[]> {
  *
  * @async
  * @param {string} _id - Identifiant du monstre (premier élément du tableau de route dynamique)
- * @returns {Promise<IMonster | null>} Le monstre trouvé ou null
+ * @returns {Promise<ISerializedMonster | null>} Le monstre trouvé ou null
  * @throws {Error} Si l'utilisateur n'est pas authentifié
  *
  * @example
@@ -132,7 +167,7 @@ export async function getMonsterById (_id: string): Promise<ISerializedMonster |
     const session = await getSession()
 
     if (session === null) {
-      throw new Error('User not authenticated')
+      return null
     }
 
     // Validation du format ObjectId MongoDB

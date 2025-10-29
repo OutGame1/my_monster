@@ -10,7 +10,7 @@ import type {
   MonsterArmType,
   MonsterLegType
 } from '@/db/models/monster.model'
-import { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
+import type { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
 
 /**
  * Simple seeded random number generator (LCG algorithm)

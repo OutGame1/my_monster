@@ -1,10 +1,9 @@
 import type { ReactNode } from 'react'
-import type { IMonster } from '@/db/models/monster.model'
-import MonsterCard from './MonsterCard'
+import { useMonster } from '@/contexts/MonsterContext'
 import EmptyMonstersState from './EmptyMonstersState'
+import MonsterCard from './MonsterCard'
 
 interface MonstersGridProps {
-  monsters: IMonster[]
   onCreateMonster: () => void
 }
 
@@ -12,7 +11,9 @@ interface MonstersGridProps {
  * Monsters grid layout component
  * Displays all user monsters in a responsive grid or shows empty state
  */
-export default function MonstersGrid ({ monsters, onCreateMonster }: MonstersGridProps): ReactNode {
+export default function MonstersGrid ({ onCreateMonster }: MonstersGridProps): ReactNode {
+  const { monsters } = useMonster()
+
   // Show empty state if no monsters
   if (monsters.length === 0) {
     return <EmptyMonstersState onCreateMonster={onCreateMonster} />

@@ -1,9 +1,10 @@
 import type { ReactNode } from 'react'
 import DashboardContent from '@/components/dashboard/DashboardContent'
 import AppLayout from '@/components/navigation/AppLayout'
-import { getMonsters } from '@/actions/monsters.actions'
+import { calculateMonsterCreationCost, getMonsters } from '@/actions/monsters.actions'
 import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
+import { MonsterProvider } from '@/contexts/MonsterContext'
 
 export default async function DashboardPage (): Promise<ReactNode> {
   // Récupération de la session utilisateur via Better Auth
@@ -16,9 +17,13 @@ export default async function DashboardPage (): Promise<ReactNode> {
   // Récupération de tous les monstres appartenant à l'utilisateur connecté
   const monsters = await getMonsters()
 
+  const creationCost = await calculateMonsterCreationCost(monsters.length)
+
   return (
     <AppLayout>
-      <DashboardContent session={session} monsters={monsters} />
+      <MonsterProvider initialMonsters={monsters}>
+        <DashboardContent initialCreationCost={creationCost} />
+      </MonsterProvider>
     </AppLayout>
   )
 }

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
-import type { IMonster } from '@/db/models/monster.model'
+import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
 
 interface MonsterDisplayProps {
-  monster: IMonster
+  monster: ISerializedMonster
 }
 
 /**

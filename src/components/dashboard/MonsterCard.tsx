@@ -1,13 +1,13 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import type { IMonster } from '@/db/models/monster.model'
+import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import { stateInfoMap } from './monster-state.utils'
 import { useRouter } from 'next/navigation'
 
 interface MonsterCardProps {
-  monster: IMonster
+  monster: ISerializedMonster
 }
 
 /**

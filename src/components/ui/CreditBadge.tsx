@@ -1,57 +1,47 @@
 'use client'
 
 import { useState, useEffect, type ReactNode } from 'react'
-
-interface CreditBadgeProps {
-  initialBalance: number
-}
+import { useWallet } from '@/contexts/WalletContext'
 
 /**
  * Credit badge component
  * Displays user's coin balance with animated counter
- * Listens for 'coinsEarned' events to update and animate the display
+ * Uses global wallet context for state management
  */
-export default function CreditBadge ({ initialBalance }: CreditBadgeProps): ReactNode {
-  const [displayCredit, setDisplayCredit] = useState(initialBalance)
+export default function CreditBadge (): ReactNode {
+  const { balance } = useWallet()
+  const [displayCredit, setDisplayCredit] = useState(balance)
   const [isAnimating, setIsAnimating] = useState(false)
 
+  // Animate when balance changes
   useEffect(() => {
-    setDisplayCredit(initialBalance)
-  }, [initialBalance])
-
-  useEffect(() => {
-    const handleCoinsEarned = (event: CoinsEarnedEvent): void => {
-      setIsAnimating(true)
-
-      // Animate the counter going up
-      setDisplayCredit(currentCredit => {
-        const startValue = currentCredit
-        const endValue = event.detail.newTotal
-        const duration = 1000 // 1 second
-        const steps = 30
-        const increment = (endValue - startValue) / steps
-        let currentStep = 0
-
-        const interval = setInterval(() => {
-          currentStep++
-          if (currentStep >= steps) {
-            setDisplayCredit(endValue)
-            clearInterval(interval)
-            setTimeout(() => setIsAnimating(false), 500)
-          } else {
-            setDisplayCredit(Math.floor(startValue + (increment * currentStep)))
-          }
-        }, duration / steps)
-
-        return currentCredit // Return current value for now
-      })
+    if (balance === displayCredit) {
+      return
     }
 
-    window.addEventListener('coinsEarned', handleCoinsEarned)
-    return () => {
-      window.removeEventListener('coinsEarned', handleCoinsEarned)
-    }
-  }, [])
+    setIsAnimating(true)
+
+    // Animate the counter going up or down
+    const startValue = displayCredit
+    const endValue = balance
+    const duration = 1000 // 1 second
+    const steps = 30
+    const increment = (endValue - startValue) / steps
+    let currentStep = 0
+
+    const interval = setInterval(() => {
+      currentStep++
+      if (currentStep >= steps) {
+        setDisplayCredit(endValue)
+        clearInterval(interval)
+        setTimeout(() => { setIsAnimating(false) }, 500)
+      } else {
+        setDisplayCredit(Math.floor(startValue + (increment * currentStep)))
+      }
+    }, duration / steps)
+
+    return () => { clearInterval(interval) }
+  }, [balance, displayCredit])
 
   return (
     <div

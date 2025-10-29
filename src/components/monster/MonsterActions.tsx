@@ -11,7 +11,7 @@ import { useRouter } from 'next/navigation'
 interface MonsterActionsProps {
   monsterId: string
   monsterName: string
-  onCoinsEarned?: (coins: number, newTotal: number) => void
+  onCoinsEarned?: (coins: number) => void
   onActionComplete?: () => void
 }
 
@@ -25,7 +25,12 @@ interface MonsterActionsProps {
  * - angry → Apaiser (Calm) - aqua-forest
  * - sleepy → Bercer (Lull to sleep) - seance
  */
-export default function MonsterActions ({ monsterId, monsterName, onCoinsEarned, onActionComplete }: MonsterActionsProps): ReactNode {
+export default function MonsterActions ({
+  monsterId,
+  monsterName,
+  onCoinsEarned,
+  onActionComplete
+}: MonsterActionsProps): ReactNode {
   const router = useRouter()
   const [isProcessing, setIsProcessing] = useState(false)
   const [levelUpState, setLevelUpState] = useState({
@@ -43,7 +48,7 @@ export default function MonsterActions ({ monsterId, monsterName, onCoinsEarned,
       if (result.success) {
         // Trigger coin animation
         if (onCoinsEarned !== undefined) {
-          onCoinsEarned(result.coinsEarned, result.newCreditTotal)
+          onCoinsEarned(result.coinsEarned)
         }
 
         // Show level-up modal if leveled up

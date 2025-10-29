@@ -1,14 +1,15 @@
 'use client'
 
 import { type ReactNode, useState, useEffect } from 'react'
+import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import MonsterDisplay from './MonsterDisplay'
 import MonsterXPBar from './MonsterXPBar'
 import MonsterStateInfo from './MonsterStateInfo'
 import MonsterActions from './MonsterActions'
-import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
+import { useWallet } from '@/contexts/WalletContext'
 
 interface MonsterPageClientProps {
-  monster: ISerializedMonster
+  initialMonster: ISerializedMonster
 }
 
 /**
@@ -16,9 +17,11 @@ interface MonsterPageClientProps {
  * Handles coin animations and state updates
  * Polls API every 10 seconds to show live monster state
  */
-export default function MonsterPageClient ({ monster: initialMonster }: MonsterPageClientProps): ReactNode {
+export default function MonsterPageClient ({ initialMonster }: MonsterPageClientProps): ReactNode {
+  const { addBalance } = useWallet()
+
   const [monster, setMonster] = useState<ISerializedMonster>(initialMonster)
-  const [coinAnimation, setCoinAnimation] = useState<{ coins: number, newTotal: number } | null>(null)
+  const [coinAnimation, setCoinAnimation] = useState<number | null>(null)
 
   // Function to fetch and update monster data
   const fetchAndUpdateMonster = async (): Promise<void> => {
@@ -47,13 +50,9 @@ export default function MonsterPageClient ({ monster: initialMonster }: MonsterP
     return () => { clearInterval(interval) }
   }, [monster._id])
 
-  const handleCoinsEarned = (coins: number, newTotal: number): void => {
-    setCoinAnimation({ coins, newTotal })
-
-    // Trigger custom event to update header
-    window.dispatchEvent(new CustomEvent('coinsEarned', {
-      detail: { newTotal }
-    }))
+  const handleCoinsEarned = (coins: number): void => {
+    setCoinAnimation(coins)
+    addBalance(coins)
   }
 
   const handleActionComplete = (): void => {
@@ -77,7 +76,7 @@ export default function MonsterPageClient ({ monster: initialMonster }: MonsterP
         <div className='fixed top-24 right-8 z-50 animate-bounce'>
           <div className='rounded-full bg-gradient-to-br from-golden-fizz-400 to-golden-fizz-600 px-6 py-3 shadow-2xl ring-4 ring-golden-fizz-300/50'>
             <span className='text-2xl font-black text-golden-fizz-900'>
-              +{coinAnimation.coins} 💰
+              +{coinAnimation} 💰
             </span>
           </div>
         </div>

@@ -1,20 +1,16 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
-import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
-import type { Session } from '@/lib/auth-client'
-import DashboardHeader from './DashboardHeader'
-import DashboardStats from './DashboardStats'
 import MonstersGrid from './MonstersGrid'
 import Modal from '@/components/ui/Modal'
 import CreateMonsterForm from './CreateMonsterForm'
 import { createMonster } from '@/actions/monsters.actions'
-import { generateMonsterTraits } from '@/monster/generator'
-import { useRouter } from 'next/navigation'
+import { PlusCircle } from 'lucide-react'
+import { useWallet } from '@/contexts/WalletContext'
+import { useMonster } from '@/contexts/MonsterContext'
 
 interface DashboardContentProps {
-  session: Session
-  monsters: ISerializedMonster[]
+  initialCreationCost: number
 }
 
 /**
@@ -22,33 +18,19 @@ interface DashboardContentProps {
  * Orchestrates all dashboard sections: header, stats, and monsters grid
  * Manages monster creation modal
  */
-export default function DashboardContent ({ session, monsters }: DashboardContentProps): ReactNode {
-  const router = useRouter()
+export default function DashboardContent ({ initialCreationCost }: DashboardContentProps): ReactNode {
+  const { removeBalance } = useWallet()
+  const { refreshMonsters } = useMonster()
+
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [monsterList, setMonsterList] = useState(monsters)
   const [monsterName, setMonsterName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
 
+  const isFirstMonster = initialCreationCost === 0
+
   useEffect(() => {
-    const fetchAndUpdateMonsters = async (): Promise<void> => {
-      try {
-        const response = await fetch('/api/monsters')
-
-        if (!response.ok) {
-          console.error(`Failed to fetch monsters: ${response.status} ${response.statusText}`)
-          return
-        }
-
-        const updatedMonsters = await response.json()
-        setMonsterList(updatedMonsters)
-      } catch (error) {
-        console.error('Error fetching monsters updates:', error)
-        // Continue polling despite errors - temporary network issues shouldn't stop updates
-      }
-    }
-
     const interval = setInterval(() => {
-      void fetchAndUpdateMonsters()
+      void refreshMonsters()
     }, 10000)
 
     return () => clearInterval(interval)
@@ -72,17 +54,16 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
     setIsCreating(true)
 
     try {
-      const traits = generateMonsterTraits(monsterName)
-
-      await createMonster({
-        name: monsterName,
-        traits,
-        state: 'happy',
-        level: 1
-      })
-
+      // Create monster - cost validation and deduction happen server-side
+      const creationCost = await createMonster(monsterName)
       handleCloseModal()
-      router.refresh()
+
+      if (creationCost > 0) {
+        // Trigger coin update event if coins were spent
+        removeBalance(creationCost)
+      }
+
+      await refreshMonsters()
     } catch (error) {
       console.error('Error creating monster:', error)
     } finally {
@@ -94,22 +75,39 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
     <>
       <div className='min-h-screen bg-gradient-to-br from-tolopea-50 via-aqua-forest-50 to-blood-50'>
         <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
-          {/* Welcome Header Section */}
-          <DashboardHeader userName={session.user.name} onCreateMonster={handleOpenModal} />
-
-          {/* Statistics Overview Section */}
-          <DashboardStats monsters={monsterList} />
-
           {/* Section Title */}
-          <div className='mb-6 flex items-center gap-3'>
-            <h2 className='text-3xl font-bold text-tolopea-800'>
+          <div className='mb-12 text-center'>
+            <h1 className='mb-4 bg-gradient-to-r from-tolopea-600 via-blood-500 to-aqua-forest-600 bg-clip-text text-5xl font-black text-transparent sm:text-6xl'>
               Mes monstres
-            </h2>
-            <div className='h-1 flex-1 rounded-full bg-gradient-to-r from-tolopea-300 via-aqua-forest-300 to-transparent' />
+            </h1>
+            <p className='mx-auto max-w-2xl text-lg text-tolopea-700/80'>
+              Découvrez votre collection de créatures extraordinaires
+            </p>
+            <div className='mx-auto mt-6 h-1 w-32 rounded-full bg-gradient-to-r from-transparent via-tolopea-400 to-transparent' />
+          </div>
+
+          {/* Create Monster Button */}
+          <div className='mb-8 flex'>
+            <button
+              onClick={handleOpenModal}
+              className='group relative overflow-hidden rounded-2xl bg-gradient-to-r from-tolopea-500 via-blood-500 to-aqua-forest-500 p-1 shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl'
+            >
+              <div className='flex items-center gap-3 rounded-xl bg-white px-8 py-4 transition-all duration-300 group-hover:bg-opacity-90'>
+                <PlusCircle className='h-8 w-8 text-tolopea-600' />
+                <div className='text-left'>
+                  <p className='text-xl font-black text-tolopea-800'>
+                    {isFirstMonster ? 'Créer mon premier monstre' : 'Créer un nouveau monstre'}
+                  </p>
+                  <p className='text-sm font-semibold text-tolopea-600'>
+                    {isFirstMonster ? 'Gratuit ! 🎉' : `${initialCreationCost} pièces 💰`}
+                  </p>
+                </div>
+              </div>
+            </button>
           </div>
 
           {/* Monsters Collection Grid Section */}
-          <MonstersGrid monsters={monsterList} onCreateMonster={handleOpenModal} />
+          <MonstersGrid onCreateMonster={handleOpenModal} />
         </div>
       </div>
 
@@ -117,8 +115,8 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
       <Modal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
-        title='Créer un nouveau monstre'
-        confirmText={isCreating ? 'Création...' : 'Créer mon monstre'}
+        title={isFirstMonster ? 'Créer mon premier monstre' : 'Créer un nouveau monstre'}
+        confirmText={isCreating ? 'Création...' : `Créer ${isFirstMonster ? '(Gratuit)' : `(${initialCreationCost} 💰)`}`}
         onConfirm={() => { void handleCreateMonster() }}
         isConfirmDisabled={monsterName.trim() === '' || isCreating}
         size='medium'
