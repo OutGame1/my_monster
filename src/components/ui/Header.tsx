@@ -2,8 +2,8 @@
 
 import type { ReactNode } from 'react'
 import Link from 'next/link'
-import { authClient, type Session } from '@/lib/auth-client'
-import { useRouter, usePathname } from 'next/navigation'
+import type { Session } from '@/lib/auth-client'
+import { usePathname } from 'next/navigation'
 import CreditBadge from './CreditBadge'
 
 interface HeaderProps {
@@ -11,19 +11,7 @@ interface HeaderProps {
 }
 
 export default function Header ({ session }: HeaderProps): ReactNode {
-  const router = useRouter()
   const pathname = usePathname()
-
-  const handleSignOut = (): void => {
-    void authClient.signOut({
-      fetchOptions: {
-        onSuccess: () => {
-          router.push('/')
-          router.refresh()
-        }
-      }
-    })
-  }
 
   // Helper to check if current path matches
   const isActive = (path: string): boolean => pathname === path
@@ -87,16 +75,16 @@ export default function Header ({ session }: HeaderProps): ReactNode {
               <>
                 <CreditBadge />
                 <div className='group relative'>
-                  <button
+                  <Link
+                    href='/profile'
                     className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-tolopea-500 to-blood-500 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-110'
-                    onClick={handleSignOut}
                   >
                     {session.user.name.charAt(0).toUpperCase()}
-                  </button>
+                  </Link>
                   {/* Tooltip on hover */}
                   <div className='absolute right-0 top-12 hidden group-hover:block'>
                     <div className='rounded-lg bg-gray-800 px-3 py-2 text-xs text-white shadow-xl whitespace-nowrap'>
-                      Cliquer pour se déconnecter
+                      Mon profil
                     </div>
                   </div>
                 </div>

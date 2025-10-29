@@ -4,6 +4,7 @@ import { useEffect, useState, type ReactNode } from 'react'
 import MonstersGrid from './MonstersGrid'
 import Modal from '@/components/ui/Modal'
 import CreateMonsterForm from './CreateMonsterForm'
+import SectionTitle from '@/components/ui/SectionTitle'
 import { createMonster } from '@/actions/monsters.actions'
 import { PlusCircle } from 'lucide-react'
 import { useWallet } from '@/contexts/WalletContext'
@@ -76,15 +77,10 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
       <div className='min-h-screen bg-gradient-to-br from-tolopea-50 via-aqua-forest-50 to-blood-50'>
         <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
           {/* Section Title */}
-          <div className='mb-12 text-center'>
-            <h1 className='mb-4 bg-gradient-to-r from-tolopea-600 via-blood-500 to-aqua-forest-600 bg-clip-text text-5xl font-black text-transparent sm:text-6xl'>
-              Mes monstres
-            </h1>
-            <p className='mx-auto max-w-2xl text-lg text-tolopea-700/80'>
-              Découvrez votre collection de créatures extraordinaires
-            </p>
-            <div className='mx-auto mt-6 h-1 w-32 rounded-full bg-gradient-to-r from-transparent via-tolopea-400 to-transparent' />
-          </div>
+          <SectionTitle
+            title='Mes monstres'
+            subtitle='Découvrez votre collection de créatures extraordinaires'
+          />
 
           {/* Create Monster Button */}
           <div className='mb-8 flex'>
