@@ -3,10 +3,7 @@ import { getMonsterById } from '@/actions/monsters.actions'
 import { notFound } from 'next/navigation'
 import AppLayout from '@/components/navigation/AppLayout'
 import Link from 'next/link'
-import MonsterDisplay from '@/components/monster/MonsterDisplay'
-import MonsterXPBar from '@/components/monster/MonsterXPBar'
-import MonsterStateInfo from '@/components/monster/MonsterStateInfo'
-import MonsterActions from '@/components/monster/MonsterActions'
+import MonsterPageClient from '@/components/monster/MonsterPageClient'
 
 interface MonsterPageProps {
   params: Promise<{
@@ -40,23 +37,7 @@ export default async function MonsterPage ({ params }: MonsterPageProps): Promis
           Retour au dashboard
         </Link>
 
-        {/* Two Column Layout */}
-        <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
-          {/* Left Column - Monster Display */}
-          <MonsterDisplay monster={monster} />
-
-          {/* Right Column - Info & Actions */}
-          <div className='space-y-6'>
-            {/* State Info */}
-            <MonsterStateInfo name={monster.name} state={monster.state} />
-
-            {/* XP Bar TODO Add dynamic XP Values */}
-            <MonsterXPBar currentXP={0} maxXP={100} />
-
-            {/* Action Buttons */}
-            <MonsterActions />
-          </div>
-        </div>
+        <MonsterPageClient monster={monster} />
       </div>
     </AppLayout>
   )

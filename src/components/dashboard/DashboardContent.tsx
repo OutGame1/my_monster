@@ -1,9 +1,8 @@
 'use client'
 
-import type { ReactNode } from 'react'
-import { useState } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
+import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import type { Session } from '@/lib/auth-client'
-import type { IMonster } from '@/db/models/monster.model'
 import DashboardHeader from './DashboardHeader'
 import DashboardStats from './DashboardStats'
 import MonstersGrid from './MonstersGrid'
@@ -15,7 +14,7 @@ import { useRouter } from 'next/navigation'
 
 interface DashboardContentProps {
   session: Session
-  monsters: IMonster[]
+  monsters: ISerializedMonster[]
 }
 
 /**
@@ -26,8 +25,34 @@ interface DashboardContentProps {
 export default function DashboardContent ({ session, monsters }: DashboardContentProps): ReactNode {
   const router = useRouter()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [monsterList, setMonsterList] = useState(monsters)
   const [monsterName, setMonsterName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
+
+  useEffect(() => {
+    const fetchAndUpdateMonsters = async (): Promise<void> => {
+      try {
+        const response = await fetch('/api/monsters')
+
+        if (!response.ok) {
+          console.error(`Failed to fetch monsters: ${response.status} ${response.statusText}`)
+          return
+        }
+
+        const updatedMonsters = await response.json()
+        setMonsterList(updatedMonsters)
+      } catch (error) {
+        console.error('Error fetching monsters updates:', error)
+        // Continue polling despite errors - temporary network issues shouldn't stop updates
+      }
+    }
+
+    const interval = setInterval(() => {
+      void fetchAndUpdateMonsters()
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   const handleOpenModal = (): void => {
     setIsModalOpen(true)
@@ -39,30 +64,30 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
     setMonsterName('')
   }
 
-  const handleCreateMonster = (): void => {
-    if (monsterName.trim() === '') return
+  const handleCreateMonster = async (): Promise<void> => {
+    if (monsterName.trim() === '') {
+      return
+    }
 
     setIsCreating(true)
 
-    void (async () => {
-      try {
-        const traits = generateMonsterTraits(monsterName)
+    try {
+      const traits = generateMonsterTraits(monsterName)
 
-        await createMonster({
-          name: monsterName,
-          traits,
-          state: 'happy',
-          level: 1
-        })
+      await createMonster({
+        name: monsterName,
+        traits,
+        state: 'happy',
+        level: 1
+      })
 
-        handleCloseModal()
-        router.refresh()
-      } catch (error) {
-        console.error('Error creating monster:', error)
-      } finally {
-        setIsCreating(false)
-      }
-    })()
+      handleCloseModal()
+      router.refresh()
+    } catch (error) {
+      console.error('Error creating monster:', error)
+    } finally {
+      setIsCreating(false)
+    }
   }
 
   return (
@@ -73,7 +98,7 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
           <DashboardHeader userName={session.user.name} onCreateMonster={handleOpenModal} />
 
           {/* Statistics Overview Section */}
-          <DashboardStats monsters={monsters} />
+          <DashboardStats monsters={monsterList} />
 
           {/* Section Title */}
           <div className='mb-6 flex items-center gap-3'>
@@ -84,7 +109,7 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
           </div>
 
           {/* Monsters Collection Grid Section */}
-          <MonstersGrid monsters={monsters} onCreateMonster={handleOpenModal} />
+          <MonstersGrid monsters={monsterList} onCreateMonster={handleOpenModal} />
         </div>
       </div>
 
@@ -94,7 +119,7 @@ export default function DashboardContent ({ session, monsters }: DashboardConten
         onClose={handleCloseModal}
         title='Créer un nouveau monstre'
         confirmText={isCreating ? 'Création...' : 'Créer mon monstre'}
-        onConfirm={handleCreateMonster}
+        onConfirm={() => { void handleCreateMonster() }}
         isConfirmDisabled={monsterName.trim() === '' || isCreating}
         size='medium'
       >

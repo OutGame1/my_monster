@@ -180,3 +180,15 @@ body {
 .animate-tears {
   animation: tears 1.5s ease-in-out infinite;
 }
+
+.delay-100 {
+  animation-delay: 0.1s;
+}
+
+.delay-200 {
+  animation-delay: 0.2s;
+}
+
+.delay-300 {
+  animation-delay: 0.3s;
+}

@@ -33,7 +33,7 @@ export const stateInfoMap: Record<MonsterState, StateInfo> = {
     color: 'bg-amber-100 text-amber-700 border-amber-300'
   },
   sleepy: {
-    label: 'Endormi',
+    label: 'Somnolant',
     emoji: '😴',
     color: 'bg-purple-100 text-purple-700 border-purple-300'
   }

@@ -1,17 +1,18 @@
 import { connectMongooseToDatabase } from '@/db'
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
+import monsterSerizalizer from '@/lib/serializers/monster.serializer'
 
 export async function GET (): Promise<Response> {
+  await connectMongooseToDatabase()
+
   const session = await getSession()
 
   if (session === null) {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  await connectMongooseToDatabase()
   const monsters = await Monster.find({ ownerId: session.user.id }).exec()
 
-  // Sérialisation JSON pour éviter les problèmes de typage Next.js
-  return Response.json(monsters)
+  return Response.json(monsters.map(monsterSerizalizer))
 }

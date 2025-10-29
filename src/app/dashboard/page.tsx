@@ -1,10 +1,11 @@
-import { getMonsters } from '@/actions/monsters.actions'
+import type { ReactNode } from 'react'
 import DashboardContent from '@/components/dashboard/DashboardContent'
+import AppLayout from '@/components/navigation/AppLayout'
+import { getMonsters } from '@/actions/monsters.actions'
 import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import AppLayout from '@/components/navigation/AppLayout'
 
-export default async function DashboardPage (): Promise<React.ReactNode> {
+export default async function DashboardPage (): Promise<ReactNode> {
   // Récupération de la session utilisateur via Better Auth
   const session = await getSession()
 

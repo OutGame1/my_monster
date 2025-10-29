@@ -1,11 +1,7 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import { useState } from 'react'
 import InputField from '@/components/ui/InputField'
-import MonsterAvatar from '@/components/monster/MonsterAvatar'
-import { generateMonsterTraits } from '@/monster/generator'
-import type { MonsterTraits } from '@/db/models/monster.model'
 
 interface CreateMonsterFormProps {
   onNameChange: (name: string) => void
@@ -20,15 +16,6 @@ export default function CreateMonsterForm ({
   onNameChange,
   monsterName
 }: CreateMonsterFormProps): ReactNode {
-  const [traits, setTraits] = useState<MonsterTraits>(() => generateMonsterTraits('DefaultMonster'))
-
-  const handleNameChange = (value: string): void => {
-    onNameChange(value)
-    if (value.trim() !== '') {
-      setTraits(generateMonsterTraits(value))
-    }
-  }
-
   return (
     <div className='space-y-6'>
       {/* Monster Name Input */}
@@ -38,7 +25,7 @@ export default function CreateMonsterForm ({
           name='monster-name'
           label='Nom de votre monstre'
           value={monsterName}
-          onChangeText={handleNameChange}
+          onChangeText={onNameChange}
           placeholder='Ex: Fluffy, Sparkle, Shadow...'
           required
         />

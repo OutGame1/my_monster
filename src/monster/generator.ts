@@ -4,13 +4,13 @@
 // Generates consistent, reproducible monster traits from a name seed
 
 import type {
-  MonsterTraits,
-  MonsterBodyShape as BodyShape,
-  MonsterEyeShape as EyeType,
-  MonsterMouthType as MouthType,
-  MonsterArmType as ArmType,
-  MonsterLegType as LegType
+  MonsterBodyShape,
+  MonsterEyeShape,
+  MonsterMouthType,
+  MonsterArmType,
+  MonsterLegType
 } from '@/db/models/monster.model'
+import { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
 
 /**
  * Simple seeded random number generator (LCG algorithm)
@@ -45,11 +45,11 @@ function pickRandom<T> (array: T[], random: () => number): T {
   return array[index]
 }
 
-const BODY_SHAPES: BodyShape[] = ['round', 'pear', 'blocky']
-const EYE_TYPES: EyeType[] = ['dot', 'round', 'star']
-const MOUTH_TYPES: MouthType[] = ['simple', 'toothy', 'wavy']
-const ARM_TYPES: ArmType[] = ['short', 'long', 'tiny']
-const LEG_TYPES: LegType[] = ['stumpy', 'long', 'feet']
+const BODY_SHAPES: MonsterBodyShape[] = ['round', 'pear', 'blocky']
+const EYE_TYPES: MonsterEyeShape[] = ['dot', 'round', 'star']
+const MOUTH_TYPES: MonsterMouthType[] = ['simple', 'toothy', 'wavy']
+const ARM_TYPES: MonsterArmType[] = ['short', 'long', 'tiny']
+const LEG_TYPES: MonsterLegType[] = ['stumpy', 'long', 'feet']
 
 // Undertale-inspired color palettes - vibrant, cartoonish colors
 const COLOR_PALETTES = [
@@ -69,7 +69,7 @@ const COLOR_PALETTES = [
  * Generate monster traits from a name seed
  * Same name will always produce the same monster
  */
-export function generateMonsterTraits (name: string): MonsterTraits {
+export function generateMonsterTraits (name: string): ISerializedMonsterTraits {
   const seed = stringToSeed(name)
   const random = seededRandom(seed)
 
@@ -86,18 +86,4 @@ export function generateMonsterTraits (name: string): MonsterTraits {
     outlineColor: colorPalette.outline,
     size: Math.floor(random() * 40) + 80 // 80-120
   }
-}
-
-/**
- * Parse traits from database JSON string
- */
-export function parseTraits (traitsJson: string): MonsterTraits {
-  return JSON.parse(traitsJson) as MonsterTraits
-}
-
-/**
- * Stringify traits for database storage
- */
-export function stringifyTraits (traits: MonsterTraits): string {
-  return JSON.stringify(traits)
 }

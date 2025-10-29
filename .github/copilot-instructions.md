@@ -3,6 +3,20 @@
 ## Project Overview
 This is a Next.js 16.0.0 project using the App Router architecture, built for a school project (My Digital School). It's a Tamagotchi-style application using React 19, TypeScript, and Tailwind CSS 4 with custom color palette.
 
+### Game Mechanics
+- **Wallet System**: Each user has a separate `Wallet` document (default balance: 100 coins)
+  - Wallet is created automatically on first access via `getWallet()` server action
+  - Each monster action rewards coins: 10 coins (base) or 20 coins (when action matches monster state)
+  - Coin counter in header animates when coins are earned
+  - Wallet stored in separate collection, not on user document
+- **XP System**: Monsters gain experience and level up
+  - Each action awards 25 XP
+  - Level-up formula: `maxXp = 100 * (level ^ 1.5)`
+  - Level-up triggers a dramatic full-screen celebration modal
+- **Monster States**: `happy | sad | gamester | angry | hungry | sleepy`
+  - Actions that match the current state give double coin rewards
+  - All actions return monster to `happy` state
+
 ## Tech Stack & Key Dependencies
 - **Framework**: Next.js 16.0.0 with App Router and Turbopack
 - **Language**: TypeScript with strict mode enabled
@@ -123,6 +137,8 @@ export default function Button ({
 - **No Custom Serializers**: Avoid creating serializer/deserializer utilities for database models; rely on Mongoose's native `.lean()` for clean data transfer
 - **Type Casting**: When using `.lean()`, the result is supposed to be the appropriate TypeScript interface. Use casting only when strictly necessary.
 - **Example Pattern**: `const monster = await MonsterModel.findById(id).lean()`
+- **Wallet Pattern**: Use separate Wallet collection instead of storing credits on user document. Access via `getWallet()` which auto-creates if missing.
+- **Wallet Updates**: Use `updateWalletBalance(amount)` for atomic balance updates with upsert support
 
 ### Implementation Checklist
 - **Design First**: Capture the intended responsibility, collaborators, and dependencies before coding; validate the design against SOLID and Clean Architecture boundaries.

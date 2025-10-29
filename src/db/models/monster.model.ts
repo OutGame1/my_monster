@@ -1,4 +1,4 @@
-import { Schema, models, model, Types, Model } from 'mongoose'
+import { type Document, Schema, models, model, Types, Model } from 'mongoose'
 
 export type MonsterState = 'happy' | 'sad' | 'gamester' | 'angry' | 'hungry' | 'sleepy'
 export type MonsterBodyShape = 'round' | 'pear' | 'blocky'
@@ -7,7 +7,7 @@ export type MonsterMouthType = 'simple' | 'toothy' | 'wavy'
 export type MonsterArmType = 'short' | 'long' | 'tiny'
 export type MonsterLegType = 'stumpy' | 'long' | 'feet'
 
-export interface MonsterTraits {
+export interface IMonsterTraitsDocument extends Document {
   bodyShape: MonsterBodyShape
   eyeType: MonsterEyeShape
   mouthType: MonsterMouthType
@@ -19,29 +19,20 @@ export interface MonsterTraits {
   size: number // 80-120 scale percentage
 }
 
-export interface IDocumentMonster {
+export interface IMonsterDocument extends Document {
   _id: Types.ObjectId
   name: string
   level: number
-  traits: MonsterTraits
+  xp: number
+  maxXp: number
+  traits: IMonsterTraitsDocument
   state: MonsterState
   ownerId: Types.ObjectId
   createdAt: Date
   updatedAt: Date
 }
 
-export interface IMonster {
-  _id: string
-  name: string
-  level: number
-  traits: MonsterTraits
-  state: MonsterState
-  ownerId: string
-  createdAt: string
-  updatedAt: string
-}
-
-const monsterTraitsSchema = new Schema<MonsterTraits>({
+const monsterTraitsSchema = new Schema<IMonsterTraitsDocument>({
   bodyShape: {
     type: String,
     required: true,
@@ -87,7 +78,9 @@ const monsterTraitsSchema = new Schema<MonsterTraits>({
   }
 }, { _id: false })
 
-const monsterSchema = new Schema<IDocumentMonster>({
+export const monsterBaseXp = 100
+
+const monsterSchema = new Schema<IMonsterDocument>({
   name: {
     type: String,
     required: true
@@ -96,6 +89,16 @@ const monsterSchema = new Schema<IDocumentMonster>({
     type: Number,
     required: false,
     default: 1
+  },
+  xp: {
+    type: Number,
+    required: false,
+    default: 0
+  },
+  maxXp: {
+    type: Number,
+    required: false,
+    default: monsterBaseXp
   },
   traits: {
     type: monsterTraitsSchema,
@@ -117,6 +120,6 @@ const monsterSchema = new Schema<IDocumentMonster>({
   timestamps: true
 })
 
-const MonsterModel: Model<IDocumentMonster> = models.Monster ?? model('Monster', monsterSchema)
+const MonsterModel: Model<IMonsterDocument> = models.Monster ?? model('Monster', monsterSchema)
 
 export default MonsterModel

@@ -4,7 +4,8 @@
 // Main monster renderer composing all trait parts
 
 import type { ReactNode } from 'react'
-import type { MonsterState, MonsterTraits } from '@/db/models/monster.model'
+import type { MonsterState } from '@/db/models/monster.model'
+import type { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
 import Body from './parts/Body'
 import Head from './parts/Head'
 import Eyes from './parts/Eyes'
@@ -13,7 +14,7 @@ import Arms from './parts/Arms'
 import Legs from './parts/Legs'
 
 interface MonsterAvatarProps {
-  traits: MonsterTraits
+  traits: ISerializedMonsterTraits
   state: MonsterState | null
   size?: number // SVG container size in pixels
   className?: string

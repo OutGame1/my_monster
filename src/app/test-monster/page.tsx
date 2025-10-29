@@ -6,9 +6,9 @@ import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import Card from '@/components/ui/Card'
 import type {
   MonsterArmType, MonsterBodyShape, MonsterEyeShape,
-  MonsterLegType, MonsterState, MonsterTraits,
-  MonsterMouthType
+  MonsterLegType, MonsterState, MonsterMouthType
 } from '@/db/models/monster.model'
+import type { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
 
 interface AnimationEntry {
   state: MonsterState | null
@@ -49,7 +49,7 @@ export default function TestMonsterPage (): ReactNode {
   const displayName = customName.trim() !== '' ? customName : selectedName
   const generatedTraits = generateMonsterTraits(displayName)
 
-  const traits: MonsterTraits = manualMode
+  const traits: ISerializedMonsterTraits = manualMode
     ? {
         bodyShape: manualBody,
         armType: manualArms,

@@ -15,16 +15,6 @@ export const auth = betterAuth({
       clientId: env.GITHUB_CLIENT_ID,
       clientSecret: env.GITHUB_CLIENT_SECRET
     }
-  },
-  user: {
-    additionalFields: {
-      credit: {
-        type: 'number',
-        required: true,
-        defaultValue: 100,
-        input: false
-      }
-    }
   }
 })
 
