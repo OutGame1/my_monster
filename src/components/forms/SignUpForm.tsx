@@ -28,7 +28,7 @@ export default function SignUpForm (): ReactNode {
 
     void authClient.signUp.email({
       ...credentials,
-      callbackURL: '/dashboard'
+      callbackURL: '/app'
     }, {
       onRequest: () => {
         toast.loading('Création de votre compte... 🐣', {
@@ -42,7 +42,7 @@ export default function SignUpForm (): ReactNode {
           isLoading: false,
           autoClose: 3000
         })
-        router.push('/dashboard')
+        router.push('/app')
       },
       onError: (ctx) => {
         toast.update('signup', {

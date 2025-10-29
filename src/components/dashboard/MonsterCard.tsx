@@ -24,7 +24,7 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
   } = stateInfoMap[monster.state]
 
   const handleCardClick = (): void => {
-    router.push(`/monster/${monster._id}`)
+    router.push(`/app/monster/${monster._id}`)
   }
 
   return (
