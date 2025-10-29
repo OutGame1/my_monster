@@ -30,7 +30,7 @@ export default async function MonsterPage ({ params }: MonsterPageProps): Promis
       <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
         {/* Bouton de retour */}
         <Link
-          href='/dashboard'
+          href='/app'
           className='mb-6 inline-flex items-center gap-2 text-tolopea-600 transition-colors hover:text-tolopea-800'
         >
           <svg className='h-5 w-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'>

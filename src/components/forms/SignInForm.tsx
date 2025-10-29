@@ -21,7 +21,7 @@ export default function SignInForm (): ReactNode {
 
     void authClient.signIn.email({
       ...credentials,
-      callbackURL: '/dashboard'
+      callbackURL: '/app'
     }, {
       onRequest: () => {
         toast.loading('Connexion en cours... 🐾', {

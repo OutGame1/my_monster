@@ -48,9 +48,9 @@ export default function Header ({ session }: HeaderProps): ReactNode {
         {session !== null && (
           <nav className='hidden md:flex items-center gap-4'>
             <Link
-              href='/dashboard'
+              href='/app'
               className={`rounded-lg px-6 py-3 text-base font-bold transition-all duration-300 ${
-                isActive('/dashboard')
+                isActive('/app')
                   ? 'bg-gradient-to-r from-tolopea-500 to-tolopea-600 text-white shadow-lg'
                   : 'text-tolopea-700 hover:bg-tolopea-100'
               }`}

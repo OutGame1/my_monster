@@ -70,7 +70,7 @@ export async function createMonster (monsterName: string): Promise<number> {
   await monster.save()
 
   // Revalidation du cache pour rafraîchir le dashboard
-  revalidatePath('/dashboard')
+  revalidatePath('/app')
 
   return creationCost
 }
@@ -244,8 +244,8 @@ export async function performMonsterAction (
     // Mise à jour du solde du portefeuille utilisateur
     const newCreditTotal = await updateWalletBalance(coinsEarned)
 
-    revalidatePath(`/monster/${monsterId}`)
-    revalidatePath('/dashboard')
+    revalidatePath(`/app/monster/${monsterId}`)
+    revalidatePath('/app')
 
     return {
       success: true,
