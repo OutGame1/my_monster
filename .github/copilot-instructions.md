@@ -55,10 +55,10 @@ export default function Button ({
 ```
 
 ### Styling Conventions
-- **Custom Color Palette**: Uses `blood`, `tolopea`, and `aqua-forest` color scales defined in `globals.css`
+- **Custom Color Palette**: Uses `blood`, `tolopea`, `aqua-forest`, `golden-fizz`, and `seance` color scales defined in `globals.css`
 - **Component Styling**: Utility functions for size/variant mapping (see `getSize()` and `getVariant()` in Button component)
 - **Responsive Design**: Mobile-first approach with `sm:` breakpoints
-- **Animations**: Consistent `transition-all duration-300` and `active:scale-95` for interactive elements
+- **Animations**: Custom keyframe animations for monster interactions (wave-arms, wiggle-arms, shake-arms-hungry, chomp-mouth, gaming-eyes, bounce-body, tears)
 
 ### Import Patterns
 - Use `@/` alias for src imports: `import Button from '@/components/button'`
@@ -75,10 +75,13 @@ export default function Button ({
 - **Default Props**: Provide sensible defaults in destructuring
 
 ### Color Usage Notes
-- Primary brand color: `blood-500` (`#ff2d34`)
-- Secondary accent: `tolopea-500` (`#5f47ff`)
-- Tertiary accent: `aqua-forest-500` (`#428751`)
-- Use color-50 variants for subtle backgrounds, color-700+ for emphasis
+- **Primary brand color**: `blood-500` (`#ff2d34`) - Main brand red
+- **Secondary accent**: `tolopea-500` (`#5f47ff`) - Purple accent
+- **Tertiary accent**: `aqua-forest-500` (`#428751`) - Green accent
+- **Energy/Highlight**: `golden-fizz-500` (`#e3f401`) - Bright yellow for energy/highlights
+- **Special/Magic**: `seance-500` (`#ff16f4`) - Magenta for special effects
+- **Background tones**: Use color-50 variants for subtle backgrounds, color-700+ for emphasis
+- **Monster animations**: Custom animations available (see globals.css for animate-* classes)
 
 ### TypeScript Configuration
 - **Strict Mode**: All strict TypeScript rules enabled
