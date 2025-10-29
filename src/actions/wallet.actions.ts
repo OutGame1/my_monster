@@ -6,11 +6,17 @@ import Wallet, { type IWalletDocument } from '@/db/models/wallet.model'
 import { getSession } from '@/lib/auth'
 import walletSerializer, { type ISerializedWallet } from '@/lib/serializers/wallet.serializer'
 
+/**
+ * Récupère le portefeuille associé à un propriétaire ou le crée s'il n'existe pas encore.
+ *
+ * @param {string} ownerId Identifiant MongoDB du propriétaire du portefeuille.
+ * @returns {Promise<IWalletDocument>} Document Mongoose du portefeuille créé ou existant.
+ */
 async function getWalletByOwnerId (ownerId: string): Promise<IWalletDocument> {
-  // Try to find existing wallet
+  // Recherche d'un portefeuille existant
   let wallet = await Wallet.findOne({ ownerId }).exec()
 
-  // Create wallet if it doesn't exist
+  // Création à la volée si absent
   if (wallet === null) {
     wallet = new Wallet({ ownerId })
     await wallet.save()
@@ -20,23 +26,12 @@ async function getWalletByOwnerId (ownerId: string): Promise<IWalletDocument> {
 }
 
 /**
- * Get or create a wallet for the authenticated user
+ * Récupère ou crée un portefeuille pour l'utilisateur correspondant à l'identifiant fourni.
+ * Valide le format de l'identifiant puis sérialise le document pour la couche de présentation.
  *
- * This server action:
- * 1. Verifies user authentication
- * 2. Attempts to find existing wallet
- * 3. Creates new wallet with default balance (100) if none exists
- * 4. Returns the wallet data
- *
- * Responsibility: Ensure every authenticated user has a wallet
- *
- * @async
- * @returns {Promise<IWallet>} The user's wallet
- * @throws {Error} If user is not authenticated
- *
- * @example
- * const wallet = await getWallet()
- * // { _id: "...", ownerId: "...", balance: 100 }
+ * @param {string} ownerId Identifiant MongoDB de l'utilisateur propriétaire du portefeuille.
+ * @returns {Promise<ISerializedWallet>} Portefeuille sous forme sérialisée.
+ * @throws {Error} Si l'identifiant fourni n'est pas un ObjectId valide.
  */
 export async function getWallet (ownerId: string): Promise<ISerializedWallet> {
   if (!Types.ObjectId.isValid(ownerId)) {
@@ -49,16 +44,12 @@ export async function getWallet (ownerId: string): Promise<ISerializedWallet> {
 }
 
 /**
- * Update wallet balance
+ * Met à jour le solde du portefeuille de l'utilisateur actuellement connecté.
+ * Ajoute ou soustrait un montant après validation de l'authentification et du solde disponible.
  *
- * @async
- * @param {number} amount - Amount to add (positive) or subtract (negative)
- * @returns {Promise<number>} New balance
- * @throws {Error} If user is not authenticated or wallet not found
- *
- * @example
- * const newBalance = await updateWalletBalance(20) // Add 20 coins
- * const afterSpending = await updateWalletBalance(-50) // Subtract 50 coins
+ * @param {number} amount Montant à appliquer (positif pour créditer, négatif pour débiter).
+ * @returns {Promise<number>} Nouveau solde disponible après mise à jour.
+ * @throws {Error} Si l'utilisateur n'est pas authentifié ou si le solde deviendrait négatif.
  */
 export async function updateWalletBalance (amount: number): Promise<number> {
   await connectMongooseToDatabase()

@@ -33,13 +33,18 @@ const LEG_TYPES: MonsterLegType[] = ['stumpy', 'long', 'feet']
 const EYE_TYPES: MonsterEyeShape[] = ['dot', 'round', 'star']
 const MOUTH_TYPES: MonsterMouthType[] = ['simple', 'toothy', 'wavy']
 
+/**
+ * Page client permettant de tester la génération et la personnalisation visuelle d'un monstre.
+ *
+ * @returns {ReactNode} Interface interactive combinant aperçu du monstre et panneaux de contrôle.
+ */
 export default function TestMonsterPage (): ReactNode {
   const [selectedName, setSelectedName] = useState('Fluffy')
   const [customName, setCustomName] = useState('')
   const [currentState, setCurrentState] = useState<MonsterState | null>(null)
   const [manualMode, setManualMode] = useState(false)
 
-  // Manual trait selection
+  // Sélection manuelle des attributs physiques
   const [manualBody, setManualBody] = useState<MonsterBodyShape>('round')
   const [manualArms, setManualArms] = useState<MonsterArmType>('short')
   const [manualLegs, setManualLegs] = useState<MonsterLegType>('stumpy')
@@ -71,7 +76,7 @@ export default function TestMonsterPage (): ReactNode {
         </h1>
 
         <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
-          {/* Monster Display */}
+          {/* Affichage du monstre */}
           <Card className='flex flex-col items-center justify-center'>
             <h2 className='mb-4 text-xl font-semibold text-tolopea-800'>{displayName}</h2>
             <MonsterAvatar
@@ -89,9 +94,9 @@ export default function TestMonsterPage (): ReactNode {
             </div>
           </Card>
 
-          {/* Controls */}
+          {/* Panneaux de contrôle */}
           <div className='flex flex-col gap-6'>
-            {/* Mode Toggle */}
+            {/* Bascule entre mode manuel et aléatoire */}
             <Card>
               <div className='flex items-center justify-between'>
                 <h3 className='text-lg font-semibold text-tolopea-800'>Mode de création</h3>
@@ -111,7 +116,7 @@ export default function TestMonsterPage (): ReactNode {
             {manualMode
               ? (
                 <>
-                  {/* Manual Body Parts Selection */}
+                  {/* Sélection manuelle des parties du corps */}
                   <Card>
                     <h3 className='mb-4 text-lg font-semibold text-tolopea-800'>Corps</h3>
                     <div className='grid grid-cols-3 gap-2'>
@@ -210,7 +215,7 @@ export default function TestMonsterPage (): ReactNode {
                 )
               : (
                 <>
-                  {/* Random Name Selection */}
+                  {/* Sélection ou saisie aléatoire du nom */}
                   <Card>
                     <h3 className='mb-4 text-lg font-semibold text-tolopea-800'>Choisir un nom</h3>
                     <div className='mb-4 grid grid-cols-3 gap-2'>

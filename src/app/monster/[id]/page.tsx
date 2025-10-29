@@ -12,8 +12,10 @@ interface MonsterPageProps {
 }
 
 /**
- * Monster detail page
- * Server component that displays a single monster's details
+ * Page serveur affichant le détail d'un monstre identifié via le segment dynamique.
+ *
+ * @param {MonsterPageProps} props Propriétés contenant la promesse des paramètres de route.
+ * @returns {Promise<ReactNode>} Vue détaillée du monstre ou redirection 404 si introuvable.
  */
 export default async function MonsterPage ({ params }: MonsterPageProps): Promise<ReactNode> {
   const { id } = await params
@@ -26,7 +28,7 @@ export default async function MonsterPage ({ params }: MonsterPageProps): Promis
   return (
     <AppLayout>
       <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
-        {/* Back Button */}
+        {/* Bouton de retour */}
         <Link
           href='/dashboard'
           className='mb-6 inline-flex items-center gap-2 text-tolopea-600 transition-colors hover:text-tolopea-800'

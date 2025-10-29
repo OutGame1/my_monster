@@ -6,7 +6,7 @@ This is a Next.js 16.0.0 project using the App Router architecture, built for a 
 ### Game Mechanics
 - **Wallet System**: Each user has a separate `Wallet` document (default balance: 100 coins)
   - Wallet is created automatically on first access via `getWallet()` server action
-  - Each monster action rewards coins: 10 coins (base) or 20 coins (when action matches monster state)
+  - Each monster action rewards coins: 1 coins (base) or 2 coins (when action matches monster state)
   - Coin counter in header animates when coins are earned
   - Wallet stored in separate collection, not on user document
 - **XP System**: Monsters gain experience and level up

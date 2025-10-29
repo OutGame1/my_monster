@@ -2,6 +2,11 @@ import type { ReactNode } from 'react'
 import Button from '@/components/ui/Button'
 import Link from 'next/link'
 
+/**
+ * Page temporaire affichant un message "bientôt disponible" pour les sections en construction.
+ *
+ * @returns {ReactNode} Mise en page centrée avec lien de retour vers l'accueil.
+ */
 export default function ComingSoon (): ReactNode {
   return (
     <div className='min-h-screen flex gap-2 items-center justify-center bg-tolopea-50'>

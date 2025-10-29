@@ -5,7 +5,6 @@
 
 import type { ReactNode } from 'react'
 import type { MonsterArmType, MonsterBodyShape, MonsterState } from '@/db/models/monster.model'
-import { invoke } from '@/lib/utilities'
 import ShortArms from './arms/ShortArms'
 import LongArms from './arms/LongArms'
 import TinyArms from './arms/TinyArms'
@@ -35,6 +34,12 @@ export interface SpecificBodyArmsProps {
   className?: string
 }
 
+const stateClassMap: Map<MonsterState | null, string> = new Map([
+  ['happy', 'animate-wave-arms'],
+  ['gamester', 'animate-wiggle-arms'],
+  ['hungry', 'animate-shake-arms-hungry']
+])
+
 export default function Arms ({
   type,
   bodyShape,
@@ -43,16 +48,7 @@ export default function Arms ({
   state
 }: ArmsProps): ReactNode {
   // CSS animation class based on animation state
-  const stateClass = invoke(() => {
-    switch (state) {
-      case 'happy':
-        return 'animate-wave-arms'
-      case 'gamester':
-        return 'animate-wiggle-arms'
-      case 'hungry':
-        return 'animate-shake-arms-hungry'
-    }
-  })
+  const stateClass = stateClassMap.get(state)
 
   switch (type) {
     case 'tiny':

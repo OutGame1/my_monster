@@ -10,54 +10,35 @@ import { updateWalletBalance } from './wallet.actions'
 import { generateMonsterTraits } from '@/monster/generator'
 
 /**
- * Calculate the cost to create a new monster (SERVER-SIDE ONLY)
- * Uses a logarithmic function to keep costs reasonable
+ * Calcule le coût de création d'un nouveau monstre côté serveur.
+ * Utilise une progression logarithmique afin que la dépense reste raisonnable.
  *
- * Formula: cost = floor(100 * log2(monsterCount + 1))
- * - First monster (count = 0): 0 coins (free)
- * - Second monster (count = 1): 100 coins
- * - Third monster (count = 2): 158 coins
- * - Fourth monster (count = 3): 200 coins
- * - Fifth monster (count = 4): 232 coins
+ * Formule : `cost = floor(100 * log2(monsterCount + 1))`
+ * - 1er monstre (0 existants) : 0 pièce
+ * - 2e monstre (1 existant) : 100 pièces
+ * - 3e monstre (2 existants) : 158 pièces
+ * - 4e monstre (3 existants) : 200 pièces
+ * - 5e monstre (4 existants) : 232 pièces
  *
- * The logarithmic growth ensures costs increase slowly
- *
- * @param currentMonsterCount - Number of monsters the user already owns
- * @returns Cost in coins to create the next monster
+ * @param {number} currentMonsterCount Nombre de monstres déjà possédés par l'utilisateur.
+ * @returns {Promise<number>} Coût en pièces pour créer le prochain monstre.
  */
 export async function calculateMonsterCreationCost (currentMonsterCount: number): Promise<number> {
   if (currentMonsterCount === 0) {
-    return 0 // First monster is free
+    return 0 // Le premier monstre est offert
   }
 
   return Math.floor(100 * Math.log2(currentMonsterCount + 1))
 }
 
 /**
- * Crée un nouveau monstre pour l'utilisateur authentifié
+ * Crée un nouveau monstre pour l'utilisateur actuellement authentifié.
+ * Orchestration : vérifie l'authentification, calcule le coût, met à jour le portefeuille,
+ * crée le document dans MongoDB puis revalide le cache du tableau de bord.
  *
- * Cette server action :
- * 1. Vérifie l'authentification de l'utilisateur
- * 2. Calcule et vérifie le coût de création
- * 3. Déduit les pièces du portefeuille
- * 4. Crée un nouveau document Monster dans MongoDB
- * 5. Revalide le cache de la page dashboard
- *
- * Responsabilité unique : orchestrer la création d'un monstre
- * en coordonnant l'authentification, la persistence et le cache.
- *
- * @async
- * @param {CreateMonsterFormValues} monsterData - Données validées du monstre à créer
- * @returns {Promise<number>} Promise résolue une fois le monstre créé, renvoie le coût de création
- * @throws {Error} Si l'utilisateur n'est pas authentifié ou n'a pas assez de pièces
- *
- * @example
- * await createMonster({
- *   name: "Pikachu",
- *   traits: '{"bodyColor": "#FFB5E8", ...}',
- *   state: "happy",
- *   level: 1
- * })
+ * @param {string} monsterName Nom choisi pour le monstre à générer.
+ * @returns {Promise<number>} Coût effectivement débité lors de la création.
+ * @throws {Error} Si l'utilisateur est inconnu ou si le solde est insuffisant.
  */
 export async function createMonster (monsterName: string): Promise<number> {
   // Connexion à la base de données
@@ -70,13 +51,13 @@ export async function createMonster (monsterName: string): Promise<number> {
     throw new Error('User not authenticated')
   }
 
-  // Count current monsters to calculate cost
+  // Comptage des monstres existants pour déterminer le coût
   const currentMonsterCount = await Monster.countDocuments({ ownerId: session.user.id }).exec()
   const creationCost = await calculateMonsterCreationCost(currentMonsterCount)
 
-  // Deduct coins if not the first monster (server-side validation)
+  // Débit des pièces si ce n'est pas le premier monstre (validation côté serveur)
   if (creationCost > 0) {
-    await updateWalletBalance(-creationCost) // This will throw if insufficient balance
+    await updateWalletBalance(-creationCost) // Déclenche une erreur si le solde est insuffisant
   }
 
   // Création et sauvegarde du monstre
@@ -95,22 +76,10 @@ export async function createMonster (monsterName: string): Promise<number> {
 }
 
 /**
- * Récupère tous les monstres de l'utilisateur authentifié
+ * Récupère tous les monstres appartenant à l'utilisateur connecté.
+ * Garantit que la base de données est jointe et renvoie toujours un tableau (vide en cas d'erreur).
  *
- * Cette server action :
- * 1. Vérifie l'authentification de l'utilisateur
- * 2. Récupère tous les monstres appartenant à l'utilisateur
- * 3. Retourne un tableau vide en cas d'erreur (résilience)
- *
- * Responsabilité unique : récupérer la liste complète des monstres
- * de l'utilisateur depuis la base de données.
- *
- * @async
- * @returns {Promise<ISerializedMonster[]>} Liste des monstres ou tableau vide en cas d'erreur
- *
- * @example
- * const monsters = await getMonsters()
- * // [{ _id: "...", name: "Pikachu", ... }, ...]
+ * @returns {Promise<ISerializedMonster[]>} Liste sérialisée des monstres de l'utilisateur.
  */
 export async function getMonsters (): Promise<ISerializedMonster[]> {
   try {
@@ -135,28 +104,11 @@ export async function getMonsters (): Promise<ISerializedMonster[]> {
 }
 
 /**
- * Récupère un monstre spécifique par son identifiant
+ * Récupère un monstre identifié par son ObjectId en vérifiant la propriété utilisateur.
+ * Retourne `null` si l'identifiant est invalide ou que le monstre n'appartient pas à l'utilisateur.
  *
- * Cette server action :
- * 1. Vérifie l'authentification de l'utilisateur
- * 2. Valide le format de l'identifiant MongoDB
- * 3. Récupère le monstre s'il appartient à l'utilisateur
- * 4. Retourne null si le monstre n'existe pas ou n'appartient pas à l'utilisateur
- *
- * Responsabilité unique : récupérer un monstre spécifique
- * en garantissant la propriété et l'existence.
- *
- * @async
- * @param {string} _id - Identifiant du monstre (premier élément du tableau de route dynamique)
- * @returns {Promise<ISerializedMonster | null>} Le monstre trouvé ou null
- * @throws {Error} Si l'utilisateur n'est pas authentifié
- *
- * @example
- * const monster = await getMonsterById("507f1f77bcf86cd799439011")
- * // { _id: "507f1f77bcf86cd799439011", name: "Pikachu", ... }
- *
- * const notFound = await getMonsterById("invalid-id")
- * // null
+ * @param {string} _id Identifiant MongoDB du monstre recherché.
+ * @returns {Promise<ISerializedMonster | null>} Monstre sérialisé ou `null` s'il est introuvable.
  */
 export async function getMonsterById (_id: string): Promise<ISerializedMonster | null> {
   try {
@@ -187,23 +139,24 @@ export async function getMonsterById (_id: string): Promise<ISerializedMonster |
 }
 
 /**
- * Calculate max XP required for a given level
- * Uses formula: maxXp = monsterBaseXp * (level ^ 1.5)
+ * Calcule le capital d'expérience maximum pour un niveau donné selon la formule
+ * `monsterBaseXp * (level ^ 1.5)` et arrondit à l'entier inférieur.
+ *
+ * @param {number} level Niveau actuel du monstre.
+ * @returns {number} Seuil d'expérience à atteindre pour le prochain niveau.
  */
 function calculateMaxXp (level: number): number {
   return Math.floor(monsterBaseXp * Math.pow(level, 1.5))
 }
 
 /**
- * Coin rewards for actions
- * Base reward: 10 coins
- * Matched state reward: 20 coins (double)
+ * Récompenses en pièces pour les actions : base à 10, doublée (20) si l'action correspond à l'état du monstre.
  */
 const BASE_COIN_REWARD = 10
 const MATCHED_STATE_COIN_REWARD = 20
 
 /**
- * XP reward per action
+ * Récompense d'expérience accordée à chaque action utilisateur.
  */
 const XP_REWARD = 25
 
@@ -220,7 +173,7 @@ export interface PerformActionResult {
   message?: string
 }
 
-// Map actions to states for bonus detection
+// Table de correspondance actions ↔ états pour détecter les bonus
 const actionStateMap: Record<ActionType, MonsterState> = {
   feed: 'hungry',
   play: 'gamester',
@@ -230,19 +183,12 @@ const actionStateMap: Record<ActionType, MonsterState> = {
 }
 
 /**
- * Perform an action on a monster
+ * Applique une action sur un monstre après validation de l'authentification et de la propriété.
+ * Gère l'attribution d'XP, la montée en niveau, l'état du monstre et la récompense en pièces.
  *
- * This server action:
- * 1. Validates authentication and monster ownership
- * 2. Awards XP to the monster
- * 3. Awards coins to the user (double if action matches state)
- * 4. Handles level-up logic if XP threshold is reached
- * 5. Updates monster state based on the action
- *
- * @async
- * @param {string} monsterId - The monster's ID
- * @param {ActionType} actionType - The type of action performed
- * @returns {Promise<PerformActionResult>} Result of the action
+ * @param {string} monsterId Identifiant du monstre ciblé.
+ * @param {ActionType} actionType Type d'interaction réalisée (nourrir, jouer, etc.).
+ * @returns {Promise<PerformActionResult>} Résultat agrégé contenant XP, niveau et gains.
  */
 export async function performMonsterAction (
   monsterId: string,
@@ -260,7 +206,7 @@ export async function performMonsterAction (
       throw new Error('Invalid monster ID format')
     }
 
-    // Get the monster
+    // Récupération du monstre ciblé
     const monster = await Monster.findOne({
       ownerId: session.user.id,
       _id: monsterId
@@ -270,17 +216,17 @@ export async function performMonsterAction (
       throw new Error('Monster not found')
     }
 
-    // Check if action matches current state for bonus
+    // Vérification de la correspondance action/état pour accorder le bonus
     const isMatched = actionStateMap[actionType] === monster.state
     const coinsEarned = isMatched ? MATCHED_STATE_COIN_REWARD : BASE_COIN_REWARD
 
-    // Add XP
+    // Ajout des points d'expérience
     let newXp = monster.xp + XP_REWARD
     let currentLevel = monster.level ?? 1
     let currentMaxXp = monster.maxXp ?? 100
     let leveledUp = false
 
-    // Check for level up
+    // Vérification d'une montée de niveau potentielle
     while (newXp >= currentMaxXp) {
       leveledUp = true
       newXp -= currentMaxXp
@@ -288,14 +234,14 @@ export async function performMonsterAction (
       currentMaxXp = calculateMaxXp(currentLevel)
     }
 
-    // Update monster
+    // Mise à jour du document monstre
     monster.xp = newXp
     monster.level = currentLevel
     monster.maxXp = currentMaxXp
     monster.state = 'happy'
     await monster.save()
 
-    // Update user wallet balance
+    // Mise à jour du solde du portefeuille utilisateur
     const newCreditTotal = await updateWalletBalance(coinsEarned)
 
     revalidatePath(`/monster/${monsterId}`)

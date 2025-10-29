@@ -5,6 +5,9 @@ import GettingStartedSection from '@/components/home/GettingStartedSection'
 import HeroSection from '@/components/home/HeroSection'
 import HighlightsSection from '@/components/home/HighlightsSection'
 
+/**
+ * Configuration du viewport mobile/desktop pour une mise à l'échelle responsive optimale.
+ */
 export const viewport: Viewport = {
   width: 'device-width',
   initialScale: 1,
@@ -12,6 +15,9 @@ export const viewport: Viewport = {
   userScalable: true
 }
 
+/**
+ * Métadonnées SEO détaillées de la page d'accueil My Monster.
+ */
 export const metadata: Metadata = {
   title: 'My Monster - Adoptez et élevez votre compagnon virtuel',
   description: 'Créez, nourrissez et faites évoluer votre propre monstre unique ! Découvrez une expérience de jeu immersive où chaque créature est générée de manière procédurale avec des traits visuels uniques.',
@@ -100,6 +106,11 @@ export const metadata: Metadata = {
   }
 }
 
+/**
+ * Page d'accueil publique affichant les sections marketing principales.
+ *
+ * @returns {ReactNode} Structure de mise en page avec sections héro, points forts et démarrage.
+ */
 export default function Home (): ReactNode {
   return (
     <AppLayout>

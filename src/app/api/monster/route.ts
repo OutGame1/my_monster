@@ -4,6 +4,12 @@ import { getSession } from '@/lib/auth'
 import monsterSerizalizer from '@/lib/serializers/monster.serializer'
 import { NextRequest } from 'next/server'
 
+/**
+ * Endpoint GET renvoyant un monstre appartenant à l'utilisateur authentifié via son identifiant.
+ *
+ * @param {NextRequest} request Requête HTTP entrante contenant le paramètre `id`.
+ * @returns {Promise<Response>} Réponse JSON avec le monstre ou code d'erreur approprié.
+ */
 export async function GET (request: NextRequest): Promise<Response> {
   await connectMongooseToDatabase()
 
@@ -13,7 +19,7 @@ export async function GET (request: NextRequest): Promise<Response> {
     return new Response('Unauthorized', { status: 401 })
   }
 
-  // Get monster ID from query params
+  // Récupération de l'identifiant du monstre dans la query string
   const searchParams = request.nextUrl.searchParams
   const monsterId = searchParams.get('id')
 

@@ -28,32 +28,32 @@ export default function Body ({
   const stateClass = state === 'gamester' ? 'animate-bounce-body' : undefined
 
   switch (shape) {
-      case 'round':
-        return (
-          <RoundBody
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-            outlineColor={outlineColor}
-            className={stateClass}
-          />
-        )
-      case 'pear':
-        return (
-          <PearBody
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-            outlineColor={outlineColor}
-            className={stateClass}
-          />
-        )
-      case 'blocky':
-        return (
-          <TallBody
-            primaryColor={primaryColor}
-            secondaryColor={secondaryColor}
-            outlineColor={outlineColor}
-            className={stateClass}
-          />
-        )
-    }
+    case 'round':
+      return (
+        <RoundBody
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          outlineColor={outlineColor}
+          className={stateClass}
+        />
+      )
+    case 'pear':
+      return (
+        <PearBody
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          outlineColor={outlineColor}
+          className={stateClass}
+        />
+      )
+    case 'blocky':
+      return (
+        <TallBody
+          primaryColor={primaryColor}
+          secondaryColor={secondaryColor}
+          outlineColor={outlineColor}
+          className={stateClass}
+        />
+      )
+  }
 }
