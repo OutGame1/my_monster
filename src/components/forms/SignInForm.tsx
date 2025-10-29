@@ -76,7 +76,7 @@ export default function SignInForm (): ReactNode {
       <Button
         type='submit'
         variant='primary'
-        className={isLoading ? 'opacity-75 cursor-not-allowed' : ''}
+        disabled={isLoading}
       >
         Se connecter
       </Button>

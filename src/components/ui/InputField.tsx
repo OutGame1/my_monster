@@ -1,4 +1,4 @@
-import { ReactNode } from 'react'
+import type { ReactNode } from 'react'
 
 interface InputFieldProps {
   type: string
@@ -8,6 +8,7 @@ interface InputFieldProps {
   onChangeText: (value: string) => void
   required?: boolean
   placeholder?: string
+  maxLength?: number
 }
 
 export default function InputField ({
@@ -17,7 +18,8 @@ export default function InputField ({
   value,
   onChangeText,
   required = false,
-  placeholder
+  placeholder,
+  maxLength
 }: InputFieldProps): ReactNode {
   return (
     <div className='relative'>
@@ -35,6 +37,7 @@ export default function InputField ({
         onChange={(e) => onChangeText(e.target.value)}
         required={required}
         placeholder={placeholder}
+        maxLength={maxLength}
         className='w-full px-4 py-3 rounded-lg border border-gray-200
                  focus:border-tolopea-500 focus:ring-2 focus:ring-tolopea-200
                  transition-all duration-200 bg-white/50 backdrop-blur-sm

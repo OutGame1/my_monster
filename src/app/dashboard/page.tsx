@@ -1,19 +1,34 @@
-import { ReactNode } from 'react'
-import { auth } from '@/lib/auth'
-import { headers } from 'next/headers'
+import type { ReactNode } from 'react'
+import DashboardContent from '@/components/dashboard/DashboardContent'
+import AppLayout from '@/components/navigation/AppLayout'
+import { calculateMonsterCreationCost, getMonsters } from '@/actions/monsters.actions'
+import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
-import DashboardContent from '@/components/content/DashboardContent'
+import { MonsterProvider } from '@/contexts/MonsterContext'
 
+/**
+ * Page dashboard authentifiée affichant la gestion des monstres de l'utilisateur.
+ *
+ * @returns {Promise<ReactNode>} Contenu JSX rendu côté serveur pour le tableau de bord.
+ */
 export default async function DashboardPage (): Promise<ReactNode> {
-  const session = await auth.api.getSession({
-    headers: await headers()
-  })
+  // Récupération de la session utilisateur via Better Auth
+  const session = await getSession()
 
   if (session === null) {
     redirect('/sign-in')
   }
 
+  // Récupération de tous les monstres appartenant à l'utilisateur connecté
+  const monsters = await getMonsters()
+
+  const creationCost = await calculateMonsterCreationCost(monsters.length)
+
   return (
-    <DashboardContent user={session.user} />
+    <AppLayout>
+      <MonsterProvider initialMonsters={monsters}>
+        <DashboardContent initialCreationCost={creationCost} />
+      </MonsterProvider>
+    </AppLayout>
   )
 }

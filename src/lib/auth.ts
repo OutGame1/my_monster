@@ -1,7 +1,9 @@
+import type { Session } from './auth-client'
 import { betterAuth } from 'better-auth'
 import { mongodbAdapter } from 'better-auth/adapters/mongodb'
-import { db } from '@/db'
+import db from '@/db'
 import env from '@lib/env'
+import { headers } from 'next/headers'
 
 export const auth = betterAuth({
   database: mongodbAdapter(db),
@@ -15,3 +17,9 @@ export const auth = betterAuth({
     }
   }
 })
+
+export async function getSession (): Promise<Session | null> {
+  return await auth.api.getSession({
+    headers: await headers()
+  })
+}
