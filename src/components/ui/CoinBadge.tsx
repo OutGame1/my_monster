@@ -11,7 +11,7 @@ import CoinIcon from './CoinIcon'
  * Uses global wallet context for state management
  * Clickable to navigate to coin purchase page
  */
-export default function CreditBadge (): ReactNode {
+export default function CoinBadge (): ReactNode {
   const { balance } = useWallet()
   const [displayCredit, setDisplayCredit] = useState(balance)
   const [isAnimating, setIsAnimating] = useState(false)
