@@ -1,11 +1,11 @@
 'use server'
 
 import { connectMongooseToDatabase } from '@/db'
-import QuestProgress, { type IQuestProgressDocument } from '@/db/models/quest-progress.model'
+import Quest, { type IQuestDocument } from '@/db/models/quest.model'
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
-import questProgressSerializer, { type ISerializedQuestProgress } from '@/lib/serializers/quest-progress.serializer'
+import questSerializer, { type ISerializedQuestProgress } from '@/lib/serializers/quest.serializer'
 import { allQuests, dailyQuestIds, type QuestObjective, type QuestDefinition } from '@/config/quests.config'
 import { updateWalletBalance, getWallet } from './wallet.actions'
 
@@ -33,9 +33,9 @@ export async function getQuestsWithProgress (): Promise<QuestsPayload> {
   }
 
   // Récupération de toutes les progressions de l'utilisateur
-  const progressRecords = await QuestProgress.find({ userId: session.user.id }).exec()
+  const progressRecords = await Quest.find({ userId: session.user.id }).exec()
 
-  const progressMap = new Map<string, IQuestProgressDocument>(
+  const progressMap = new Map<string, IQuestDocument>(
     progressRecords.map(pr => [pr.questId, pr])
   )
 
@@ -45,7 +45,7 @@ export async function getQuestsWithProgress (): Promise<QuestsPayload> {
     let progress = progressMap.get(quest.id)
 
     if (progress === undefined) {
-      progress = new QuestProgress({
+      progress = new Quest({
         userId: session.user.id,
         questId: quest.id
       })
@@ -54,7 +54,7 @@ export async function getQuestsWithProgress (): Promise<QuestsPayload> {
 
     questsPayload[quest.type].push({
       definition: quest,
-      progress: questProgressSerializer(progress)
+      progress: questSerializer(progress)
     })
   }
 
@@ -91,10 +91,10 @@ export async function incrementQuestProgress (
     }
 
     // Récupérer ou créer la progression
-    let progress = await QuestProgress.findOne(questData).exec()
+    let progress = await Quest.findOne(questData).exec()
 
     if (progress === null) {
-      progress = new QuestProgress(questData)
+      progress = new Quest(questData)
     }
 
     // Ne pas incrémenter si déjà complété
@@ -139,10 +139,10 @@ export async function checkOwnershipQuests (): Promise<void> {
       questId: quest.id
     }
 
-    let progress = await QuestProgress.findOne(questData).exec()
+    let progress = await Quest.findOne(questData).exec()
 
     if (progress === null) {
-      progress = new QuestProgress(questData)
+      progress = new Quest(questData)
     }
 
     // Mettre à jour avec le nombre réel
@@ -176,16 +176,15 @@ export async function checkCoinsQuests (): Promise<void> {
     if (quest.objective !== 'reach_coins') {
       continue
     }
-    let progress = await QuestProgress.findOne({
+    let progress = await Quest.findOne({
       userId: session.user.id,
       questId: quest.id
     }).exec()
 
     if (progress === null) {
-      progress = new QuestProgress({
+      progress = new Quest({
         userId: session.user.id,
-        questId: quest.id,
-        progress: 0
+        questId: quest.id
       })
     }
 
@@ -220,7 +219,7 @@ export async function claimQuestReward (questId: string): Promise<number> {
   }
 
   // Récupérer la progression
-  const progress = await QuestProgress.findOne({
+  const progress = await Quest.findOne({
     userId: session.user.id,
     questId
   }).exec()
@@ -260,7 +259,7 @@ export async function claimQuestReward (questId: string): Promise<number> {
 export async function resetDailyQuests (userId: string): Promise<void> {
   await connectMongooseToDatabase()
 
-  await QuestProgress.updateMany(
+  await Quest.updateMany(
     {
       userId,
       questId: { $in: dailyQuestIds }

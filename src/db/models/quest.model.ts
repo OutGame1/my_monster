@@ -1,6 +1,6 @@
 import { type Document, Schema, Types, Model, models, model } from 'mongoose'
 
-export interface IQuestProgressDocument extends Document {
+export interface IQuestDocument extends Document {
   _id: Types.ObjectId
   userId: Types.ObjectId
   questId: string // ID de la quête depuis la config
@@ -14,7 +14,7 @@ export interface IQuestProgressDocument extends Document {
   updatedAt: Date
 }
 
-const questProgressSchema = new Schema<IQuestProgressDocument>({
+const questSchema = new Schema<IQuestDocument>({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'user',
@@ -45,18 +45,18 @@ const questProgressSchema = new Schema<IQuestProgressDocument>({
 })
 
 // Index composé pour retrouver rapidement les quêtes d'un utilisateur
-questProgressSchema.index({ userId: 1, questId: 1 }, { unique: true })
+questSchema.index({ userId: 1, questId: 1 }, { unique: true })
 
 // Virtual field: completed est déterminé par la présence de completedAt
-questProgressSchema.virtual('completed').get(function () {
+questSchema.virtual('completed').get(function () {
   return this.completedAt !== undefined
 })
 
 // Virtual field: claimed est déterminé par la présence de claimedAt
-questProgressSchema.virtual('claimed').get(function () {
+questSchema.virtual('claimed').get(function () {
   return this.claimedAt !== undefined
 })
 
-const QuestProgressModel: Model<IQuestProgressDocument> = models.QuestProgress ?? model('QuestProgress', questProgressSchema)
+const QuestModel: Model<IQuestDocument> = models.Quest ?? model('Quest', questSchema)
 
-export default QuestProgressModel
+export default QuestModel
