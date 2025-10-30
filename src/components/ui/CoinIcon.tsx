@@ -15,7 +15,7 @@ interface CoinIconProps {
 export default function CoinIcon ({ size, className }: CoinIconProps): ReactNode {
   return (
     <img
-      src='./coin.svg'
+      src='/coin.svg'
       alt='Coin icon'
       width={size}
       height={size}
