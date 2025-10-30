@@ -14,7 +14,7 @@ export default function HeroSection (): ReactNode {
         </p>
         <div className='mt-8 flex flex-col sm:flex-row gap-4 sm:items-center'>
           <Link href='/sign-up'>
-            <Button className='sm:w-auto'>Commencer gratuitement</Button>
+            <Button>Commencer gratuitement</Button>
           </Link>
           <Link href='/sign-in' className='sm:w-auto text-white/80 hover:text-white underline decoration-white/40'>
             J'ai déjà un compte
