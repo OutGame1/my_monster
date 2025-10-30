@@ -8,6 +8,7 @@ interface ButtonProps extends PropsWithChildren {
   disabled?: boolean
   onClick?: () => void
   variant?: VariantType
+  width?: 'full' | 'fit'
   color?: ColorType
 }
 
@@ -45,9 +46,10 @@ export default function Button ({
   disabled,
   onClick,
   variant = 'primary',
+  width = 'full',
   color = 'blood'
 }: ButtonProps): ReactNode {
-  const baseStyles = 'flex items-center justify-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-102 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed text-lg'
+  const baseStyles = `flex items-center justify-center w-${width} gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-102 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed text-lg`
   const colorClasses = colorMap[color][variant]
 
   return (

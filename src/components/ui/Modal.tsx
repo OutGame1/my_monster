@@ -94,22 +94,18 @@ export default function Modal ({
               <Button
                 variant='secondary'
                 onClick={onClose}
+                width='fit'
               >
                 Fermer
               </Button>
             )}
             {onConfirm !== undefined && (
-              <button
+              <Button
                 onClick={onConfirm}
                 disabled={isConfirmDisabled}
-                className={`flex-1 py-3 px-6 rounded-lg font-semibold transition-all duration-200 transform hover:scale-102 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed text-lg ${
-                  isConfirmDisabled
-                    ? 'bg-gray-300 text-gray-500'
-                    : 'bg-blood-500 hover:bg-blood-600 text-white shadow-lg hover:shadow-xl'
-                }`}
               >
                 {confirmText}
-              </button>
+              </Button>
             )}
           </div>
         )}
