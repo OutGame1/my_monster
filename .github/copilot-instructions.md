@@ -4,23 +4,40 @@
 This is a Next.js 16.0.0 project using the App Router architecture, built for a school project (My Digital School). It's a Tamagotchi-style application using React 19, TypeScript, and Tailwind CSS 4 with custom color palette.
 
 ### Game Mechanics
-- **Wallet System**: Each user has a separate `Wallet` document (default balance: 100 coins)
+- **Wallet System**: Each user has a separate `Wallet` document (default balance: 25 coins)
   - Wallet is created automatically on first access via `getWallet()` server action
-  - Each monster action rewards coins: 1 coins (base) or 2 coins (when action matches monster state)
-  - Coin counter in header animates when coins are earned
+  - Each monster action rewards coins: 1 coin (base) or 2 coins (when action matches monster state)
+  - **Total Earned Tracking**: `totalEarned` field tracks cumulative coins earned (never decreases)
+  - Coin counter in header animates when coins are earned (see `CoinBadge` component)
   - Wallet stored in separate collection, not on user document
+  - Balance updates via `updateWalletBalance(amount)` - auto-increments `totalEarned` on positive amounts
 - **XP System**: Monsters gain experience and level up
   - Each action awards 25 XP
   - Level-up formula: `maxXp = 100 * (level ^ 1.5)`
-  - Level-up triggers a dramatic full-screen celebration modal
+  - Level-up triggers a dramatic full-screen celebration modal (`LevelUpModal`)
 - **Monster States**: `happy | sad | gamester | angry | hungry | sleepy`
   - Actions that match the current state give double coin rewards
   - All actions return monster to `happy` state
+  - Five action types: `feed`, `play`, `comfort`, `calm`, `lullaby`
+- **Quest System**: Daily quests and achievements with progress tracking
+  - **Daily Quests**: Reset daily, simple objectives (5-12 coins rewards)
+  - **Achievements**: Permanent milestones with cumulative progress tracking
+  - Quest types: `action_count`, `ownership_count`, `reach_coins`
+  - Progress stored in `Quest` model (renamed from `quest-progress`)
+  - Coin achievements based on `totalEarned`, not current balance
+  - Claimable quests show visual indicators (ring styling)
 
 ## Tech Stack & Key Dependencies
 - **Framework**: Next.js 16.0.0 with App Router and Turbopack
 - **Language**: TypeScript with strict mode enabled
 - **Styling**: Tailwind CSS 4 with custom color themes
+- **UI Utilities**: `classnames` library for conditional CSS class management
+- **Database**: MongoDB with Mongoose ODM
+- **Authentication**: Better Auth for session management
+- **Icons**: Lucide React for consistent iconography
+- **Animations**: Framer Motion for advanced animations
+- **Notifications**: React Toastify for user feedback
+- **Validation**: Zod for schema validation
 - **Fonts**: Jersey 10 & Geist Mono from Google Fonts
 - **Linting**: ts-standard for TypeScript linting
 
@@ -40,9 +57,33 @@ npm run lint
 
 ### File Structure
 - `src/app/` - Next.js App Router pages and layouts
+  - `src/app/app/` - Main dashboard and monster management
+  - `src/app/profile/` - User profile page with wallet statistics
+  - `src/app/quests/` - Quest system page (daily quests & achievements)
+  - `src/app/buy-coins/` - Coin shop page
+  - `src/app/sign-in/` & `src/app/sign-up/` - Authentication pages (redirect if logged in)
 - `src/components/` - Reusable React components
-- `src/services/` - Service layer (currently empty, planned for Tamagotchi logic)
+  - `src/components/ui/` - Base UI components (Button, Card, Modal, Header, CoinBadge, CoinIcon, etc.)
+  - `src/components/monster/` - Monster-specific components (Avatar, Display, Actions, LevelUpModal)
+  - `src/components/dashboard/` - Dashboard components (MonsterCard, MonstersGrid)
+  - `src/components/quests/` - Quest components (QuestCard, QuestsContent)
+  - `src/components/shop/` - Shop components (CoinPackage, BuyCoinsContent)
+  - `src/components/profile/` - Profile components (ProfileContent)
+- `src/actions/` - Server actions for data mutations
+  - `monsters.actions.ts` - Monster CRUD and action handling
+  - `wallet.actions.ts` - Wallet balance management
+  - `quests.actions.ts` - Quest progress tracking and rewards
+- `src/db/` - Database models and connection
+  - `src/db/models/` - Mongoose schemas (monster, wallet, quest)
+- `src/lib/` - Shared utilities and configurations
+  - `src/lib/serializers/` - Data serializers for client transfer
+  - `src/lib/utils.ts` - Utility functions (count, cn)
+- `src/config/` - Configuration files
+  - `monsters.config.ts` - Monster generation parameters
+  - `rewards.config.ts` - Reward calculation constants
+  - `quests.config.ts` - Quest definitions and objectives
 - `specs/` - Project specifications (PDF documentation)
+- `public/` - Static assets (coin.svg)
 
 ### Component Patterns
 Components follow a functional approach with explicit TypeScript interfaces:
@@ -70,7 +111,21 @@ export default function Button ({
 
 ### Styling Conventions
 - **Custom Color Palette**: Uses `blood`, `tolopea`, `aqua-forest`, `golden-fizz`, and `seance` color scales defined in `globals.css`
-- **Component Styling**: Utility functions for size/variant mapping (see `getSize()` and `getVariant()` in Button component)
+- **Component Styling**: 
+  - Use `classnames` library (imported as `cn`) for conditional CSS class management
+  - **CRITICAL**: Never use template literals for dynamic Tailwind classes (e.g., `from-${color}-400`)
+  - **Instead**: Create color mapping objects with complete class strings for Tailwind purging
+  - Example pattern:
+    ```tsx
+    import cn from 'classnames'
+    
+    const colorClasses = {
+      tolopea: 'bg-tolopea-500',
+      blood: 'bg-blood-500'
+    }
+    
+    <div className={cn('base-class', { 'active-class': active }, colorClasses[color])} />
+    ```
 - **Responsive Design**: Mobile-first approach with `sm:` breakpoints
 - **Animations**: Custom keyframe animations for monster interactions (wave-arms, wiggle-arms, shake-arms-hungry, chomp-mouth, gaming-eyes, bounce-body, tears)
 
@@ -134,26 +189,135 @@ export default function Button ({
 
 ### Database & Data Handling
 - **Mongoose Queries**: Use `.lean()` method to convert Mongoose documents to plain JavaScript objects
-- **No Custom Serializers**: Avoid creating serializer/deserializer utilities for database models; rely on Mongoose's native `.lean()` for clean data transfer
-- **Type Casting**: When using `.lean()`, the result is supposed to be the appropriate TypeScript interface. Use casting only when strictly necessary.
-- **Example Pattern**: `const monster = await MonsterModel.findById(id).lean()`
-- **Wallet Pattern**: Use separate Wallet collection instead of storing credits on user document. Access via `getWallet()` which auto-creates if missing.
-- **Wallet Updates**: Use `updateWalletBalance(amount)` for atomic balance updates with upsert support
+- **Serializers**: Use dedicated serializer functions in `src/lib/serializers/` for converting Mongoose documents to client-safe objects
+  - `monster.serializer.ts` - Serializes monster documents with traits
+  - `wallet.serializer.ts` - Serializes wallet documents with balance and totalEarned
+  - `quest.serializer.ts` - Serializes quest progress documents (renamed from quest-progress)
+- **Type Casting**: When using `.lean()`, cast to the appropriate TypeScript interface
+- **Example Pattern**: 
+  ```ts
+  const monster = await MonsterModel.findById(id).lean()
+  return monsterSerializer(monster)
+  ```
+- **Wallet Pattern**: Use separate Wallet collection instead of storing credits on user document
+  - Access via `getWallet(ownerId)` which auto-creates if missing (default: 25 coins, 25 totalEarned)
+  - Updates via `updateWalletBalance(amount)` with automatic `totalEarned` tracking
+  - Zero-amount updates are no-op (early return)
+- **Database Connection**: Conditional connection in `src/db/index.ts` - only connects when needed
 
 ### Implementation Checklist
 - **Design First**: Capture the intended responsibility, collaborators, and dependencies before coding; validate the design against SOLID and Clean Architecture boundaries.
 - **Enforce Abstractions**: Introduce interfaces or type aliases at layer boundaries and depend on them instead of concrete implementations.
-- **Keep Layers Pure**: Prohibit presentation components from importing domain or infrastructure code directly; rely on application-level adapters housed in `src/services/`.
+- **Keep Layers Pure**: Prohibit presentation components from importing domain or infrastructure code directly; rely on server actions in `src/actions/`.
 - **Traceability**: Document how each new module maps to its domain concept with a short comment or README snippet when the rationale is non-trivial.
 - **Testing Strategy**: Prefer fast unit tests around pure domain logic, component tests for UI behaviour, and adapters/tests at boundaries to keep regression risk low.
 - **Refinement Loop**: After implementation, review the change by explicitly checking SRP adherence, dependency direction, naming clarity, and absence of duplications or magic values.
+- **Utility Functions**: Extract reusable logic into `src/lib/utils.ts` (e.g., `count()` for array filtering, `cn()` for classnames)
+
+## Utility Functions & Helpers
+
+### `src/lib/utils.ts`
+Contains generic utility functions used across the application:
+
+- **`count<T>(array: T[], predicate: (item: T) => boolean, thisArg?: any): number`**
+  - Counts elements in an array matching a predicate function
+  - More efficient than `filter().length` as it doesn't create intermediate arrays
+  - Example: `count(quests, q => q.progress.completed && !q.progress.claimed)`
+  - The `thisArg` parameter uses `any` type as it's a dynamic context that depends on user implementation
+
+- **`cn(...classes)`** 
+  - Re-export of `classnames` library for conditional CSS class management
+  - Use instead of template literals for dynamic classes
+  - Example: `cn('base-class', isActive && 'active-class')`
+
+## Configuration Files
+
+### `src/config/monsters.config.ts`
+- Monster generation parameters (sizes, colors, trait types)
+- Defines available body shapes, eye types, mouth types, arm types, leg types
+- Used by monster generator to create random monsters
+
+### `src/config/rewards.config.ts`
+- Reward calculation constants
+- Base coin rewards per action (1 coin base, 2 coins when matching state)
+- XP rewards per action (25 XP)
+- Level-up formula parameters
+
+### `src/config/quests.config.ts`
+- Complete quest definitions (daily quests + achievements)
+- **Daily Quests**: 8 quests with 5-12 coin rewards
+  - Simple objectives: feed, play, comfort, calm, lullaby monsters
+  - Reset daily for recurring engagement
+- **Achievements**: 29 permanent milestones
+  - Action count tiers: 250/500/1000 for each action type (feed, play, comfort, calm, lullaby)
+  - Ownership quests: 1/3/5 monsters
+  - Coin milestones: 500/1000/2500/5000 coins earned (10% cashback rewards)
+  - Progressive icon usage for visual hierarchy
+- Quest types: `daily` | `achievement`
+- Objective types: `action_count` | `ownership_count` | `reach_coins`
+
+## Recent Development History
+
+### Authentication & Routing Improvements
+- **Sign-in/Sign-up Protection**: Auth pages now redirect to `/app` if user is already logged in (prevents duplicate sessions)
+- **Profile Page**: Created comprehensive user profile with account info and logout functionality
+- **Header Navigation**: Updated with profile link and wallet display
+
+### Coin System & Shop
+- **Coin Icon**: Custom SVG icon component (`CoinIcon.tsx`) with coin.svg asset
+- **CoinBadge**: Animated coin counter in header (renamed from `CreditBadge`)
+- **Buy Coins Page**: Complete shop interface with purchasable coin packages
+- **CoinPackage Component**: Reusable card for displaying coin bundles with pricing
+- **Wallet Balance**: Reduced default from 100 to 25 coins for better game balance
+- **Conditional DB Connection**: Database only connects when needed (performance optimization)
+
+### Quest System
+- **Quest Models**: Renamed from `quest-progress` to `quest` for clarity
+- **Quest Types**: Daily quests (reset daily) and achievements (permanent)
+- **Quest Progress Tracking**: Automatic progress updates via server actions
+- **Quest Claiming**: Users can claim rewards for completed quests
+- **Quest Page**: Full-featured UI with tabs for daily/achievements
+- **Visual Indicators**: Ring styling on claimable quests
+- **Action Hooks**: Monster actions automatically check and update quest progress
+
+### Wallet Enhancements
+- **Total Earned Tracking**: New `totalEarned` field tracks cumulative coins (never decreases)
+- **Coin Achievements**: Based on `totalEarned` rather than current balance
+- **Auto-increment**: `updateWalletBalance()` automatically updates `totalEarned` on gains
+- **Profile Statistics**: Wallet stats section shows both current balance and total earned
+- **Zero-amount Guard**: No-op for zero-amount wallet updates (performance)
+
+### Configuration & Architecture
+- **Config Files**: Extracted magic numbers to dedicated config files
+  - `monsters.config.ts` - Monster generation parameters
+  - `rewards.config.ts` - Reward calculation constants  
+  - `quests.config.ts` - Quest definitions (8 daily + 29 achievements)
+- **Serializers**: Proper serializer pattern for all database models
+- **Utility Functions**: `count()` helper for efficient array filtering
+
+### UI/UX Improvements
+- **classnames Integration**: Replaced template literals with `cn()` utility across all components
+- **Tailwind Dynamic Classes**: Fixed dynamic class generation with complete class mappings
+- **Button Variants**: `width` prop added for flexible button sizing
+- **Modal Integration**: Button component properly integrated in Modal footer
+- **SectionTitle Component**: Reusable section headers across pages
+
+### Code Quality
+- **Consistent Imports**: `import cn from 'classnames'` pattern
+- **Type Safety**: Explicit interfaces for all server action returns
+- **Documentation**: French JSDoc comments for utility functions
+- **Linting**: All code follows ts-standard conventions
 
 ## Next Steps / Incomplete Areas
-- `src/services/` directory is empty - likely for Tamagotchi game logic
-- Layout uses generic "Create Next App" metadata - needs project-specific updates
-- Only basic Button component exists - UI component library needs expansion
+- `src/services/` directory is empty - likely for future Tamagotchi logic extraction
+- Payment integration for coin purchases (shop is UI-only currently)
+- Quest reset mechanism for daily quests (needs cron job or similar)
+- Achievement notification system when unlocked
 
 ## File References
-- **Main Page**: `src/app/page.tsx` - Shows Button component variations
-- **Component Example**: `src/components/button.tsx` - Reference for component patterns
-- **Styling**: `src/app/globals.css` - Custom color definitions and theme setup
+- **Main Dashboard**: `src/app/app/page.tsx` - Monster grid and create form
+- **Quest System**: `src/app/quests/page.tsx` - Daily quests and achievements
+- **Profile**: `src/app/profile/page.tsx` - User account and wallet stats
+- **Shop**: `src/app/buy-coins/page.tsx` - Coin purchase packages
+- **Component Library**: `src/components/ui/` - Reusable UI components
+- **Styling**: `src/app/globals.css` - Custom color definitions and animations
