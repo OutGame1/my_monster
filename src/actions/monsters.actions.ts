@@ -1,35 +1,15 @@
 'use server'
 
 import { connectMongooseToDatabase } from '@/db'
-import Monster, { monsterBaseXp, type MonsterState } from '@/db/models/monster.model'
+import Monster, { type MonsterState } from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { Types } from 'mongoose'
 import monsterSerizalizer, { type ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import { updateWalletBalance } from './wallet.actions'
 import { generateMonsterTraits } from '@/monster/generator'
-
-/**
- * Calcule le coût de création d'un nouveau monstre côté serveur.
- * Utilise une progression logarithmique afin que la dépense reste raisonnable.
- *
- * Formule : `cost = floor(100 * log2(monsterCount + 1))`
- * - 1er monstre (0 existants) : 0 pièce
- * - 2e monstre (1 existant) : 100 pièces
- * - 3e monstre (2 existants) : 158 pièces
- * - 4e monstre (3 existants) : 200 pièces
- * - 5e monstre (4 existants) : 232 pièces
- *
- * @param {number} currentMonsterCount Nombre de monstres déjà possédés par l'utilisateur.
- * @returns {Promise<number>} Coût en pièces pour créer le prochain monstre.
- */
-export async function calculateMonsterCreationCost (currentMonsterCount: number): Promise<number> {
-  if (currentMonsterCount === 0) {
-    return 0 // Le premier monstre est offert
-  }
-
-  return Math.floor(100 * Math.log2(currentMonsterCount + 1))
-}
+import { calculateMaxXp, calculateMonsterCreationCost } from '@/config/monsters.config'
+import { BASE_COIN_REWARD, MATCHED_STATE_COIN_REWARD, XP_REWARD } from '@/config/rewards.config'
 
 /**
  * Crée un nouveau monstre pour l'utilisateur actuellement authentifié.
@@ -53,7 +33,7 @@ export async function createMonster (monsterName: string): Promise<number> {
 
   // Comptage des monstres existants pour déterminer le coût
   const currentMonsterCount = await Monster.countDocuments({ ownerId: session.user.id }).exec()
-  const creationCost = await calculateMonsterCreationCost(currentMonsterCount)
+  const creationCost = calculateMonsterCreationCost(currentMonsterCount)
 
   // Débit des pièces si ce n'est pas le premier monstre (validation côté serveur)
   if (creationCost > 0) {
@@ -137,28 +117,6 @@ export async function getMonsterById (_id: string): Promise<ISerializedMonster |
     return null
   }
 }
-
-/**
- * Calcule le capital d'expérience maximum pour un niveau donné selon la formule
- * `monsterBaseXp * (level ^ 1.5)` et arrondit à l'entier inférieur.
- *
- * @param {number} level Niveau actuel du monstre.
- * @returns {number} Seuil d'expérience à atteindre pour le prochain niveau.
- */
-function calculateMaxXp (level: number): number {
-  return Math.floor(monsterBaseXp * Math.pow(level, 1.5))
-}
-
-/**
- * Récompenses en pièces pour les actions : base à 10, doublée (20) si l'action correspond à l'état du monstre.
- */
-const BASE_COIN_REWARD = 10
-const MATCHED_STATE_COIN_REWARD = 20
-
-/**
- * Récompense d'expérience accordée à chaque action utilisateur.
- */
-const XP_REWARD = 25
 
 export type ActionType = 'feed' | 'play' | 'comfort' | 'calm' | 'lullaby'
 

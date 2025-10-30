@@ -1,4 +1,5 @@
 import { type Document, Schema, models, model, Types, Model } from 'mongoose'
+import { MONSTER_BASE_XP } from '@/config/monsters.config'
 
 export type MonsterState = 'happy' | 'sad' | 'gamester' | 'angry' | 'hungry' | 'sleepy'
 export type MonsterBodyShape = 'round' | 'pear' | 'blocky'
@@ -78,8 +79,6 @@ const monsterTraitsSchema = new Schema<IMonsterTraitsDocument>({
   }
 }, { _id: false })
 
-export const monsterBaseXp = 100
-
 const monsterSchema = new Schema<IMonsterDocument>({
   name: {
     type: String,
@@ -98,7 +97,7 @@ const monsterSchema = new Schema<IMonsterDocument>({
   maxXp: {
     type: Number,
     required: false,
-    default: monsterBaseXp
+    default: MONSTER_BASE_XP
   },
   traits: {
     type: monsterTraitsSchema,
