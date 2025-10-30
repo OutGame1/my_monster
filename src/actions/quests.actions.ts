@@ -157,7 +157,7 @@ export async function checkOwnershipQuests (): Promise<void> {
 }
 
 /**
- * Vérifie et incrémente les quêtes de type "reach_coins" basées sur le solde actuel.
+ * Vérifie et incrémente les quêtes de type "reach_coins" basées sur le total de pièces gagnées.
  */
 export async function checkCoinsQuests (): Promise<void> {
   await connectMongooseToDatabase()
@@ -167,9 +167,9 @@ export async function checkCoinsQuests (): Promise<void> {
     return
   }
 
-  // Récupérer le solde actuel
+  // Récupérer le total de pièces gagnées
   const wallet = await getWallet(session.user.id)
-  const currentBalance = wallet.balance
+  const totalEarned = wallet.totalEarned
 
   // Itérer sur toutes les quêtes et filtrer par objectif
   for (const quest of allQuests) {
@@ -188,10 +188,10 @@ export async function checkCoinsQuests (): Promise<void> {
       })
     }
 
-    // Mettre à jour avec le solde réel
-    progress.progress = currentBalance
+    // Mettre à jour avec le total de pièces gagnées
+    progress.progress = totalEarned
 
-    if (currentBalance >= quest.target && progress.completedAt == null) {
+    if (totalEarned >= quest.target && !progress.completed) {
       progress.completedAt = new Date()
     }
 

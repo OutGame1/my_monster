@@ -46,12 +46,17 @@ export async function getWallet (ownerId: string): Promise<ISerializedWallet> {
 /**
  * Met à jour le solde du portefeuille de l'utilisateur actuellement connecté.
  * Ajoute ou soustrait un montant après validation de l'authentification et du solde disponible.
+ * Si le montant est positif (gain), il est aussi ajouté au total de pièces gagnées.
  *
  * @param {number} amount Montant à appliquer (positif pour créditer, négatif pour débiter).
  * @returns {Promise<number>} Nouveau solde disponible après mise à jour.
  * @throws {Error} Si l'utilisateur n'est pas authentifié ou si le solde deviendrait négatif.
  */
 export async function updateWalletBalance (amount: number): Promise<number> {
+  if (amount === 0) {
+    return 0
+  }
+
   await connectMongooseToDatabase()
 
   const session = await getSession()
@@ -67,6 +72,11 @@ export async function updateWalletBalance (amount: number): Promise<number> {
   }
 
   wallet.balance = newBalance
+
+  // Si on ajoute des pièces (gain), incrémenter aussi le total gagné
+  if (amount > 0) {
+    wallet.totalEarned += amount
+  }
 
   await wallet.save()
 
