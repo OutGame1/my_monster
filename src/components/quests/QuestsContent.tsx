@@ -1,19 +1,26 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import { type ReactNode, useState } from 'react'
 import type { QuestWithProgress } from '@/actions/quests.actions'
 import type { QuestType } from '@/config/quests.config'
 import SectionTitle from '@/components/ui/SectionTitle'
 import Card from '@/components/ui/Card'
 import QuestCard from './QuestCard'
 import { Clock, Trophy } from 'lucide-react'
-import { useState } from '@/lib/utils'
+import { count } from '@/lib/utils'
 import cn from 'classnames'
 
 interface QuestsContentProps {
   dailyQuests: QuestWithProgress[]
   achievements: QuestWithProgress[]
 }
+
+/**
+ * Renvoie un booléen indiquant si une quête est réclamable.
+ * @param q La quête
+ * @returns Un booléen indiquant si la quête est réclamable
+ */
+const claimable = (q: QuestWithProgress): boolean => q.progress.completed && !q.progress.claimed
 
 /**
  * Quests content component
@@ -25,13 +32,8 @@ export default function QuestsContent ({ dailyQuests, achievements }: QuestsCont
   const currentQuests = activeTab === 'daily' ? dailyQuests : achievements
 
   // Compte des quêtes à récupérer (complétées mais non réclamées)
-  const claimableDailyCount = dailyQuests.filter(
-    q => (q.progress?.completed ?? false) && !(q.progress?.claimed ?? false)
-  ).length
-
-  const claimableAchievementsCount = achievements.filter(
-    q => (q.progress?.completed ?? false) && !(q.progress?.claimed ?? false)
-  ).length
+  const claimableDailyCount = count(dailyQuests, claimable)
+  const claimableAchievementsCount = count(achievements, claimable)
 
   return (
     <div className='min-h-screen bg-gradient-to-br from-tolopea-50 via-aqua-forest-50 to-blood-50'>
