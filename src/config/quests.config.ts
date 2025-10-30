@@ -30,7 +30,7 @@ export interface QuestDefinition {
 
 /**
  * Quêtes quotidiennes - Se renouvellent chaque jour à minuit
- * Objectifs simples et rapides, faibles récompenses
+ * Objectifs simples et rapides, faibles récompenses pour encourager l'achat
  */
 export const dailyQuests: QuestDefinition[] = [
   {
@@ -38,7 +38,7 @@ export const dailyQuests: QuestDefinition[] = [
     type: 'daily',
     objective: 'feed_monsters',
     target: 3,
-    reward: 15,
+    reward: 5,
     title: 'Heure du goûter',
     description: 'Nourrir 3 fois vos monstres',
     icon: '🍖'
@@ -48,7 +48,7 @@ export const dailyQuests: QuestDefinition[] = [
     type: 'daily',
     objective: 'play_monsters',
     target: 3,
-    reward: 15,
+    reward: 5,
     title: 'Temps de jeu',
     description: 'Jouer 3 fois avec vos monstres',
     icon: '🎮'
@@ -58,7 +58,7 @@ export const dailyQuests: QuestDefinition[] = [
     type: 'daily',
     objective: 'care_different_monsters',
     target: 3,
-    reward: 20,
+    reward: 8,
     title: 'Dresseur attentionné',
     description: "S'occuper de 3 monstres différents",
     icon: '💝'
@@ -68,20 +68,50 @@ export const dailyQuests: QuestDefinition[] = [
     type: 'daily',
     objective: 'total_actions',
     target: 5,
-    reward: 25,
+    reward: 6,
     title: 'Journée active',
     description: 'Effectuer 5 actions au total',
     icon: '⚡'
   },
   {
-    id: 'daily_comfort_2',
+    id: 'daily_comfort_5',
     type: 'daily',
     objective: 'comfort_monsters',
-    target: 2,
-    reward: 10,
+    target: 5,
+    reward: 7,
     title: 'Câlins réconfortants',
-    description: 'Réconforter 2 fois vos monstres',
+    description: 'Réconforter 5 fois vos monstres',
     icon: '🤗'
+  },
+  {
+    id: 'daily_calm_3',
+    type: 'daily',
+    objective: 'calm_monsters',
+    target: 3,
+    reward: 5,
+    title: 'Apaisement du soir',
+    description: 'Calmer 3 fois vos monstres',
+    icon: '😌'
+  },
+  {
+    id: 'daily_lullaby_3',
+    type: 'daily',
+    objective: 'lullaby_monsters',
+    target: 3,
+    reward: 5,
+    title: 'Berceuse nocturne',
+    description: 'Bercer 3 fois vos monstres',
+    icon: '🌙'
+  },
+  {
+    id: 'daily_total_actions_10',
+    type: 'daily',
+    objective: 'total_actions',
+    target: 10,
+    reward: 12,
+    title: 'Super actif',
+    description: 'Effectuer 10 actions au total',
+    icon: '💪'
   }
 ]
 
@@ -92,7 +122,7 @@ export const dailyQuestIds = dailyQuests.map(q => q.id)
 
 /**
  * Succès (Achievements) - Objectifs permanents
- * Objectifs plus longs, récompenses plus importantes
+ * Objectifs plus difficiles, récompenses importantes pour encourager l'engagement long terme
  */
 export const achievements: QuestDefinition[] = [
   {
@@ -100,80 +130,240 @@ export const achievements: QuestDefinition[] = [
     type: 'achievement',
     objective: 'own_monsters',
     target: 5,
-    reward: 100,
+    reward: 30,
     title: 'Collectionneur débutant',
     description: 'Posséder 5 monstres',
-    icon: '👥'
+    icon: '🐾'
   },
   {
     id: 'achievement_own_10',
     type: 'achievement',
     objective: 'own_monsters',
     target: 10,
-    reward: 250,
+    reward: 75,
     title: 'Éleveur confirmé',
     description: 'Posséder 10 monstres',
     icon: '🏆'
   },
   {
-    id: 'achievement_feed_50',
+    id: 'achievement_own_15',
+    type: 'achievement',
+    objective: 'own_monsters',
+    target: 15,
+    reward: 150,
+    title: 'Maître éleveur',
+    description: 'Posséder 15 monstres',
+    icon: '👑'
+  },
+  {
+    id: 'achievement_feed_250',
     type: 'achievement',
     objective: 'feed_monsters',
-    target: 50,
-    reward: 150,
+    target: 250,
+    reward: 50,
     title: 'Chef cuisinier',
-    description: 'Nourrir 50 fois vos monstres',
+    description: 'Nourrir 250 fois vos monstres',
     icon: '👨‍🍳'
   },
   {
-    id: 'achievement_feed_100',
+    id: 'achievement_feed_500',
     type: 'achievement',
     objective: 'feed_monsters',
-    target: 100,
-    reward: 300,
+    target: 500,
+    reward: 150,
     title: 'Maître des festins',
-    description: 'Nourrir 100 fois vos monstres',
+    description: 'Nourrir 500 fois vos monstres',
     icon: '🍽️'
   },
   {
-    id: 'achievement_play_50',
+    id: 'achievement_feed_1000',
+    type: 'achievement',
+    objective: 'feed_monsters',
+    target: 1000,
+    reward: 250,
+    title: 'Grand banquet',
+    description: 'Nourrir 1000 fois vos monstres',
+    icon: '🍖'
+  },
+  {
+    id: 'achievement_play_250',
     type: 'achievement',
     objective: 'play_monsters',
-    target: 50,
-    reward: 150,
+    target: 250,
+    reward: 50,
     title: 'Compagnon de jeu',
-    description: 'Jouer 50 fois avec vos monstres',
+    description: 'Jouer 250 fois avec vos monstres',
     icon: '🎲'
   },
   {
-    id: 'achievement_total_actions_100',
+    id: 'achievement_play_500',
     type: 'achievement',
-    objective: 'total_actions',
-    target: 100,
-    reward: 200,
-    title: 'Dresseur dévoué',
-    description: 'Effectuer 100 actions au total',
-    icon: '🌟'
+    objective: 'play_monsters',
+    target: 500,
+    reward: 150,
+    title: 'Expert du divertissement',
+    description: 'Jouer 500 fois avec vos monstres',
+    icon: '🎭'
+  },
+  {
+    id: 'achievement_play_1000',
+    type: 'achievement',
+    objective: 'play_monsters',
+    target: 1000,
+    reward: 250,
+    title: 'Maître du jeu',
+    description: 'Jouer 1000 fois avec vos monstres',
+    icon: '🎪'
+  },
+  {
+    id: 'achievement_comfort_250',
+    type: 'achievement',
+    objective: 'comfort_monsters',
+    target: 250,
+    reward: 50,
+    title: 'Cœur tendre',
+    description: 'Réconforter 250 fois vos monstres',
+    icon: '💖'
+  },
+  {
+    id: 'achievement_comfort_500',
+    type: 'achievement',
+    objective: 'comfort_monsters',
+    target: 500,
+    reward: 150,
+    title: 'Ange gardien',
+    description: 'Réconforter 500 fois vos monstres',
+    icon: '😇'
+  },
+  {
+    id: 'achievement_comfort_1000',
+    type: 'achievement',
+    objective: 'comfort_monsters',
+    target: 1000,
+    reward: 250,
+    title: 'Maître des câlins',
+    description: 'Réconforter 1000 fois vos monstres',
+    icon: '💝'
+  },
+  {
+    id: 'achievement_calm_250',
+    type: 'achievement',
+    objective: 'calm_monsters',
+    target: 250,
+    reward: 50,
+    title: 'Pacificateur',
+    description: 'Calmer 250 fois vos monstres',
+    icon: '�️'
+  },
+  {
+    id: 'achievement_calm_500',
+    type: 'achievement',
+    objective: 'calm_monsters',
+    target: 500,
+    reward: 150,
+    title: 'Maître du zen',
+    description: 'Calmer 500 fois vos monstres',
+    icon: '🧘'
+  },
+  {
+    id: 'achievement_calm_1000',
+    type: 'achievement',
+    objective: 'calm_monsters',
+    target: 1000,
+    reward: 250,
+    title: 'Sage apaisement',
+    description: 'Calmer 1000 fois vos monstres',
+    icon: '☮️'
+  },
+  {
+    id: 'achievement_lullaby_250',
+    type: 'achievement',
+    objective: 'lullaby_monsters',
+    target: 250,
+    reward: 50,
+    title: 'Chanteur nocturne',
+    description: 'Bercer 250 fois vos monstres',
+    icon: '🌙'
+  },
+  {
+    id: 'achievement_lullaby_500',
+    type: 'achievement',
+    objective: 'lullaby_monsters',
+    target: 500,
+    reward: 150,
+    title: 'Virtuose des berceuses',
+    description: 'Bercer 500 fois vos monstres',
+    icon: '🎵'
+  },
+  {
+    id: 'achievement_lullaby_1000',
+    type: 'achievement',
+    objective: 'lullaby_monsters',
+    target: 1000,
+    reward: 250,
+    title: 'Maître des rêves',
+    description: 'Bercer 1000 fois vos monstres',
+    icon: '⭐'
   },
   {
     id: 'achievement_total_actions_500',
     type: 'achievement',
     objective: 'total_actions',
     target: 500,
-    reward: 500,
-    title: 'Légende vivante',
+    reward: 50,
+    title: 'Dresseur dévoué',
     description: 'Effectuer 500 actions au total',
-    icon: '👑'
+    icon: '🌟'
+  },
+  {
+    id: 'achievement_total_actions_1000',
+    type: 'achievement',
+    objective: 'total_actions',
+    target: 1000,
+    reward: 100,
+    title: 'Dresseur légendaire',
+    description: 'Effectuer 1000 actions au total',
+    icon: '✨'
+  },
+  {
+    id: 'achievement_total_actions_2000',
+    type: 'achievement',
+    objective: 'total_actions',
+    target: 2000,
+    reward: 175,
+    title: 'Légende vivante',
+    description: 'Effectuer 2000 actions au total',
+    icon: '🏅'
   },
   {
     id: 'achievement_level_10',
     type: 'achievement',
     objective: 'level_up_monster',
     target: 10,
-    reward: 200,
-    title: 'Entraîneur exQuestWithProgresspert',
+    reward: 100,
+    title: 'Entraîneur expert',
     description: 'Faire monter un monstre au niveau 10',
     icon: '📈'
+  },
+  {
+    id: 'achievement_level_20',
+    type: 'achievement',
+    objective: 'level_up_monster',
+    target: 20,
+    reward: 200,
+    title: 'Maître entraîneur',
+    description: 'Faire monter un monstre au niveau 20',
+    icon: '🚀'
+  },
+  {
+    id: 'achievement_coins_500',
+    type: 'achievement',
+    objective: 'reach_coins',
+    target: 500,
+    reward: 50,
+    title: 'Petit économe',
+    description: 'Gagner 500 pièces au total',
+    icon: '🪙'
   },
   {
     id: 'achievement_coins_1000',
@@ -182,17 +372,27 @@ export const achievements: QuestDefinition[] = [
     target: 1000,
     reward: 100,
     title: 'Économe',
-    description: 'Atteindre 1000 pièces',
+    description: 'Gagner 1000 pièces au total',
     icon: '💰'
+  },
+  {
+    id: 'achievement_coins_2500',
+    type: 'achievement',
+    objective: 'reach_coins',
+    target: 2500,
+    reward: 200,
+    title: 'Riche éleveur',
+    description: 'Gagner 2500 pièces au total',
+    icon: '🤑'
   },
   {
     id: 'achievement_coins_5000',
     type: 'achievement',
     objective: 'reach_coins',
     target: 5000,
-    reward: 500,
+    reward: 350,
     title: 'Millionnaire',
-    description: 'Atteindre 5000 pièces',
+    description: 'Gagner 5000 pièces au total',
     icon: '💎'
   }
 ]
