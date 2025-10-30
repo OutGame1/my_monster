@@ -4,6 +4,7 @@ export interface IWalletDocument extends Document {
   _id: Types.ObjectId
   ownerId: Types.ObjectId
   balance: number
+  totalEarned: number
   createdAt: Date
   updatedAt: Date
 }
@@ -18,6 +19,11 @@ const walletSchema = new Schema<IWalletDocument>({
   balance: {
     type: Number,
     default: 25,
+    min: 0
+  },
+  totalEarned: {
+    type: Number,
+    default: 0,
     min: 0
   }
 }, {

@@ -2,24 +2,26 @@
 
 import { useState, type ReactNode } from 'react'
 import type { Session } from '@/lib/auth-client'
+import type { ISerializedWallet } from '@/lib/serializers/wallet.serializer'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import SectionTitle from '@/components/ui/SectionTitle'
 import { authClient } from '@/lib/auth-client'
 import { useRouter } from 'next/navigation'
-import { User, Mail, Calendar, LogOut, Loader2 } from 'lucide-react'
+import { User, Mail, Calendar, LogOut, Loader2, Coins, TrendingUp } from 'lucide-react'
 
 interface ProfileContentProps {
   session: Session
+  wallet: ISerializedWallet
 }
 
 /**
  * Component displaying user profile information and account management options.
  *
- * @param {ProfileContentProps} props - Session data for the current user
+ * @param {ProfileContentProps} props - Session data and wallet information for the current user
  * @returns {ReactNode} Profile content with user information and logout
  */
-export default function ProfileContent ({ session }: ProfileContentProps): ReactNode {
+export default function ProfileContent ({ session, wallet }: ProfileContentProps): ReactNode {
   const router = useRouter()
   const [isSigningOut, setIsSigningOut] = useState(false)
 
@@ -96,6 +98,43 @@ export default function ProfileContent ({ session }: ProfileContentProps): React
               <div className='flex-1'>
                 <p className='text-sm font-semibold text-tolopea-600'>Membre depuis</p>
                 <p className='text-lg font-bold text-tolopea-900'>{formatDate(session.user.createdAt)}</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Wallet Statistics Section */}
+        <Card className='mb-6'>
+          <div className='mb-6'>
+            <h2 className='text-2xl font-bold text-tolopea-800 flex items-center gap-2'>
+              <Coins className='h-6 w-6' />
+              Statistiques de votre portefeuille
+            </h2>
+          </div>
+
+          <div className='space-y-6'>
+            {/* Current Balance */}
+            <div className='flex items-start gap-4'>
+              <div className='flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-golden-fizz-400 to-golden-fizz-600 shadow-lg'>
+                <Coins className='h-6 w-6 text-tolopea-900' />
+              </div>
+              <div className='flex-1'>
+                <p className='text-sm font-semibold text-tolopea-600'>Solde actuel</p>
+                <p className='text-lg font-bold text-tolopea-900'>{wallet.balance} pièces</p>
+              </div>
+            </div>
+
+            {/* Total Earned */}
+            <div className='flex items-start gap-4 border-t border-tolopea-100 pt-6'>
+              <div className='flex h-12 w-12 items-center justify-center rounded-full bg-aqua-forest-100'>
+                <TrendingUp className='h-6 w-6 text-aqua-forest-600' />
+              </div>
+              <div className='flex-1'>
+                <p className='text-sm font-semibold text-tolopea-600'>Total de pièces gagnées</p>
+                <p className='text-lg font-bold text-tolopea-900'>{wallet.totalEarned} pièces</p>
+                <p className='text-xs text-tolopea-500 mt-1'>
+                  Depuis le début de votre aventure
+                </p>
               </div>
             </div>
           </div>
