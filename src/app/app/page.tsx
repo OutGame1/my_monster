@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react'
 import DashboardContent from '@/components/dashboard/DashboardContent'
 import AppLayout from '@/components/navigation/AppLayout'
-import { calculateMonsterCreationCost, getMonsters } from '@/actions/monsters.actions'
+import { getMonsters } from '@/actions/monsters.actions'
+import { calculateMonsterCreationCost } from '@/config/monsters.config'
 import { getSession } from '@/lib/auth'
 import { redirect } from 'next/navigation'
 import { MonsterProvider } from '@/contexts/MonsterContext'
@@ -22,7 +23,7 @@ export default async function DashboardPage (): Promise<ReactNode> {
   // Récupération de tous les monstres appartenant à l'utilisateur connecté
   const monsters = await getMonsters()
 
-  const creationCost = await calculateMonsterCreationCost(monsters.length)
+  const creationCost = calculateMonsterCreationCost(monsters.length)
 
   return (
     <AppLayout>
