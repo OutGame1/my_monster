@@ -5,6 +5,7 @@ import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import { stateInfoMap } from './monster-state.utils'
 import { useRouter } from 'next/navigation'
+import cn from 'classnames'
 
 interface MonsterCardProps {
   monster: ISerializedMonster
@@ -54,7 +55,7 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
           </span>
 
           {/* State Badge */}
-          <span className={`rounded-full px-3 py-1 text-sm font-semibold ${color}`}>
+          <span className={cn('rounded-full px-3 py-1 text-sm font-semibold', color)}>
             {label} {emoji}
           </span>
         </div>

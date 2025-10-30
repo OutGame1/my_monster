@@ -2,6 +2,7 @@ import type { ReactNode } from 'react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import CoinIcon from '@/components/ui/CoinIcon'
+import cn from 'classnames'
 
 interface CoinPackageProps {
   id: string
@@ -31,6 +32,20 @@ export default function CoinPackage ({
   color,
   onPurchase
 }: CoinPackageProps): ReactNode {
+  // Map colors to complete Tailwind classes (required for purging)
+  const iconColorClasses = {
+    tolopea: 'bg-gradient-to-br from-tolopea-400 to-tolopea-600',
+    blood: 'bg-gradient-to-br from-blood-400 to-blood-600',
+    'aqua-forest': 'bg-gradient-to-br from-aqua-forest-400 to-aqua-forest-600',
+    'golden-fizz': 'bg-gradient-to-br from-golden-fizz-400 to-golden-fizz-600'
+  }
+
+  const priceColorClasses = {
+    tolopea: 'text-tolopea-700',
+    blood: 'text-blood-700',
+    'aqua-forest': 'text-aqua-forest-700',
+    'golden-fizz': 'text-golden-fizz-700'
+  }
   return (
     <div className='relative'>
       {/* Popular Badge */}
@@ -44,16 +59,18 @@ export default function CoinPackage ({
 
       {/* Card with optional popular styling */}
       <Card
-        className={`relative h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl ${
-          popular
-            ? 'ring-4 ring-blood-400 ring-offset-2'
-            : ''
-        }`}
+        className={cn(
+          'relative h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl',
+          { 'ring-4 ring-blood-400 ring-offset-2': popular }
+        )}
       >
         <div className='flex flex-col items-center space-y-6 text-center'>
           {/* Icon */}
           <div
-            className={`flex h-20 w-20 items-center justify-center rounded-full bg-gradient-to-br from-${color}-400 to-${color}-600 text-white shadow-lg`}
+            className={cn(
+              'flex h-20 w-20 items-center justify-center rounded-full text-white shadow-lg',
+              iconColorClasses[color]
+            )}
           >
             {icon}
           </div>
@@ -74,7 +91,7 @@ export default function CoinPackage ({
           </div>
 
           {/* Price - Smaller */}
-          <div className={`text-4xl font-semibold text-${color}-700`}>
+          <div className={cn('text-4xl font-semibold', priceColorClasses[color])}>
             {price.toFixed(2)}€
           </div>
 

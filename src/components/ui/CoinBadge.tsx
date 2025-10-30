@@ -4,6 +4,7 @@ import { useState, useEffect, type ReactNode } from 'react'
 import { useWallet } from '@/contexts/WalletContext'
 import Link from 'next/link'
 import CoinIcon from './CoinIcon'
+import cn from 'classnames'
 
 /**
  * Credit badge component
@@ -49,11 +50,18 @@ export default function CoinBadge (): ReactNode {
   return (
     <Link
       href='/buy-coins'
-      className={`group flex items-center gap-2 rounded-full bg-gradient-to-br from-golden-fizz-300 via-golden-fizz-400 to-golden-fizz-500 px-4 py-2 shadow-lg shadow-golden-fizz-500/30 ring-2 ring-golden-fizz-600/40 transition-all duration-300 hover:scale-110 hover:shadow-xl ${
+      className={cn(
+        'group flex items-center gap-2 rounded-full bg-gradient-to-br from-golden-fizz-300 via-golden-fizz-400 to-golden-fizz-500 px-4 py-2 shadow-lg shadow-golden-fizz-500/30 ring-2 ring-golden-fizz-600/40 transition-all duration-300 hover:scale-110 hover:shadow-xl',
         isAnimating ? 'scale-110 ring-4' : 'scale-100'
-      }`}
+      )}
     >
-      <CoinIcon size={20} className={`transition-transform group-hover:rotate-12 ${isAnimating ? 'animate-spin' : ''}`} />
+      <CoinIcon
+        size={20}
+        className={cn(
+          'transition-transform group-hover:rotate-12',
+          { 'animate-spin': isAnimating }
+        )}
+      />
       <span className='text-lg font-bold text-golden-fizz-900 transition-all group-hover:scale-105'>
         {displayCredit}
       </span>
