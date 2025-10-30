@@ -1,4 +1,4 @@
-import type { IQuestProgressDocument } from '@/db/models/quest-progress.model'
+import type { IQuestDocument } from '@/db/models/quest.model'
 
 export interface ISerializedQuestProgress {
   id: string
@@ -18,11 +18,11 @@ export interface ISerializedQuestProgress {
  * Sérialise un document Mongoose QuestProgress en objet JSON simple.
  * Convertit les ObjectId en chaînes et les dates en ISO strings.
  *
- * @param {IQuestProgressDocument} questProgress Document Mongoose à sérialiser.
+ * @param {IQuestDocument} questProgress Document Mongoose à sérialiser.
  * @returns {ISerializedQuestProgress} Objet sérialisé sans références Mongoose.
  */
-export default function questProgressSerializer (
-  questProgress: IQuestProgressDocument
+export default function questSerializer (
+  questProgress: IQuestDocument
 ): ISerializedQuestProgress {
   return {
     id: questProgress._id.toString(),
