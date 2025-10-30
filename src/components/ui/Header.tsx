@@ -4,7 +4,7 @@ import type { ReactNode } from 'react'
 import Link from 'next/link'
 import type { Session } from '@/lib/auth-client'
 import { usePathname } from 'next/navigation'
-import CreditBadge from './CreditBadge'
+import CoinBadge from './CoinBadge'
 
 interface HeaderProps {
   session: Session | null
@@ -73,7 +73,7 @@ export default function Header ({ session }: HeaderProps): ReactNode {
           {session !== null
             ? (
               <>
-                <CreditBadge />
+                <CoinBadge />
                 <div className='group relative'>
                   <Link
                     href='/profile'
