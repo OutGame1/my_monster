@@ -5,6 +5,7 @@ import Link from 'next/link'
 import type { Session } from '@/lib/auth-client'
 import { usePathname } from 'next/navigation'
 import CoinBadge from './CoinBadge'
+import cn from 'classnames'
 
 interface HeaderProps {
   session: Session | null
@@ -37,31 +38,34 @@ export default function Header ({ session }: HeaderProps): ReactNode {
           <nav className='hidden md:flex items-center gap-4'>
             <Link
               href='/app'
-              className={`rounded-lg px-6 py-3 text-base font-bold transition-all duration-300 ${
+              className={cn(
+                'rounded-lg px-6 py-3 text-base font-bold transition-all duration-300',
                 isActive('/app')
                   ? 'bg-gradient-to-r from-tolopea-500 to-tolopea-600 text-white shadow-lg'
                   : 'text-tolopea-700 hover:bg-tolopea-100'
-              }`}
+              )}
             >
               Mes monstres
             </Link>
             <Link
               href='/gallery'
-              className={`rounded-lg px-6 py-3 text-base font-bold transition-all duration-300 ${
+              className={cn(
+                'rounded-lg px-6 py-3 text-base font-bold transition-all duration-300',
                 isActive('/gallery')
                   ? 'bg-gradient-to-r from-blood-500 to-blood-600 text-white shadow-lg'
                   : 'text-tolopea-700 hover:bg-blood-100'
-              }`}
+              )}
             >
               Galerie
             </Link>
             <Link
               href='/quests'
-              className={`rounded-lg px-6 py-3 text-base font-bold transition-all duration-300 ${
+              className={cn(
+                'rounded-lg px-6 py-3 text-base font-bold transition-all duration-300',
                 isActive('/quests')
                   ? 'bg-gradient-to-r from-aqua-forest-500 to-aqua-forest-600 text-white shadow-lg'
                   : 'text-tolopea-700 hover:bg-aqua-forest-100'
-              }`}
+              )}
             >
               Quêtes
             </Link>

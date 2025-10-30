@@ -10,6 +10,7 @@ import { Check, Lock } from 'lucide-react'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/navigation'
 import { useWallet } from '@/contexts/WalletContext'
+import cn from 'classnames'
 
 interface QuestCardProps {
   quest: QuestWithProgress
@@ -59,9 +60,10 @@ export default function QuestCard ({ quest }: QuestCardProps): ReactNode {
   }
 
   return (
-    <Card className={`relative transition-all duration-300 hover:shadow-xl ${
-      completed && !claimed ? 'ring-2 ring-golden-fizz-500 ring-offset-2' : ''
-    }`}
+    <Card className={cn(
+      'relative transition-all duration-300 hover:shadow-xl',
+      completed && !claimed && 'ring-2 ring-golden-fizz-500 ring-offset-2'
+    )}
     >
       {/* Icon & Type Badge */}
       <div className='mb-4 flex items-start justify-between'>

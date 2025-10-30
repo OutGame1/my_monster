@@ -7,7 +7,8 @@ import SectionTitle from '@/components/ui/SectionTitle'
 import Card from '@/components/ui/Card'
 import QuestCard from './QuestCard'
 import { Clock, Trophy } from 'lucide-react'
-import { useState } from 'react'
+import { useState } from '@/lib/utils'
+import cn from 'classnames'
 
 interface QuestsContentProps {
   dailyQuests: QuestWithProgress[]
@@ -60,22 +61,24 @@ export default function QuestsContent ({ dailyQuests, achievements }: QuestsCont
         <div className='mb-8 flex gap-4'>
           <button
             onClick={() => { setActiveTab('daily') }}
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+            className={cn(
+              'flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300',
               activeTab === 'daily'
                 ? 'bg-gradient-to-r from-tolopea-500 to-tolopea-600 text-white shadow-lg'
                 : 'bg-white text-tolopea-700 hover:bg-tolopea-50'
-            }`}
+            )}
           >
             <Clock className='h-5 w-5' />
             Quêtes quotidiennes ({claimableDailyCount})
           </button>
           <button
             onClick={() => { setActiveTab('achievement') }}
-            className={`flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${
+            className={cn(
+              'flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-all duration-300',
               activeTab === 'achievement'
                 ? 'bg-gradient-to-r from-blood-500 to-blood-600 text-white shadow-lg'
                 : 'bg-white text-blood-700 hover:bg-blood-50'
-            }`}
+            )}
           >
             <Trophy className='h-5 w-5' />
             Succès ({claimableAchievementsCount})

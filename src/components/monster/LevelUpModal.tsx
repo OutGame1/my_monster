@@ -2,6 +2,7 @@
 
 import type { ReactNode } from 'react'
 import { useEffect, useState } from 'react'
+import cn from 'classnames'
 
 interface LevelUpModalProps {
   isOpen: boolean
@@ -33,18 +34,20 @@ export default function LevelUpModal ({ isOpen, monsterName, newLevel, onClose }
 
   return (
     <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center transition-all duration-300 ${
+      className={cn(
+        'fixed inset-0 z-[100] flex items-center justify-center transition-all duration-300',
         show ? 'opacity-100' : 'opacity-0'
-      }`}
+      )}
     >
       {/* Dark overlay */}
       <div className='absolute inset-0 bg-black/80 backdrop-blur-sm' />
 
       {/* Content */}
       <div
-        className={`relative z-10 transform transition-all duration-500 ${
+        className={cn(
+          'relative z-10 transform transition-all duration-500',
           show ? 'scale-100 opacity-100' : 'scale-50 opacity-0'
-        }`}
+        )}
       >
         <div className='relative'>
           {/* Glowing effect */}

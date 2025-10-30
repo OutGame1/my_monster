@@ -2,6 +2,7 @@
 
 import { type ReactNode, type MouseEvent, useEffect } from 'react'
 import Button from './Button'
+import cn from 'classnames'
 
 interface ModalProps {
   isOpen: boolean
@@ -67,7 +68,10 @@ export default function Modal ({
       onClick={handleBackdropClick}
     >
       <div
-        className={`bg-white rounded-2xl shadow-2xl ${sizeClasses[size]} w-full animate-slideUp max-h-[90vh] overflow-y-auto`}
+        className={cn(
+          'bg-white rounded-2xl shadow-2xl w-full animate-slideUp max-h-[90vh] overflow-y-auto',
+          sizeClasses[size]
+        )}
         role='dialog'
         aria-modal='true'
         aria-labelledby='modal-title'

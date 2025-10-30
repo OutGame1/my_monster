@@ -12,6 +12,7 @@ import Eyes from './parts/Eyes'
 import Mouth from './parts/Mouth'
 import Arms from './parts/Arms'
 import Legs from './parts/Legs'
+import cn from 'classnames'
 
 interface MonsterAvatarProps {
   traits: ISerializedMonsterTraits
@@ -34,7 +35,7 @@ export default function MonsterAvatar ({
       width={size}
       height={size}
       viewBox='0 0 200 200'
-      className={`block ${className}`}
+      className={cn('block', className)}
     >
       <g transform={`scale(${scale}) translate(${(100 - 100 * scale) / scale}, ${(100 - 100 * scale) / scale})`}>
         {/* Legs behind body */}

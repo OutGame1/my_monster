@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import Link from 'next/link'
 import Card from '@components/ui/Card'
+import cn from 'classnames'
 
 const floatingMonsters = [
   { className: 'bg-tolopea-100', top: '15%', left: '20%', delay: '0s' },
@@ -26,7 +27,7 @@ export default function AuthPageLayout ({
       {floatingMonsters.map(({ className, top, left, delay }) => (
         <div
           key={`${className}-${top}-${left}`}
-          className={`absolute w-24 h-24 ${className} rounded-full opacity-70 animate-float`}
+          className={cn('absolute w-24 h-24 rounded-full opacity-70 animate-float', className)}
           style={{
             top,
             left,
