@@ -1,64 +1,53 @@
 'use client'
 
 import type { ReactNode } from 'react'
+import { useEffect } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import SectionTitle from '@/components/ui/SectionTitle'
 import CoinPackage from './CoinPackage'
-import { Sparkles, Zap, Crown, Flame, Shield, Check } from 'lucide-react'
-
-interface CoinPackageData {
-  id: string
-  label: string
-  coins: number
-  price: number
-  icon: ReactNode
-  popular?: boolean
-  color: 'tolopea' | 'blood' | 'aqua-forest' | 'golden-fizz'
-}
-
-const packages: CoinPackageData[] = [
-  {
-    id: 'starter',
-    label: 'Petit Sac',
-    coins: 150,
-    price: 1,
-    icon: <Sparkles className='h-8 w-8' />,
-    color: 'tolopea'
-  },
-  {
-    id: 'popular',
-    label: 'Sac Magique',
-    coins: 350,
-    price: 2,
-    icon: <Zap className='h-8 w-8' />,
-    popular: true,
-    color: 'blood'
-  },
-  {
-    id: 'premium',
-    label: 'Coffre Royal',
-    coins: 1000,
-    price: 5,
-    icon: <Crown className='h-8 w-8' />,
-    color: 'aqua-forest'
-  },
-  {
-    id: 'ultimate',
-    label: 'Trésor Légendaire',
-    coins: 2500,
-    price: 10,
-    icon: <Flame className='h-8 w-8' />,
-    color: 'golden-fizz'
-  }
-]
+import { Zap, Shield, Check } from 'lucide-react'
+import { pricingPackages } from '@/config/pricing.config'
+import { createCheckoutSession } from '@/actions/stripe.actions'
+import { toast } from 'react-toastify'
 
 /**
  * Buy coins content component
  * Displays coin packages with prices and purchase options
  */
 export default function BuyCoinsContent (): ReactNode {
-  const handlePurchase = (packageId: string): void => {
-    // TODO: Implement Stripe payment integration
-    console.log('Purchase package:', packageId)
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
+  // Détection du retour après paiement Stripe
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment')
+
+    if (paymentStatus === 'success') {
+      toast.success('🎉 Paiement réussi ! Vos pièces ont été ajoutées à votre compte.')
+      // Nettoyer l'URL
+      router.replace('/buy-coins')
+    } else if (paymentStatus === 'cancelled') {
+      toast.info('Paiement annulé. Vous pouvez réessayer quand vous voulez.')
+      // Nettoyer l'URL
+      router.replace('/buy-coins')
+    }
+  }, [searchParams, router])
+
+  const handlePurchase = async (productId: string): Promise<void> => {
+    try {
+      const checkoutUrl = await createCheckoutSession(productId)
+
+      if (checkoutUrl === null) {
+        toast.error('Erreur lors de la création de la session de paiement')
+        return
+      }
+
+      // Rediriger vers Stripe Checkout
+      window.location.href = checkoutUrl
+    } catch (error) {
+      console.error('Payment error:', error)
+      toast.error('Erreur lors du paiement')
+    }
   }
 
   return (
@@ -72,17 +61,11 @@ export default function BuyCoinsContent (): ReactNode {
 
         {/* Coin Packages Grid */}
         <div className='mb-12 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4'>
-          {packages.map((pkg) => (
+          {Object.entries(pricingPackages).map(([productId, pkg]) => (
             <CoinPackage
-              key={pkg.id}
-              id={pkg.id}
-              label={pkg.label}
-              coins={pkg.coins}
-              price={pkg.price}
-              icon={pkg.icon}
-              popular={pkg.popular}
-              color={pkg.color}
-              onPurchase={handlePurchase}
+              key={productId}
+              pkg={pkg}
+              onPurchase={() => { void handlePurchase(productId) }}
             />
           ))}
         </div>

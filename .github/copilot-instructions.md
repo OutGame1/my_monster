@@ -173,6 +173,22 @@ export default function Button ({
 - **Pure Functions**: Prefer pure functions for utilities (see `getSize()` and `getVariant()` in Button)
 - **No Magic Numbers**: Use named constants for sizes, colors, and configuration values
 - **Consistent Formatting**: Follow ts-standard linting rules strictly
+- **🚨 STRICT EQUALITY OPERATORS**: 
+  - **ALWAYS use `===` and `!==`** for comparisons
+  - **NEVER use `==` or `!=`** - these are FORBIDDEN
+  - This applies to ALL comparisons: strings, numbers, booleans, null, undefined, objects
+  - Examples:
+    ```ts
+    // ✅ CORRECT
+    if (value === null) { }
+    if (completedAt !== null) { }
+    if (count === 0) { }
+    
+    // ❌ FORBIDDEN - DO NOT USE
+    if (value == null) { }  // WRONG
+    if (completedAt != null) { }  // WRONG
+    if (count == 0) { }  // WRONG
+    ```
 
 ### Clean Architecture Layers
 - **Presentation Layer**: `src/components/` - UI components with no business logic
@@ -245,6 +261,10 @@ Contains generic utility functions used across the application:
 
 ### `src/config/quests.config.ts`
 - Complete quest definitions (daily quests + achievements)
+- **Structure**: Uses Maps for O(1) lookup performance
+  - `dailyQuestsMap: Map<string, QuestDefinition>` - 8 daily quests indexed by ID
+  - `achievementsMap: Map<string, QuestDefinition>` - 29 achievements indexed by ID
+  - `getQuestById(id)` - Helper function using nullish coalescing across both maps
 - **Daily Quests**: 8 quests with 5-12 coin rewards
   - Simple objectives: feed, play, comfort, calm, lullaby monsters
   - Reset daily for recurring engagement
@@ -255,6 +275,19 @@ Contains generic utility functions used across the application:
   - Progressive icon usage for visual hierarchy
 - Quest types: `daily` | `achievement`
 - Objective types: `action_count` | `ownership_count` | `reach_coins`
+
+### `src/config/pricing.config.ts`
+- Stripe pricing configuration with dual access patterns (iteration + lookup)
+- **Structure**: Array source of truth + Maps for fast lookups
+  - `pricingPackages: PricingPackage[]` - Source of truth array with 4 packages (150, 350, 1000, 2500 coins)
+  - `pricingByCoins: Map<number, PricingPackage>` - O(1) lookup by coin amount
+  - `pricingByProductId: Map<string, PricingPackage>` - O(1) lookup by Stripe Product ID
+  - `getPackageByCoins(coins)` - Returns package or null using Map.get()
+  - `getCoinsByProductId(productId)` - Returns coins or null using Map.get()
+- **Usage**: 
+  - UI components iterate over `pricingPackages` array for display
+  - Server actions use Maps for fast validation (checkout creation, webhook processing)
+- **Real Product IDs**: Contains production Stripe Product IDs (prod_TMDrndEWtgsT5V, etc.)
 
 ## Recent Development History
 
@@ -270,6 +303,10 @@ Contains generic utility functions used across the application:
 - **CoinPackage Component**: Reusable card for displaying coin bundles with pricing
 - **Wallet Balance**: Reduced default from 100 to 25 coins for better game balance
 - **Conditional DB Connection**: Database only connects when needed (performance optimization)
+- **Stripe Integration**: Full payment processing with Stripe Checkout
+  - Real Product IDs configured in pricing.config.ts
+  - Webhook handler for secure payment verification
+  - Automatic wallet balance update on successful payment
 
 ### Quest System
 - **Quest Models**: Renamed from `quest-progress` to `quest` for clarity
@@ -279,6 +316,8 @@ Contains generic utility functions used across the application:
 - **Quest Page**: Full-featured UI with tabs for daily/achievements
 - **Visual Indicators**: Ring styling on claimable quests
 - **Action Hooks**: Monster actions automatically check and update quest progress
+- **Maps Optimization**: Uses Map data structures for O(1) quest lookups by ID
+- **Virtual Fields**: `completed` field is virtual, derived from `completedAt !== null`
 
 ### Wallet Enhancements
 - **Total Earned Tracking**: New `totalEarned` field tracks cumulative coins (never decreases)
@@ -286,14 +325,20 @@ Contains generic utility functions used across the application:
 - **Auto-increment**: `updateWalletBalance()` automatically updates `totalEarned` on gains
 - **Profile Statistics**: Wallet stats section shows both current balance and total earned
 - **Zero-amount Guard**: No-op for zero-amount wallet updates (performance)
+- **Animation System**: Centralized in WalletContext with actualBalance/balance states
+  - Coin change animations (gain up/green, loss down/red)
+  - Smooth counter animation over 1 second (30 steps)
+  - Visual feedback for all coin transactions
 
 ### Configuration & Architecture
 - **Config Files**: Extracted magic numbers to dedicated config files
   - `monsters.config.ts` - Monster generation parameters
   - `rewards.config.ts` - Reward calculation constants  
-  - `quests.config.ts` - Quest definitions (8 daily + 29 achievements)
+  - `quests.config.ts` - Quest definitions with Maps (8 daily + 29 achievements)
+  - `pricing.config.ts` - Stripe pricing with dual structure (array + Maps)
 - **Serializers**: Proper serializer pattern for all database models
 - **Utility Functions**: `count()` helper for efficient array filtering
+- **Performance Optimization**: Maps for O(1) lookups instead of O(n) filters/finds
 
 ### UI/UX Improvements
 - **classnames Integration**: Replaced template literals with `cn()` utility across all components
@@ -310,9 +355,11 @@ Contains generic utility functions used across the application:
 
 ## Next Steps / Incomplete Areas
 - `src/services/` directory is empty - likely for future Tamagotchi logic extraction
-- Payment integration for coin purchases (shop is UI-only currently)
 - Quest reset mechanism for daily quests (needs cron job or similar)
 - Achievement notification system when unlocked
+- Stripe testing with Stripe CLI (see STRIPE_IMPLEMENTATION.md)
+- Payment success/cancel redirect handling with toast notifications
+- Loading states for CoinPackage buttons during checkout
 
 ## File References
 - **Main Dashboard**: `src/app/app/page.tsx` - Monster grid and create form

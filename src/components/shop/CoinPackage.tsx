@@ -1,18 +1,22 @@
 import type { ReactNode } from 'react'
+import type { PricingPackage } from '@/config/pricing.config'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import CoinIcon from '@/components/ui/CoinIcon'
+import { Sparkles, Zap, Crown, Flame } from 'lucide-react'
 import cn from 'classnames'
 
 interface CoinPackageProps {
-  id: string
-  label: string
-  coins: number
-  price: number
-  icon: ReactNode
-  popular?: boolean
-  color: 'tolopea' | 'blood' | 'aqua-forest' | 'golden-fizz'
-  onPurchase: (id: string) => void
+  pkg: PricingPackage
+  onPurchase: () => void
+}
+
+// Map pour les icônes Lucide
+const iconMap: Record<string, ReactNode> = {
+  Sparkles: <Sparkles className='h-8 w-8' />,
+  Zap: <Zap className='h-8 w-8' />,
+  Crown: <Crown className='h-8 w-8' />,
+  Flame: <Flame className='h-8 w-8' />
 }
 
 /**
@@ -23,13 +27,7 @@ interface CoinPackageProps {
  * @returns {ReactNode} Card displaying coin package details
  */
 export default function CoinPackage ({
-  id,
-  label,
-  coins,
-  price,
-  icon,
-  popular = false,
-  color,
+  pkg,
   onPurchase
 }: CoinPackageProps): ReactNode {
   // Map colors to complete Tailwind classes (required for purging)
@@ -46,10 +44,11 @@ export default function CoinPackage ({
     'aqua-forest': 'text-aqua-forest-700',
     'golden-fizz': 'text-golden-fizz-700'
   }
+
   return (
     <div className='relative'>
       {/* Popular Badge */}
-      {popular && (
+      {pkg.popular && (
         <div className='absolute -top-3 left-1/2 z-10 -translate-x-1/2 transform'>
           <div className='rounded-full bg-gradient-to-r from-blood-500 to-blood-600 px-4 py-1 text-xs font-bold text-white shadow-lg ring-2 ring-blood-300'>
             ⭐ POPULAIRE
@@ -61,7 +60,7 @@ export default function CoinPackage ({
       <Card
         className={cn(
           'relative h-full transition-all duration-300 hover:scale-105 hover:shadow-2xl',
-          { 'ring-4 ring-blood-400 ring-offset-2': popular }
+          { 'ring-4 ring-blood-400 ring-offset-2': pkg.popular }
         )}
       >
         <div className='flex flex-col items-center space-y-6 text-center'>
@@ -69,16 +68,16 @@ export default function CoinPackage ({
           <div
             className={cn(
               'flex h-20 w-20 items-center justify-center rounded-full text-white shadow-lg',
-              iconColorClasses[color]
+              iconColorClasses[pkg.color]
             )}
           >
-            {icon}
+            {iconMap[pkg.icon]}
           </div>
 
           {/* Label */}
           <div>
             <h3 className='text-xl font-bold text-tolopea-900'>
-              {label}
+              {pkg.label}
             </h3>
           </div>
 
@@ -86,20 +85,20 @@ export default function CoinPackage ({
           <div className='flex items-center gap-2'>
             <CoinIcon />
             <span className='text-4xl font-black text-tolopea-900'>
-              {coins.toLocaleString()}
+              {pkg.coins.toLocaleString()}
             </span>
           </div>
 
           {/* Price - Smaller */}
-          <div className={cn('text-4xl font-semibold', priceColorClasses[color])}>
-            {price.toFixed(2)}€
+          <div className={cn('text-4xl font-semibold', priceColorClasses[pkg.color])}>
+            {pkg.price.toFixed(2)}€
           </div>
 
           {/* Purchase Button */}
           <Button
-            onClick={() => { onPurchase(id) }}
+            onClick={onPurchase}
             variant='primary'
-            color={color}
+            color={pkg.color}
           >
             Acheter
           </Button>

@@ -148,7 +148,7 @@ export async function checkOwnershipQuests (): Promise<void> {
     // Mettre à jour avec le nombre réel
     progress.progress = monsterCount
 
-    if (monsterCount >= quest.target && progress.completedAt == null) {
+    if (monsterCount >= quest.target && !progress.completed) {
       progress.completedAt = new Date()
     }
 
