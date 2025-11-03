@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useState, type ReactNode } from 'react'
+import { useSearchParams, useRouter } from 'next/navigation'
 import MonstersGrid from './MonstersGrid'
 import Modal from '@/components/ui/Modal'
 import CreateMonsterForm from './CreateMonsterForm'
@@ -9,6 +10,7 @@ import { createMonster } from '@/actions/monsters.actions'
 import { PlusCircle } from 'lucide-react'
 import { useWallet } from '@/contexts/WalletContext'
 import { useMonster } from '@/contexts/MonsterContext'
+import { toast } from 'react-toastify'
 
 interface DashboardContentProps {
   initialCreationCost: number
@@ -22,12 +24,25 @@ interface DashboardContentProps {
 export default function DashboardContent ({ initialCreationCost }: DashboardContentProps): ReactNode {
   const { removeBalance } = useWallet()
   const { refreshMonsters } = useMonster()
+  const searchParams = useSearchParams()
+  const router = useRouter()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [monsterName, setMonsterName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
 
   const isFirstMonster = initialCreationCost === 0
+
+  // Détection du retour après paiement Stripe
+  useEffect(() => {
+    const paymentStatus = searchParams.get('payment')
+
+    if (paymentStatus === 'success') {
+      toast.success('🎉 Paiement réussi ! Vos pièces ont été ajoutées à votre compte.')
+      // Nettoyer l'URL
+      router.replace('/app')
+    }
+  }, [searchParams, router])
 
   useEffect(() => {
     const interval = setInterval(() => {
