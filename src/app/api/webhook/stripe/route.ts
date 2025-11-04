@@ -4,7 +4,7 @@ import Stripe from 'stripe'
 import { connectMongooseToDatabase } from '@/db'
 import Wallet from '@/db/models/wallet.model'
 import { pricingPackages } from '@/config/pricing.config'
-import env from '@/lib/env'
+import env from '@/lib/env.server'
 
 export const runtime = 'nodejs'
 

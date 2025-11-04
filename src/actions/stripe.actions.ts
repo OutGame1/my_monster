@@ -3,7 +3,7 @@
 import { stripe } from '@/lib/stripe'
 import { getSession } from '@/lib/auth'
 import { pricingPackages } from '@/config/pricing.config'
-import env from '@/lib/env'
+import env from '@/lib/env.public'
 
 /**
  * Crée une session de paiement Stripe Checkout

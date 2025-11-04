@@ -2,7 +2,7 @@ import type { Session } from './auth-client'
 import { betterAuth } from 'better-auth'
 import { mongodbAdapter } from 'better-auth/adapters/mongodb'
 import db from '@/db'
-import env from '@lib/env'
+import env from '@/lib/env.server'
 import { headers } from 'next/headers'
 
 export const auth = betterAuth({

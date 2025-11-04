@@ -1,6 +1,6 @@
 import { ServerApiVersion } from 'mongodb'
 import mongoose, { type ConnectOptions } from 'mongoose'
-import env from '@lib/env'
+import env from '@/lib/env.server'
 
 const connectOptions: ConnectOptions = {
   serverSelectionTimeoutMS: 5000,

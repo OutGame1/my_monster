@@ -1,7 +1,12 @@
 import { z } from 'zod'
 
-const envSchema = z.object({
+export const publicEnvSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.url(),
+  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string()
+})
+
+export const serverEnvSchema = z.object({
+  ...publicEnvSchema.shape,
 
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.url(),
@@ -13,8 +18,5 @@ const envSchema = z.object({
 
   // Stripe
   STRIPE_SECRET_KEY: z.string(),
-  STRIPE_WEBHOOK_SECRET: z.string(),
-  NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: z.string()
+  STRIPE_WEBHOOK_SECRET: z.string()
 })
-
-export default envSchema
