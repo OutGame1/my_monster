@@ -13,9 +13,7 @@ import { MonsterProvider } from '@/contexts/MonsterContext'
  * @returns {Promise<ReactNode>} Contenu JSX rendu côté serveur pour le tableau de bord.
  */
 export default async function DashboardPage (): Promise<ReactNode> {
-  // Récupération de la session utilisateur via Better Auth
   const session = await getSession()
-
   if (session === null) {
     redirect('/sign-in')
   }

@@ -90,7 +90,7 @@ export default function MonsterPageClient ({ initialMonster }: MonsterPageClient
         {/* Right Column - Info & Actions */}
         <div className='space-y-6'>
           {/* State Info */}
-          <MonsterStateInfo name={monster.name} state={monster.state} />
+          <MonsterStateInfo monster={monster} />
 
           {/* XP Bar */}
           <MonsterXPBar currentXP={monster.xp} maxXP={monster.maxXp} />
