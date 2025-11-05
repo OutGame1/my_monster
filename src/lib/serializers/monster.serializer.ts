@@ -25,6 +25,7 @@ export interface ISerializedMonster {
   maxXp: number
   traits: ISerializedMonsterTraits
   state: MonsterState
+  isPublic: boolean
   ownerId: string
   createdAt: string
   updatedAt: string
@@ -49,6 +50,7 @@ export default function monsterSerizalizer (rawMonster: IMonsterDocument): ISeri
       size: rawMonster.traits.size
     },
     state: rawMonster.state,
+    isPublic: rawMonster.isPublic,
     ownerId: rawMonster.ownerId.toString(),
     createdAt: rawMonster.createdAt.toISOString(),
     updatedAt: rawMonster.updatedAt.toISOString()

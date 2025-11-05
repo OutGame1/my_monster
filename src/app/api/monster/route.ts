@@ -1,4 +1,3 @@
-import { connectMongooseToDatabase } from '@/db'
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import monsterSerizalizer from '@/lib/serializers/monster.serializer'
@@ -11,8 +10,6 @@ import { NextRequest } from 'next/server'
  * @returns {Promise<Response>} Réponse JSON avec le monstre ou code d'erreur approprié.
  */
 export async function GET (request: NextRequest): Promise<Response> {
-  await connectMongooseToDatabase()
-
   const session = await getSession()
 
   if (session === null) {

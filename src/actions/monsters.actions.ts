@@ -1,6 +1,5 @@
 'use server'
 
-import { connectMongooseToDatabase } from '@/db'
 import Monster, { type MonsterState } from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
@@ -22,10 +21,6 @@ import { checkOwnershipQuests, incrementQuestProgress, checkCoinsQuests } from '
  * @throws {Error} Si l'utilisateur est inconnu ou si le solde est insuffisant.
  */
 export async function createMonster (monsterName: string): Promise<number> {
-  // Connexion à la base de données
-  await connectMongooseToDatabase()
-
-  // Vérification de l'authentification
   const session = await getSession()
 
   if (session === null) {
@@ -67,12 +62,7 @@ export async function createMonster (monsterName: string): Promise<number> {
  */
 export async function getMonsters (): Promise<ISerializedMonster[]> {
   try {
-    // Connexion à la base de données
-    await connectMongooseToDatabase()
-
-    // Vérification de l'authentification
     const session = await getSession()
-
     if (session === null) {
       throw new Error('User not authenticated')
     }
@@ -96,12 +86,7 @@ export async function getMonsters (): Promise<ISerializedMonster[]> {
  */
 export async function getMonsterById (_id: string): Promise<ISerializedMonster | null> {
   try {
-    // Connexion à la base de données
-    await connectMongooseToDatabase()
-
-    // Vérification de l'authentification
     const session = await getSession()
-
     if (session === null) {
       return null
     }
@@ -157,8 +142,6 @@ export async function performMonsterAction (
   actionType: ActionType
 ): Promise<PerformActionResult> {
   try {
-    await connectMongooseToDatabase()
-
     const session = await getSession()
     if (session === null) {
       throw new Error('User not authenticated')
@@ -239,4 +222,42 @@ export async function performMonsterAction (
       message: error instanceof Error ? error.message : 'Unknown error'
     }
   }
+}
+
+/**
+ * Bascule le statut public/privé d'un monstre.
+ * Vérifie que le monstre appartient bien à l'utilisateur authentifié.
+ *
+ * @param {string} monsterId Identifiant du monstre à modifier
+ * @returns {Promise<void>} Résultat de l'opération
+ */
+export async function toggleMonsterPublicStatus (monsterId: string): Promise<void> {
+  const session = await getSession()
+
+  if (session === null) {
+    throw new Error('User not authenticated')
+  }
+
+  // Validation de l'identifiant
+  if (!Types.ObjectId.isValid(monsterId)) {
+    throw new Error('Invalid monster ID')
+  }
+
+  // Récupération du monstre avec vérification de propriété
+  const monster = await Monster.findOne({
+    _id: monsterId,
+    ownerId: session.user.id
+  }).exec()
+
+  if (monster === null) {
+    throw new Error('Monster not found or access denied')
+  }
+
+  // Basculer le statut isPublic
+  monster.isPublic = !monster.isPublic
+  await monster.save()
+
+  // Revalidation du cache
+  revalidatePath(`/app/monster/${monsterId}`)
+  revalidatePath('/app')
 }

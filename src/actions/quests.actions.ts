@@ -25,8 +25,6 @@ interface QuestsPayload {
  * @returns {Promise<QuestsPayload>}
  */
 export async function getQuestsWithProgress (): Promise<QuestsPayload> {
-  await connectMongooseToDatabase()
-
   const session = await getSession()
   if (session === null) {
     throw new Error('User not authenticated')
@@ -72,8 +70,6 @@ export async function incrementQuestProgress (
   objective: QuestObjective,
   amount: number
 ): Promise<void> {
-  await connectMongooseToDatabase()
-
   const session = await getSession()
   if (session === null) {
     return
@@ -118,8 +114,6 @@ export async function incrementQuestProgress (
  * Vérifie et incrémente les quêtes de type "own_monsters" basées sur le nombre actuel.
  */
 export async function checkOwnershipQuests (): Promise<void> {
-  await connectMongooseToDatabase()
-
   const session = await getSession()
   if (session === null) {
     return
@@ -160,8 +154,6 @@ export async function checkOwnershipQuests (): Promise<void> {
  * Vérifie et incrémente les quêtes de type "reach_coins" basées sur le total de pièces gagnées.
  */
 export async function checkCoinsQuests (): Promise<void> {
-  await connectMongooseToDatabase()
-
   const session = await getSession()
   if (session === null) {
     return
@@ -206,8 +198,6 @@ export async function checkCoinsQuests (): Promise<void> {
  * @returns {Promise<number>} Montant de la récompense.
  */
 export async function claimQuestReward (questId: string): Promise<number> {
-  await connectMongooseToDatabase()
-
   const session = await getSession()
   if (session === null) {
     throw new Error('User not authenticated')

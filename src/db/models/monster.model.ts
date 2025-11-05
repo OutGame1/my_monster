@@ -28,6 +28,7 @@ export interface IMonsterDocument extends Document {
   maxXp: number
   traits: IMonsterTraitsDocument
   state: MonsterState
+  isPublic: boolean
   ownerId: Types.ObjectId
   createdAt: Date
   updatedAt: Date
@@ -108,6 +109,11 @@ const monsterSchema = new Schema<IMonsterDocument>({
     required: true,
     enum: ['happy', 'sad', 'gamester', 'angry', 'hungry', 'sleepy'],
     default: 'happy'
+  },
+  isPublic: {
+    type: Boolean,
+    required: false,
+    default: false
   },
   ownerId: {
     type: Schema.Types.ObjectId,

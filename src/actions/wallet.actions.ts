@@ -57,8 +57,6 @@ export async function updateWalletBalance (amount: number): Promise<number> {
     return 0
   }
 
-  await connectMongooseToDatabase()
-
   const session = await getSession()
   if (session === null) {
     throw new Error('User not authenticated')
