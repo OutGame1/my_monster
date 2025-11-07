@@ -215,15 +215,15 @@ export async function claimQuestReward (questId: string): Promise<number> {
   }).exec()
 
   if (progress === null) {
-    throw new Error('Quest progress not found')
+    throw new Error('La quête est introuvable')
   }
 
   if (!progress.completed) {
-    throw new Error('Quest not completed yet')
+    throw new Error('La quête n\'est pas encore complétée')
   }
 
   if (progress.claimed) {
-    throw new Error('Reward already claimed')
+    throw new Error('Vous avez déjà réclamé cette récompense')
   }
 
   // Marquer comme réclamé
@@ -234,7 +234,7 @@ export async function claimQuestReward (questId: string): Promise<number> {
   await updateWalletBalance(questDef.reward)
 
   // Revalider les pages
-  revalidatePath('/quests')
+  revalidatePath('/app/quests')
   revalidatePath('/app')
 
   return questDef.reward

@@ -4,7 +4,7 @@ import Monster, { type MonsterState } from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { Types } from 'mongoose'
-import monsterSerizalizer, { type ISerializedMonster } from '@/lib/serializers/monster.serializer'
+import monsterSerizalizer, { type ISerializedMonster, type ISerializedPublicMonster } from '@/lib/serializers/monster.serializer'
 import { updateWalletBalance } from './wallet.actions'
 import { generateMonsterTraits } from '@/monster/generator'
 import { calculateMaxXp, calculateMonsterCreationCost } from '@/config/monsters.config'
@@ -198,7 +198,7 @@ export async function performMonsterAction (
 
     revalidatePath(`/app/monster/${monsterId}`)
     revalidatePath('/app')
-    revalidatePath('/quests')
+    revalidatePath('/app/quests')
 
     return {
       success: true,
@@ -260,4 +260,70 @@ export async function toggleMonsterPublicStatus (monsterId: string): Promise<voi
   // Revalidation du cache
   revalidatePath(`/app/monster/${monsterId}`)
   revalidatePath('/app')
+}
+
+/**
+ * Récupère tous les monstres publics de tous les utilisateurs pour la galerie.
+ * Inclut le nom du créateur pour chaque monstre.
+ *
+ * @returns {Promise<ISerializedPublicMonster[]>} Liste des monstres publics avec info créateur
+ */
+export async function getPublicMonsters (): Promise<ISerializedPublicMonster[]> {
+  try {
+    const publicMonsters = await Monster.aggregate([
+      // Filtrer uniquement les monstres publics
+      { $match: { isPublic: true } },
+      // Joindre avec la collection user de Better Auth
+      {
+        $lookup: {
+          from: 'user',
+          localField: 'ownerId',
+          foreignField: '_id',
+          as: 'owner'
+        }
+      },
+      // Dérouler le tableau owner (il contiendra 0 ou 1 élément)
+      { $unwind: { path: '$owner', preserveNullAndEmptyArrays: true } },
+      // Trier par date de création (plus récent en premier)
+      { $sort: { createdAt: -1 } },
+      // Projeter uniquement les champs nécessaires
+      {
+        $project: {
+          _id: 1,
+          name: 1,
+          level: 1,
+          traits: 1,
+          state: 1,
+          createdAt: 1,
+          ownerName: {
+            $ifNull: ['$owner.name', 'Anonyme']
+          }
+        }
+      }
+    ]).exec()
+
+    // Sérialiser les résultats
+    return publicMonsters.map((monster): ISerializedPublicMonster => ({
+      _id: monster._id.toString(),
+      name: monster.name,
+      level: monster.level,
+      traits: {
+        bodyShape: monster.traits.bodyShape,
+        eyeType: monster.traits.eyeType,
+        mouthType: monster.traits.mouthType,
+        armType: monster.traits.armType,
+        legType: monster.traits.legType,
+        primaryColor: monster.traits.primaryColor,
+        secondaryColor: monster.traits.secondaryColor,
+        outlineColor: monster.traits.outlineColor,
+        size: monster.traits.size
+      },
+      state: monster.state,
+      createdAt: monster.createdAt.toISOString(),
+      ownerName: monster.ownerName
+    }))
+  } catch (error) {
+    console.error('Error fetching public monsters:', error)
+    return []
+  }
 }

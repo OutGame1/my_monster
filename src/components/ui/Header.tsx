@@ -48,10 +48,10 @@ export default function Header ({ session }: HeaderProps): ReactNode {
               Mes monstres
             </Link>
             <Link
-              href='/gallery'
+              href='/app/gallery'
               className={cn(
                 'rounded-lg px-6 py-3 text-base font-bold transition-all duration-300',
-                isActive('/gallery')
+                isActive('/app/gallery')
                   ? 'bg-gradient-to-r from-blood-500 to-blood-600 text-white shadow-lg'
                   : 'text-tolopea-700 hover:bg-blood-100'
               )}
@@ -59,10 +59,10 @@ export default function Header ({ session }: HeaderProps): ReactNode {
               Galerie
             </Link>
             <Link
-              href='/quests'
+              href='/app/quests'
               className={cn(
                 'rounded-lg px-6 py-3 text-base font-bold transition-all duration-300',
-                isActive('/quests')
+                isActive('/app/quests')
                   ? 'bg-gradient-to-r from-aqua-forest-500 to-aqua-forest-600 text-white shadow-lg'
                   : 'text-tolopea-700 hover:bg-aqua-forest-100'
               )}
