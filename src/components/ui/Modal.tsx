@@ -9,7 +9,7 @@ interface ModalProps {
   onClose: () => void
   title: string
   children: ReactNode
-  confirmText?: string
+  confirmText?: ReactNode
   onConfirm?: () => void
   isConfirmDisabled?: boolean
   showCancel?: boolean

@@ -31,6 +31,16 @@ export interface ISerializedMonster {
   updatedAt: string
 }
 
+export interface ISerializedPublicMonster {
+  _id: string
+  name: string
+  level: number
+  traits: ISerializedMonsterTraits
+  state: MonsterState
+  createdAt: string
+  ownerName: string
+}
+
 export default function monsterSerizalizer (rawMonster: IMonsterDocument): ISerializedMonster {
   return {
     _id: rawMonster._id.toString(),

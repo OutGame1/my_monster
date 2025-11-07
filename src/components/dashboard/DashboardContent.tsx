@@ -11,6 +11,7 @@ import { PlusCircle } from 'lucide-react'
 import { useWallet } from '@/contexts/WalletContext'
 import { useMonster } from '@/contexts/MonsterContext'
 import { toast } from 'react-toastify'
+import CoinIcon from '../ui/CoinIcon'
 
 interface DashboardContentProps {
   initialCreationCost: number
@@ -109,8 +110,9 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
                   <p className='text-xl font-black text-tolopea-800'>
                     {isFirstMonster ? 'Créer mon premier monstre' : 'Créer un nouveau monstre'}
                   </p>
-                  <p className='text-sm font-semibold text-tolopea-600'>
-                    {isFirstMonster ? 'Gratuit ! 🎉' : `${initialCreationCost} pièces 💰`}
+                  <p className='flex items-center gap-1 text-sm font-semibold text-tolopea-600'>
+                    {isFirstMonster ? 'Gratuit ! 🎉' : `${initialCreationCost}`}
+                    <CoinIcon className='h-4 w-4' />
                   </p>
                 </div>
               </div>
@@ -127,7 +129,13 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         title={isFirstMonster ? 'Créer mon premier monstre' : 'Créer un nouveau monstre'}
-        confirmText={isCreating ? 'Création...' : `Créer ${isFirstMonster ? '(Gratuit)' : `(${initialCreationCost} 💰)`}`}
+        confirmText={isCreating
+          ? 'Création...'
+          : (
+            <>
+              Créer {isFirstMonster ? '0' : initialCreationCost} <CoinIcon className='inline h-4 w-4' />
+            </>
+            )}
         onConfirm={() => { void handleCreateMonster() }}
         isConfirmDisabled={monsterName.trim() === '' || isCreating}
         size='medium'
