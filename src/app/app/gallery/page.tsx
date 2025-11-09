@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { getSession } from '@/lib/auth'
-import InfiniteGalleryGrid from '@/components/gallery/InfiniteGalleryGrid'
+import GalleryContent from '@/components/gallery/GalleryContent'
 import SectionTitle from '@/components/ui/SectionTitle'
 import { getPublicMonstersPaginated } from '@/actions/monsters.actions'
 import AppLayout from '@/components/navigation/AppLayout'
@@ -9,7 +9,7 @@ import AppLayout from '@/components/navigation/AppLayout'
 /**
  * Gallery page
  * Displays all public monsters from all users in an art gallery style
- * Uses infinite scroll for better performance
+ * Uses infinite scroll and filters for better performance and UX
  */
 export default async function GalleryPage (): Promise<ReactNode> {
   const session = await getSession()
@@ -40,12 +40,12 @@ export default async function GalleryPage (): Promise<ReactNode> {
             </div>
           </div>
 
-          {/* Gallery Grid with Infinite Scroll */}
-          <InfiniteGalleryGrid
+          {/* Gallery Content with Filters and Infinite Scroll */}
+          <GalleryContent
             initialMonsters={monsters}
             initialCursor={nextCursor}
             initialHasMore={hasMore}
-            totalCount={total}
+            initialTotal={total}
           />
         </div>
       </div>

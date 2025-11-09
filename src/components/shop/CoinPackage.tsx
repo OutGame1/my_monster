@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import type { PricingPackage } from '@/config/pricing.config'
+import type { PricingPackage } from '@/types/pricing'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import CoinIcon from '@/components/ui/CoinIcon'

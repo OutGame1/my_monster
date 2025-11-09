@@ -5,19 +5,10 @@ import Quest, { type IQuestDocument } from '@/db/models/quest.model'
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
-import questSerializer, { type ISerializedQuestProgress } from '@/lib/serializers/quest.serializer'
-import { allQuests, dailyQuestIds, type QuestObjective, type QuestDefinition } from '@/config/quests.config'
+import questSerializer from '@/lib/serializers/quest.serializer'
+import { allQuests, dailyQuestIds } from '@/config/quests.config'
+import type { QuestObjective, QuestsPayload } from '@/types/quests'
 import { updateWalletBalance, getWallet } from './wallet.actions'
-
-export interface QuestWithProgress {
-  definition: QuestDefinition
-  progress: ISerializedQuestProgress
-}
-
-interface QuestsPayload {
-  daily: QuestWithProgress[]
-  achievement: QuestWithProgress[]
-}
 
 /**
  * Récupère les quêtes quotidiennes et achievements avec leur progression.

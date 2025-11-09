@@ -3,16 +3,9 @@
 import { useCallback, type ReactNode } from 'react'
 import { useInView } from 'react-intersection-observer'
 import GalleryMonsterCard from './GalleryMonsterCard'
-import type { ISerializedPublicMonster } from '@/lib/serializers/monster.serializer'
 import { getPublicMonstersPaginated } from '@/actions/monsters.actions'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
-
-interface InfiniteGalleryGridProps {
-  initialMonsters: ISerializedPublicMonster[]
-  initialCursor: string | null
-  initialHasMore: boolean
-  totalCount: number
-}
+import type { InfiniteGalleryGridProps } from '@/types/gallery'
 
 /**
  * Composant client pour la grille de galerie avec infinite scroll
@@ -22,10 +15,11 @@ export default function InfiniteGalleryGrid ({
   initialMonsters,
   initialCursor,
   initialHasMore,
-  totalCount
+  totalCount,
+  fetchMore: customFetchMore
 }: InfiniteGalleryGridProps): ReactNode {
-  // Fonction de fetch pour le hook useInfiniteScroll
-  const fetchMore = useCallback(async (cursor: string) => {
+  // Fonction de fetch par défaut (sans filtres)
+  const defaultFetchMore = useCallback(async (cursor: string) => {
     const result = await getPublicMonstersPaginated(cursor)
     return {
       data: result.monsters,
@@ -33,6 +27,9 @@ export default function InfiniteGalleryGrid ({
       hasMore: result.hasMore
     }
   }, [])
+
+  // Utiliser la fonction custom si fournie, sinon la fonction par défaut
+  const fetchMore = customFetchMore ?? defaultFetchMore
 
   // Hook personnalisé pour gérer l'infinite scroll
   const { data: monsters, hasMore, isLoading, loadMore } = useInfiniteScroll({

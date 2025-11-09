@@ -1,18 +1,22 @@
 'use server'
 
-import Monster, { IPublicMonsterDocument, type MonsterState } from '@/db/models/monster.model'
+import Monster, { type IPublicMonsterDocument, type MonsterState } from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { Types } from 'mongoose'
 import {
-  monsterSerializer, publicMonsterSerializer,
-  type ISerializedMonster, type ISerializedPublicMonster
+  monsterSerializer,
+  publicMonsterSerializer,
+  type ISerializedMonster
 } from '@/lib/serializers/monster.serializer'
 import { updateWalletBalance } from './wallet.actions'
 import { generateMonsterTraits } from '@/monster/generator'
 import { calculateMaxXp, calculateMonsterCreationCost } from '@/config/monsters.config'
 import { BASE_COIN_REWARD, MATCHED_STATE_COIN_REWARD, XP_REWARD } from '@/config/rewards.config'
 import { checkOwnershipQuests, incrementQuestProgress, checkCoinsQuests } from './quests.actions'
+import type { GetPublicMonstersPaginatedResult, GalleryFiltersParams } from '@/types/gallery'
+import type { ActionType, PerformActionResult } from '@/types/monsters'
+import GalleryFilterBuilder from '@/lib/builders/GalleryFilterBuilder'
 
 /**
  * Crée un nouveau monstre pour l'utilisateur actuellement authentifié.
@@ -108,19 +112,6 @@ export async function getMonsterById (_id: string): Promise<ISerializedMonster |
     console.error('Error fetching monster by ID:', error)
     return null
   }
-}
-
-export type ActionType = 'feed' | 'play' | 'comfort' | 'calm' | 'lullaby'
-
-export interface PerformActionResult {
-  success: boolean
-  leveledUp: boolean
-  newLevel: number
-  newXp: number
-  maxXp: number
-  coinsEarned: number
-  newCreditTotal: number
-  message?: string
 }
 
 // Table de correspondance actions ↔ états pour détecter les bonus
@@ -265,43 +256,36 @@ export async function toggleMonsterPublicStatus (monsterId: string): Promise<voi
   revalidatePath('/app')
 }
 
-interface GetPublicMonstersPaginatedResult {
-  monsters: ISerializedPublicMonster[]
-  nextCursor: string | null
-  hasMore: boolean
-  total: number
-}
-
 /**
- * Récupère les monstres publics avec pagination (cursor-based)
+ * Récupère les monstres publics avec pagination (cursor-based) et filtres
  * @param cursor - ID du dernier monstre de la page précédente (optionnel)
  * @param limit - Nombre de monstres à récupérer (par défaut 12)
+ * @param filters - Filtres à appliquer (niveau, état, tri)
  */
 export async function getPublicMonstersPaginated (
   cursor?: string,
-  limit: number = 12
+  limit: number = 12,
+  filters?: GalleryFiltersParams
 ): Promise<GetPublicMonstersPaginatedResult> {
   try {
-    // Construire le filtre de base
-    const $match: {
-      isPublic: true
-      _id?: { $lt: Types.ObjectId }
-    } = { isPublic: true }
+    // Construire le filtre avec le builder (filtres passés au constructeur)
+    const builder = new GalleryFilterBuilder(filters)
 
-    // Si un cursor est fourni, filtrer pour les monstres plus anciens
-    if (cursor !== undefined && Types.ObjectId.isValid(cursor)) {
-      $match._id = { $lt: new Types.ObjectId(cursor) }
+    // Ajouter le cursor si présent
+    if (cursor !== undefined) {
+      const isReversedSort = GalleryFilterBuilder.isReversedSort(filters?.sortBy)
+      builder.withCursor(cursor, isReversedSort)
     }
 
-    // Récupérer le total de monstres publics (pour l'affichage)
-    const totalPromise = Monster.countDocuments({ isPublic: true })
+    // Récupérer le total de monstres publics avec filtres
+    const totalPromise = Monster.countDocuments(builder.buildForCount())
 
     // Récupérer les monstres avec pagination
     const monstersPromise = Monster.aggregate<IPublicMonsterDocument>([
       // Filtrer les monstres publics (et après le cursor si présent)
-      { $match },
-      // Trier par _id décroissant (équivalent à createdAt car ObjectId contient le timestamp)
-      { $sort: { _id: -1 } },
+      { $match: builder.build() },
+      // Trier selon les critères choisis
+      { $sort: GalleryFilterBuilder.buildSort(filters?.sortBy) },
       // Limiter le nombre de résultats (+ 1 pour savoir s'il y en a encore)
       { $limit: limit + 1 },
       // Jointure avec la collection user

@@ -1,10 +1,5 @@
 import type { MonsterState } from '@/db/models/monster.model'
-
-export interface StateInfo {
-  label: string
-  emoji: string
-  color: string
-}
+import type { StateInfo } from '@/types/monsters'
 
 export const stateInfoMap: Record<MonsterState, StateInfo> = {
   happy: {
