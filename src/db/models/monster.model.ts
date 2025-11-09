@@ -34,6 +34,16 @@ export interface IMonsterDocument extends Document {
   updatedAt: Date
 }
 
+export interface IPublicMonsterDocument extends Document {
+  _id: Types.ObjectId
+  name: string
+  level: number
+  traits: IMonsterTraitsDocument
+  state: MonsterState
+  createdAt: Date
+  ownerName: string // Nom de l'utilisateur propriétaire (jointure sur 'user')
+}
+
 const monsterTraitsSchema = new Schema<IMonsterTraitsDocument>({
   bodyShape: {
     type: String,

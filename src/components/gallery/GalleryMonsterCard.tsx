@@ -19,7 +19,7 @@ export default function GalleryMonsterCard ({ monster }: GalleryMonsterCardProps
         <div className='flex h-full items-center justify-center'>
           <MonsterAvatar
             traits={monster.traits}
-            state='happy'
+            state={monster.state}
             size={200}
           />
         </div>

@@ -1,14 +1,15 @@
 import type { ReactNode } from 'react'
 import { redirect } from 'next/navigation'
 import { getSession } from '@/lib/auth'
-import GalleryGrid from '@/components/gallery/GalleryGrid'
+import InfiniteGalleryGrid from '@/components/gallery/InfiniteGalleryGrid'
 import SectionTitle from '@/components/ui/SectionTitle'
-import { getPublicMonsters } from '@/actions/monsters.actions'
+import { getPublicMonstersPaginated } from '@/actions/monsters.actions'
 import AppLayout from '@/components/navigation/AppLayout'
 
 /**
  * Gallery page
  * Displays all public monsters from all users in an art gallery style
+ * Uses infinite scroll for better performance
  */
 export default async function GalleryPage (): Promise<ReactNode> {
   const session = await getSession()
@@ -17,9 +18,10 @@ export default async function GalleryPage (): Promise<ReactNode> {
     redirect('/sign-in')
   }
 
-  const publicMonsters = await getPublicMonsters()
+  // Charger la première page de monstres (12 par défaut)
+  const { monsters, nextCursor, hasMore, total } = await getPublicMonstersPaginated()
 
-  const pluralMonsters = publicMonsters.length > 1 ? 's' : ''
+  const pluralMonsters = total > 1 ? 's' : ''
 
   return (
     <AppLayout>
@@ -34,12 +36,17 @@ export default async function GalleryPage (): Promise<ReactNode> {
           <div className='mb-8 flex items-center justify-center gap-8 text-sm text-gray-500'>
             <div className='flex items-center gap-2'>
               <div className='h-3 w-3 rounded-full bg-aqua-forest-400' />
-              <span>{publicMonsters.length} monstre{pluralMonsters} public{pluralMonsters}</span>
+              <span>{total} monstre{pluralMonsters} public{pluralMonsters}</span>
             </div>
           </div>
 
-          {/* Gallery Grid */}
-          <GalleryGrid monsters={publicMonsters} />
+          {/* Gallery Grid with Infinite Scroll */}
+          <InfiniteGalleryGrid
+            initialMonsters={monsters}
+            initialCursor={nextCursor}
+            initialHasMore={hasMore}
+            totalCount={total}
+          />
         </div>
       </div>
     </AppLayout>

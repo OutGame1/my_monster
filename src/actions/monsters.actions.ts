@@ -1,10 +1,13 @@
 'use server'
 
-import Monster, { type MonsterState } from '@/db/models/monster.model'
+import Monster, { IPublicMonsterDocument, type MonsterState } from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { Types } from 'mongoose'
-import monsterSerizalizer, { type ISerializedMonster, type ISerializedPublicMonster } from '@/lib/serializers/monster.serializer'
+import {
+  monsterSerializer, publicMonsterSerializer,
+  type ISerializedMonster, type ISerializedPublicMonster
+} from '@/lib/serializers/monster.serializer'
 import { updateWalletBalance } from './wallet.actions'
 import { generateMonsterTraits } from '@/monster/generator'
 import { calculateMaxXp, calculateMonsterCreationCost } from '@/config/monsters.config'
@@ -70,7 +73,7 @@ export async function getMonsters (): Promise<ISerializedMonster[]> {
     // Récupération des monstres de l'utilisateur
     const monsters = await Monster.find({ ownerId: session.user.id }).exec()
 
-    return monsters.map(monsterSerizalizer)
+    return monsters.map(monsterSerializer)
   } catch (error) {
     console.error('Error fetching monsters:', error)
     return []
@@ -100,7 +103,7 @@ export async function getMonsterById (_id: string): Promise<ISerializedMonster |
     // Récupération du monstre avec vérification de propriété
     const monster = await Monster.findOne({ ownerId: session.user.id, _id }).exec()
 
-    return monster !== null ? monsterSerizalizer(monster) : null
+    return monster !== null ? monsterSerializer(monster) : null
   } catch (error) {
     console.error('Error fetching monster by ID:', error)
     return null
@@ -262,18 +265,46 @@ export async function toggleMonsterPublicStatus (monsterId: string): Promise<voi
   revalidatePath('/app')
 }
 
+interface GetPublicMonstersPaginatedResult {
+  monsters: ISerializedPublicMonster[]
+  nextCursor: string | null
+  hasMore: boolean
+  total: number
+}
+
 /**
- * Récupère tous les monstres publics de tous les utilisateurs pour la galerie.
- * Inclut le nom du créateur pour chaque monstre.
- *
- * @returns {Promise<ISerializedPublicMonster[]>} Liste des monstres publics avec info créateur
+ * Récupère les monstres publics avec pagination (cursor-based)
+ * @param cursor - ID du dernier monstre de la page précédente (optionnel)
+ * @param limit - Nombre de monstres à récupérer (par défaut 12)
  */
-export async function getPublicMonsters (): Promise<ISerializedPublicMonster[]> {
+export async function getPublicMonstersPaginated (
+  cursor?: string,
+  limit: number = 12
+): Promise<GetPublicMonstersPaginatedResult> {
   try {
-    const publicMonsters = await Monster.aggregate([
-      // Filtrer uniquement les monstres publics
-      { $match: { isPublic: true } },
-      // Joindre avec la collection user de Better Auth
+    // Construire le filtre de base
+    const $match: {
+      isPublic: true
+      _id?: { $lt: Types.ObjectId }
+    } = { isPublic: true }
+
+    // Si un cursor est fourni, filtrer pour les monstres plus anciens
+    if (cursor !== undefined && Types.ObjectId.isValid(cursor)) {
+      $match._id = { $lt: new Types.ObjectId(cursor) }
+    }
+
+    // Récupérer le total de monstres publics (pour l'affichage)
+    const totalPromise = Monster.countDocuments({ isPublic: true })
+
+    // Récupérer les monstres avec pagination
+    const monstersPromise = Monster.aggregate<IPublicMonsterDocument>([
+      // Filtrer les monstres publics (et après le cursor si présent)
+      { $match },
+      // Trier par _id décroissant (équivalent à createdAt car ObjectId contient le timestamp)
+      { $sort: { _id: -1 } },
+      // Limiter le nombre de résultats (+ 1 pour savoir s'il y en a encore)
+      { $limit: limit + 1 },
+      // Jointure avec la collection user
       {
         $lookup: {
           from: 'user',
@@ -282,11 +313,10 @@ export async function getPublicMonsters (): Promise<ISerializedPublicMonster[]> 
           as: 'owner'
         }
       },
-      // Dérouler le tableau owner (il contiendra 0 ou 1 élément)
+      // Dérouler le tableau owner
       { $unwind: { path: '$owner', preserveNullAndEmptyArrays: true } },
-      // Trier par date de création (plus récent en premier)
-      { $sort: { createdAt: -1 } },
-      // Projeter uniquement les champs nécessaires
+
+      // ici on projette uniquement les champs nécessaires
       {
         $project: {
           _id: 1,
@@ -302,28 +332,32 @@ export async function getPublicMonsters (): Promise<ISerializedPublicMonster[]> 
       }
     ]).exec()
 
-    // Sérialiser les résultats
-    return publicMonsters.map((monster): ISerializedPublicMonster => ({
-      _id: monster._id.toString(),
-      name: monster.name,
-      level: monster.level,
-      traits: {
-        bodyShape: monster.traits.bodyShape,
-        eyeType: monster.traits.eyeType,
-        mouthType: monster.traits.mouthType,
-        armType: monster.traits.armType,
-        legType: monster.traits.legType,
-        primaryColor: monster.traits.primaryColor,
-        secondaryColor: monster.traits.secondaryColor,
-        outlineColor: monster.traits.outlineColor,
-        size: monster.traits.size
-      },
-      state: monster.state,
-      createdAt: monster.createdAt.toISOString(),
-      ownerName: monster.ownerName
-    }))
+    const [total, publicMonsters] = await Promise.all([totalPromise, monstersPromise])
+
+    // On vérifie s'il y a plus de résultats
+    const hasMore = publicMonsters.length > limit
+    const monsters = hasMore ? publicMonsters.slice(0, limit) : publicMonsters
+
+    const lastMonster = monsters.at(-1)
+
+    // On détermine le prochain curseur
+    const nextCursor = hasMore && lastMonster !== undefined
+      ? lastMonster._id.toString()
+      : null
+
+    return {
+      monsters: monsters.map(publicMonsterSerializer),
+      nextCursor,
+      hasMore,
+      total
+    }
   } catch (error) {
-    console.error('Error fetching public monsters:', error)
-    return []
+    console.error('Error fetching paginated public monsters:', error)
+    return {
+      monsters: [],
+      nextCursor: null,
+      hasMore: false,
+      total: 0
+    }
   }
 }
