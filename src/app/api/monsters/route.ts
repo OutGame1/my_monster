@@ -1,7 +1,7 @@
 import { connectMongooseToDatabase } from '@/db'
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
-import monsterSerizalizer from '@/lib/serializers/monster.serializer'
+import { monsterSerializer } from '@/lib/serializers/monster.serializer'
 
 /**
  * Endpoint GET listant tous les monstres appartenant à l'utilisateur authentifié.
@@ -19,5 +19,5 @@ export async function GET (): Promise<Response> {
 
   const monsters = await Monster.find({ ownerId: session.user.id }).exec()
 
-  return Response.json(monsters.map(monsterSerizalizer))
+  return Response.json(monsters.map(monsterSerializer))
 }

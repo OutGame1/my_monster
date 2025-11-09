@@ -1,9 +1,10 @@
 import type {
-  IMonsterDocument, MonsterState,
-  MonsterArmType, MonsterBodyShape,
-  MonsterEyeShape, MonsterLegType,
-  MonsterMouthType
+  IMonsterDocument, IMonsterTraitsDocument, IPublicMonsterDocument,
+  MonsterState, MonsterArmType, MonsterBodyShape,
+  MonsterEyeShape, MonsterLegType, MonsterMouthType
 } from '@/db/models/monster.model'
+
+// Sérialisation des traits d'un monstre
 
 export interface ISerializedMonsterTraits {
   bodyShape: MonsterBodyShape
@@ -16,6 +17,22 @@ export interface ISerializedMonsterTraits {
   outlineColor: string
   size: number
 }
+
+function monsterTraitsSerializer (rawTraits: IMonsterTraitsDocument): ISerializedMonsterTraits {
+  return {
+    bodyShape: rawTraits.bodyShape,
+    eyeType: rawTraits.eyeType,
+    mouthType: rawTraits.mouthType,
+    armType: rawTraits.armType,
+    legType: rawTraits.legType,
+    primaryColor: rawTraits.primaryColor,
+    secondaryColor: rawTraits.secondaryColor,
+    outlineColor: rawTraits.outlineColor,
+    size: rawTraits.size
+  }
+}
+
+// Sérialisation d'un monstre complet
 
 export interface ISerializedMonster {
   _id: string
@@ -31,6 +48,24 @@ export interface ISerializedMonster {
   updatedAt: string
 }
 
+export function monsterSerializer (rawMonster: IMonsterDocument): ISerializedMonster {
+  return {
+    _id: rawMonster._id.toString(),
+    name: rawMonster.name,
+    level: rawMonster.level,
+    xp: rawMonster.xp,
+    maxXp: rawMonster.maxXp,
+    traits: monsterTraitsSerializer(rawMonster.traits),
+    state: rawMonster.state,
+    isPublic: rawMonster.isPublic,
+    ownerId: rawMonster.ownerId.toString(),
+    createdAt: rawMonster.createdAt.toISOString(),
+    updatedAt: rawMonster.updatedAt.toISOString()
+  }
+}
+
+// Sérialisation d'un monstre public (pour la galerie)
+
 export interface ISerializedPublicMonster {
   _id: string
   name: string
@@ -41,28 +76,14 @@ export interface ISerializedPublicMonster {
   ownerName: string
 }
 
-export default function monsterSerizalizer (rawMonster: IMonsterDocument): ISerializedMonster {
+export function publicMonsterSerializer (rawMonster: IPublicMonsterDocument): ISerializedPublicMonster {
   return {
     _id: rawMonster._id.toString(),
     name: rawMonster.name,
     level: rawMonster.level,
-    xp: rawMonster.xp,
-    maxXp: rawMonster.maxXp,
-    traits: {
-      bodyShape: rawMonster.traits.bodyShape,
-      eyeType: rawMonster.traits.eyeType,
-      mouthType: rawMonster.traits.mouthType,
-      armType: rawMonster.traits.armType,
-      legType: rawMonster.traits.legType,
-      primaryColor: rawMonster.traits.primaryColor,
-      secondaryColor: rawMonster.traits.secondaryColor,
-      outlineColor: rawMonster.traits.outlineColor,
-      size: rawMonster.traits.size
-    },
+    traits: monsterTraitsSerializer(rawMonster.traits),
     state: rawMonster.state,
-    isPublic: rawMonster.isPublic,
-    ownerId: rawMonster.ownerId.toString(),
     createdAt: rawMonster.createdAt.toISOString(),
-    updatedAt: rawMonster.updatedAt.toISOString()
+    ownerName: rawMonster.ownerName
   }
 }

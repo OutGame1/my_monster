@@ -1,6 +1,6 @@
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
-import monsterSerizalizer from '@/lib/serializers/monster.serializer'
+import { monsterSerializer } from '@/lib/serializers/monster.serializer'
 import { NextRequest } from 'next/server'
 
 /**
@@ -33,5 +33,5 @@ export async function GET (request: NextRequest): Promise<Response> {
     return new Response('Monster not found', { status: 404 })
   }
 
-  return Response.json(monsterSerizalizer(monster))
+  return Response.json(monsterSerializer(monster))
 }
