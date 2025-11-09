@@ -1,8 +1,7 @@
 'use client'
 
 import { type ReactNode, useState } from 'react'
-import type { QuestWithProgress } from '@/actions/quests.actions'
-import type { QuestType } from '@/config/quests.config'
+import type { QuestWithProgress, QuestType } from '@/types/quests'
 import SectionTitle from '@/components/ui/SectionTitle'
 import Card from '@/components/ui/Card'
 import QuestCard from './QuestCard'

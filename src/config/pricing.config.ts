@@ -7,14 +7,7 @@
  * IMPORTANT: Les productId doivent correspondre aux Product IDs créés dans Stripe Dashboard
  */
 
-export interface PricingPackage {
-  coins: number // Nombre de pièces dans le package
-  price: number // Prix en euros
-  label: string // Nom du package
-  icon: string // Icône (emoji ou lucide icon name)
-  popular: boolean
-  color: 'tolopea' | 'blood' | 'aqua-forest' | 'golden-fizz'
-}
+import type { PricingPackage } from '@/types/pricing'
 
 export const pricingPackages: Record<string, PricingPackage> = {
   prod_TMDrndEWtgsT5V: {

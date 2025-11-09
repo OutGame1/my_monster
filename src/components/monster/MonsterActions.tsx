@@ -5,7 +5,8 @@ import { useState } from 'react'
 import { Utensils, Gamepad2, Heart, Lightbulb, Moon } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import LevelUpModal from './LevelUpModal'
-import { performMonsterAction, type ActionType } from '@/actions/monsters.actions'
+import { performMonsterAction } from '@/actions/monsters.actions'
+import type { ActionType } from '@/types/monsters'
 import { useRouter } from 'next/navigation'
 
 interface MonsterActionsProps {
