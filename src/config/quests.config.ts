@@ -97,6 +97,49 @@ export const dailyQuests: QuestDefinition[] = [
  */
 export const dailyQuestIds = dailyQuests.map(q => q.id)
 
+export const reachCoinsQuests: QuestDefinition[] = [
+  {
+    id: 'achievement_coins_500',
+    type: 'achievement',
+    objective: 'reach_coins',
+    target: 500,
+    reward: 50,
+    title: 'Petit économe',
+    description: 'Gagner 500 pièces au total',
+    icon: '🪙'
+  },
+  {
+    id: 'achievement_coins_1000',
+    type: 'achievement',
+    objective: 'reach_coins',
+    target: 1000,
+    reward: 100,
+    title: 'Économe',
+    description: 'Gagner 1000 pièces au total',
+    icon: '💰'
+  },
+  {
+    id: 'achievement_coins_2500',
+    type: 'achievement',
+    objective: 'reach_coins',
+    target: 2500,
+    reward: 200,
+    title: 'Riche éleveur',
+    description: 'Gagner 2500 pièces au total',
+    icon: '🤑'
+  },
+  {
+    id: 'achievement_coins_5000',
+    type: 'achievement',
+    objective: 'reach_coins',
+    target: 5000,
+    reward: 350,
+    title: 'Millionnaire',
+    description: 'Gagner 5000 pièces au total',
+    icon: '💎'
+  }
+]
+
 /**
  * Succès (Achievements) - Objectifs permanents
  * Objectifs plus difficiles, récompenses importantes pour encourager l'engagement long terme
@@ -332,46 +375,7 @@ export const achievements: QuestDefinition[] = [
     description: 'Faire monter un monstre au niveau 20',
     icon: '🚀'
   },
-  {
-    id: 'achievement_coins_500',
-    type: 'achievement',
-    objective: 'reach_coins',
-    target: 500,
-    reward: 50,
-    title: 'Petit économe',
-    description: 'Gagner 500 pièces au total',
-    icon: '🪙'
-  },
-  {
-    id: 'achievement_coins_1000',
-    type: 'achievement',
-    objective: 'reach_coins',
-    target: 1000,
-    reward: 100,
-    title: 'Économe',
-    description: 'Gagner 1000 pièces au total',
-    icon: '💰'
-  },
-  {
-    id: 'achievement_coins_2500',
-    type: 'achievement',
-    objective: 'reach_coins',
-    target: 2500,
-    reward: 200,
-    title: 'Riche éleveur',
-    description: 'Gagner 2500 pièces au total',
-    icon: '🤑'
-  },
-  {
-    id: 'achievement_coins_5000',
-    type: 'achievement',
-    objective: 'reach_coins',
-    target: 5000,
-    reward: 350,
-    title: 'Millionnaire',
-    description: 'Gagner 5000 pièces au total',
-    icon: '💎'
-  }
+  ...reachCoinsQuests
 ]
 
 export const allQuests = [...dailyQuests, ...achievements]

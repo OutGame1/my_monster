@@ -13,7 +13,7 @@ import { updateWalletBalance } from './wallet.actions'
 import { generateMonsterTraits } from '@/monster/generator'
 import { calculateMaxXp, calculateMonsterCreationCost } from '@/config/monsters.config'
 import { BASE_COIN_REWARD, MATCHED_STATE_COIN_REWARD, XP_REWARD } from '@/config/rewards.config'
-import { checkOwnershipQuests, incrementQuestProgress, checkCoinsQuests } from './quests.actions'
+import { checkOwnershipQuests, incrementQuestProgress } from './quests.actions'
 import type { GetPublicMonstersPaginatedResult, GalleryFiltersParams } from '@/types/gallery'
 import type { ActionType, PerformActionResult } from '@/types/monsters'
 import GalleryFilterBuilder from '@/lib/builders/GalleryFilterBuilder'
@@ -186,9 +186,6 @@ export async function performMonsterAction (
     // Incrémenter les quêtes appropriées
     await incrementQuestProgress(`${actionType}_monsters`, 1)
     await incrementQuestProgress('total_actions', 1)
-
-    // Vérifier les quêtes de pièces
-    await checkCoinsQuests()
 
     revalidatePath(`/app/monster/${monsterId}`)
     revalidatePath('/app')

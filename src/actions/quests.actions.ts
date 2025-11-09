@@ -1,14 +1,13 @@
 'use server'
 
-import { connectMongooseToDatabase } from '@/db'
 import Quest, { type IQuestDocument } from '@/db/models/quest.model'
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import questSerializer from '@/lib/serializers/quest.serializer'
-import { allQuests, dailyQuestIds } from '@/config/quests.config'
+import { allQuests } from '@/config/quests.config'
 import type { QuestObjective, QuestsPayload } from '@/types/quests'
-import { updateWalletBalance, getWallet } from './wallet.actions'
+import { updateWalletBalance } from './wallet.actions'
 
 /**
  * Récupère les quêtes quotidiennes et achievements avec leur progression.
@@ -67,37 +66,37 @@ export async function incrementQuestProgress (
   }
 
   // Itérer sur toutes les quêtes et filtrer par objectif
-  for (const quest of allQuests) {
-    if (quest.objective !== objective) {
+  for (const questDef of allQuests) {
+    if (questDef.objective !== objective) {
       continue
     }
 
     const questData = {
       userId: session.user.id,
-      questId: quest.id
+      questId: questDef.id
     }
 
     // Récupérer ou créer la progression
-    let progress = await Quest.findOne(questData).exec()
+    let quest = await Quest.findOne(questData).exec()
 
-    if (progress === null) {
-      progress = new Quest(questData)
+    if (quest === null) {
+      quest = new Quest(questData)
     }
 
     // Ne pas incrémenter si déjà complété
-    if (progress.completed) {
+    if (quest.completedAt !== undefined) {
       continue
     }
 
     // Incrémenter la progression
-    progress.progress = Math.min(progress.progress + amount, quest.target)
+    quest.progress = Math.min(quest.progress + amount, questDef.target)
 
     // Marquer comme complété si l'objectif est atteint
-    if (progress.progress >= quest.target && !progress.completed) {
-      progress.completedAt = new Date()
+    if (quest.progress >= questDef.target) {
+      quest.completedAt = new Date()
     }
 
-    await progress.save()
+    await quest.save()
   }
 }
 
@@ -114,71 +113,30 @@ export async function checkOwnershipQuests (): Promise<void> {
   const monsterCount = await Monster.countDocuments({ ownerId: session.user.id }).exec()
 
   // Itérer sur toutes les quêtes et filtrer par objectif
-  for (const quest of allQuests) {
-    if (quest.objective !== 'own_monsters') {
+  for (const questDef of allQuests) {
+    if (questDef.objective !== 'own_monsters') {
       continue
     }
 
     const questData = {
       userId: session.user.id,
-      questId: quest.id
+      questId: questDef.id
     }
 
-    let progress = await Quest.findOne(questData).exec()
+    let quest = await Quest.findOne(questData).exec()
 
-    if (progress === null) {
-      progress = new Quest(questData)
+    if (quest === null) {
+      quest = new Quest(questData)
     }
 
     // Mettre à jour avec le nombre réel
-    progress.progress = monsterCount
+    quest.progress = monsterCount
 
-    if (monsterCount >= quest.target && !progress.completed) {
-      progress.completedAt = new Date()
+    if (monsterCount >= questDef.target && quest.completedAt === undefined) {
+      quest.completedAt = new Date()
     }
 
-    await progress.save()
-  }
-}
-
-/**
- * Vérifie et incrémente les quêtes de type "reach_coins" basées sur le total de pièces gagnées.
- */
-export async function checkCoinsQuests (): Promise<void> {
-  const session = await getSession()
-  if (session === null) {
-    return
-  }
-
-  // Récupérer le total de pièces gagnées
-  const wallet = await getWallet(session.user.id)
-  const totalEarned = wallet.totalEarned
-
-  // Itérer sur toutes les quêtes et filtrer par objectif
-  for (const quest of allQuests) {
-    if (quest.objective !== 'reach_coins') {
-      continue
-    }
-    let progress = await Quest.findOne({
-      userId: session.user.id,
-      questId: quest.id
-    }).exec()
-
-    if (progress === null) {
-      progress = new Quest({
-        userId: session.user.id,
-        questId: quest.id
-      })
-    }
-
-    // Mettre à jour avec le total de pièces gagnées
-    progress.progress = totalEarned
-
-    if (totalEarned >= quest.target && !progress.completed) {
-      progress.completedAt = new Date()
-    }
-
-    await progress.save()
+    await quest.save()
   }
 }
 
@@ -209,11 +167,11 @@ export async function claimQuestReward (questId: string): Promise<number> {
     throw new Error('La quête est introuvable')
   }
 
-  if (!progress.completed) {
+  if (progress.completedAt === undefined) {
     throw new Error('La quête n\'est pas encore complétée')
   }
 
-  if (progress.claimed) {
+  if (progress.claimedAt !== undefined) {
     throw new Error('Vous avez déjà réclamé cette récompense')
   }
 
@@ -229,31 +187,4 @@ export async function claimQuestReward (questId: string): Promise<number> {
   revalidatePath('/app')
 
   return questDef.reward
-}
-
-/**
- * Réinitialise toutes les quêtes quotidiennes pour un utilisateur.
- * À appeler via un cron job quotidien.
- *
- * @param {string} userId ID de l'utilisateur.
- */
-export async function resetDailyQuests (userId: string): Promise<void> {
-  await connectMongooseToDatabase()
-
-  await Quest.updateMany(
-    {
-      userId,
-      questId: { $in: dailyQuestIds }
-    },
-    {
-      $set: {
-        progress: 0,
-        lastResetAt: new Date()
-      },
-      $unset: {
-        completedAt: '',
-        claimedAt: ''
-      }
-    }
-  ).exec()
 }

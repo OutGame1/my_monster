@@ -28,9 +28,20 @@ export default function QuestCard ({ quest }: QuestCardProps): ReactNode {
 
   const progress = quest.progress.progress
   const target = quest.definition.target
-  const completed = quest.progress.completed
-  const claimed = quest.progress.claimed
+  const completed = quest.progress.completedAt !== undefined
+  const claimed = quest.progress.claimedAt !== undefined
+  const completedAt = quest.progress.completedAt
   const progressPercent = Math.min((progress / target) * 100, 100)
+
+  // Formater la date de complétion
+  const formatCompletedDate = (dateString: string): string => {
+    const d = new Date(dateString)
+    return d.toLocaleDateString('fr-FR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+  }
 
   const handleClaim = async (): Promise<void> => {
     setIsClaiming(true)
@@ -96,6 +107,11 @@ export default function QuestCard ({ quest }: QuestCardProps): ReactNode {
             style={{ width: `${progressPercent}%` }}
           />
         </div>
+        {completedAt !== undefined && (
+          <div className='mt-2 text-xs text-tolopea-500'>
+            Terminée le {formatCompletedDate(completedAt)}
+          </div>
+        )}
       </div>
 
       {/* Reward & Action */}

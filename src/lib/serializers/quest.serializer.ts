@@ -5,8 +5,6 @@ export interface ISerializedQuestProgress {
   userId: string
   questId: string
   progress: number
-  completed: boolean
-  claimed: boolean
   completedAt?: string
   claimedAt?: string
   lastResetAt?: string
@@ -29,8 +27,6 @@ export default function questSerializer (
     userId: questProgress.userId.toString(),
     questId: questProgress.questId,
     progress: questProgress.progress,
-    completed: questProgress.completed,
-    claimed: questProgress.claimed,
     completedAt: questProgress.completedAt?.toISOString(),
     claimedAt: questProgress.claimedAt?.toISOString(),
     lastResetAt: questProgress.lastResetAt?.toISOString(),

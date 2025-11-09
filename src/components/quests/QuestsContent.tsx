@@ -19,7 +19,7 @@ interface QuestsContentProps {
  * @param q La quête
  * @returns Un booléen indiquant si la quête est réclamable
  */
-const claimable = (q: QuestWithProgress): boolean => q.progress.completed && !q.progress.claimed
+const claimable = (q: QuestWithProgress): boolean => q.progress.completedAt !== undefined && q.progress.claimedAt !== undefined
 
 /**
  * Quests content component
