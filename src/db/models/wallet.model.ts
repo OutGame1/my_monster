@@ -1,4 +1,6 @@
 import { type Document, Schema, Types, Model, models, model } from 'mongoose'
+import Quest from './quest.model'
+import { reachCoinsQuests } from '@/config/quests.config'
 
 export interface IWalletDocument extends Document {
   _id: Types.ObjectId
@@ -29,6 +31,40 @@ const walletSchema = new Schema<IWalletDocument>({
 }, {
   versionKey: false,
   timestamps: true
+})
+
+/**
+ * Hook post-save : Met à jour automatiquement les quêtes de coins
+ * après chaque modification du wallet
+ */
+walletSchema.post('save', async function ({ ownerId: userId, totalEarned }: IWalletDocument) {
+  // Mise à jour asynchrone des quêtes de coins
+  try {
+    // Itérer sur toutes les quêtes et filtrer par objectif "reach_coins"
+    for (const coinsAchievement of reachCoinsQuests) {
+      const questData = {
+        userId,
+        questId: coinsAchievement.id
+      }
+
+      let quest = await Quest.findOne(questData).exec()
+
+      if (quest === null) {
+        quest = new Quest(questData)
+      }
+
+      // Mettre à jour avec le total de pièces gagnées
+      quest.progress = totalEarned
+
+      if (totalEarned >= coinsAchievement.target && quest.completedAt === undefined) {
+        quest.completedAt = new Date()
+      }
+
+      await quest.save()
+    }
+  } catch (err) {
+    console.error('❌ Error updating coin quests after wallet save:', err)
+  }
 })
 
 const WalletModel: Model<IWalletDocument> = models.Wallet ?? model('Wallet', walletSchema)
