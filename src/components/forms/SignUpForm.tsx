@@ -6,6 +6,7 @@ import { toast } from 'react-toastify'
 import { authClient } from '@/lib/auth-client'
 import InputField from '@components/ui/InputField'
 import Button from '@components/ui/Button'
+import SocialSignInButtons from './SocialSignInButtons'
 
 interface Credentials {
   email: string
@@ -98,6 +99,8 @@ export default function SignUpForm (): ReactNode {
       >
         Créer mon compte
       </Button>
+
+      <SocialSignInButtons mode='signup' />
     </form>
   )
 }

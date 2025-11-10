@@ -85,6 +85,7 @@ body {
   --font-sans: var(--font-jersey10);
   --font-mono: var(--font-geist-mono);
   font-family: var(--font-sans), system-ui, -apple-system, BlinkMacSystemFont;
+  letter-spacing: 1px; /* Plus d'espace entre les lettres sinon le texte est pas très lisible avec la font */
 }
 
 @keyframes wave-arms {
