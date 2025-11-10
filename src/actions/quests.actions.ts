@@ -5,7 +5,7 @@ import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import questSerializer from '@/lib/serializers/quest.serializer'
-import { allQuests } from '@/config/quests.config'
+import { allQuests, questsObjectiveMap, questsIdMap } from '@/config/quests.config'
 import type { QuestObjective, QuestsPayload } from '@/types/quests'
 import { updateWalletBalance } from './wallet.actions'
 
@@ -65,12 +65,7 @@ export async function incrementQuestProgress (
     return
   }
 
-  // Itérer sur toutes les quêtes et filtrer par objectif
-  for (const questDef of allQuests) {
-    if (questDef.objective !== objective) {
-      continue
-    }
-
+  for (const questDef of questsObjectiveMap[objective]) {
     const questData = {
       userId: session.user.id,
       questId: questDef.id
@@ -112,12 +107,7 @@ export async function checkOwnershipQuests (): Promise<void> {
   // Compter les monstres possédés
   const monsterCount = await Monster.countDocuments({ ownerId: session.user.id }).exec()
 
-  // Itérer sur toutes les quêtes et filtrer par objectif
-  for (const questDef of allQuests) {
-    if (questDef.objective !== 'own_monsters') {
-      continue
-    }
-
+  for (const questDef of questsObjectiveMap.own_monsters) {
     const questData = {
       userId: session.user.id,
       questId: questDef.id
@@ -152,7 +142,7 @@ export async function claimQuestReward (questId: string): Promise<number> {
     throw new Error('User not authenticated')
   }
 
-  const questDef = allQuests.find(q => q.id === questId)
+  const questDef = questsIdMap.get(questId)
   if (questDef === undefined) {
     throw new Error('Quest not found')
   }

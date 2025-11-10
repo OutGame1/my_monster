@@ -1,6 +1,6 @@
 import { type Document, Schema, Types, Model, models, model } from 'mongoose'
 import Quest from './quest.model'
-import { reachCoinsQuests } from '@/config/quests.config'
+import { questsObjectiveMap } from '@/config/quests.config'
 
 export interface IWalletDocument extends Document {
   _id: Types.ObjectId
@@ -41,7 +41,7 @@ walletSchema.post('save', async function ({ ownerId: userId, totalEarned }: IWal
   // Mise à jour asynchrone des quêtes de coins
   try {
     // Itérer sur toutes les quêtes et filtrer par objectif "reach_coins"
-    for (const coinsAchievement of reachCoinsQuests) {
+    for (const coinsAchievement of questsObjectiveMap.reach_coins) {
       const questData = {
         userId,
         questId: coinsAchievement.id

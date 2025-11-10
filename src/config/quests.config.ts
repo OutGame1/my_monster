@@ -3,13 +3,9 @@
  * Définit les types de quêtes, leurs objectifs et leurs récompenses.
  */
 
-import type { QuestDefinition } from '@/types/quests'
+import type { QuestDefinition, QuestObjective } from '@/types/quests'
 
-/**
- * Quêtes quotidiennes - Se renouvellent chaque jour à minuit
- * Objectifs simples et rapides, faibles récompenses pour encourager l'achat
- */
-export const dailyQuests: QuestDefinition[] = [
+const dailyFeedQuests: QuestDefinition[] = [
   {
     id: 'daily_feed_3',
     type: 'daily',
@@ -19,7 +15,10 @@ export const dailyQuests: QuestDefinition[] = [
     title: 'Heure du goûter',
     description: 'Nourrir 3 fois vos monstres',
     icon: '🍖'
-  },
+  }
+]
+
+const dailyPlayQuests: QuestDefinition[] = [
   {
     id: 'daily_play_3',
     type: 'daily',
@@ -29,27 +28,10 @@ export const dailyQuests: QuestDefinition[] = [
     title: 'Temps de jeu',
     description: 'Jouer 3 fois avec vos monstres',
     icon: '🎮'
-  },
-  {
-    id: 'daily_care_3_different',
-    type: 'daily',
-    objective: 'care_different_monsters',
-    target: 3,
-    reward: 8,
-    title: 'Dresseur attentionné',
-    description: "S'occuper de 3 monstres différents",
-    icon: '💝'
-  },
-  {
-    id: 'daily_total_actions_5',
-    type: 'daily',
-    objective: 'total_actions',
-    target: 5,
-    reward: 6,
-    title: 'Journée active',
-    description: 'Effectuer 5 actions au total',
-    icon: '⚡'
-  },
+  }
+]
+
+const dailyComfortQuests: QuestDefinition[] = [
   {
     id: 'daily_comfort_5',
     type: 'daily',
@@ -59,7 +41,10 @@ export const dailyQuests: QuestDefinition[] = [
     title: 'Câlins réconfortants',
     description: 'Réconforter 5 fois vos monstres',
     icon: '🤗'
-  },
+  }
+]
+
+const dailyCalmQuests: QuestDefinition[] = [
   {
     id: 'daily_calm_3',
     type: 'daily',
@@ -69,7 +54,10 @@ export const dailyQuests: QuestDefinition[] = [
     title: 'Apaisement du soir',
     description: 'Calmer 3 fois vos monstres',
     icon: '😌'
-  },
+  }
+]
+
+const dailyLullabyQuests: QuestDefinition[] = [
   {
     id: 'daily_lullaby_3',
     type: 'daily',
@@ -79,6 +67,32 @@ export const dailyQuests: QuestDefinition[] = [
     title: 'Berceuse nocturne',
     description: 'Bercer 3 fois vos monstres',
     icon: '🌙'
+  }
+]
+
+const dailyCareDifferentQuests: QuestDefinition[] = [
+  {
+    id: 'daily_care_3_different',
+    type: 'daily',
+    objective: 'care_different_monsters',
+    target: 3,
+    reward: 8,
+    title: 'Dresseur attentionné',
+    description: "S'occuper de 3 monstres différents",
+    icon: '💝'
+  }
+]
+
+const dailyTotalActionsQuests: QuestDefinition[] = [
+  {
+    id: 'daily_total_actions_5',
+    type: 'daily',
+    objective: 'total_actions',
+    target: 5,
+    reward: 6,
+    title: 'Journée active',
+    description: 'Effectuer 5 actions au total',
+    icon: '⚡'
   },
   {
     id: 'daily_total_actions_10',
@@ -93,11 +107,20 @@ export const dailyQuests: QuestDefinition[] = [
 ]
 
 /**
- * Mapping des quêtes quotidiennes par ID pour un accès rapide
+ * Quêtes quotidiennes - Se renouvellent chaque jour à minuit
+ * Objectifs simples et rapides, faibles récompenses pour encourager l'achat
  */
-export const dailyQuestIds = dailyQuests.map(q => q.id)
+export const dailyQuests: QuestDefinition[] = [
+  ...dailyFeedQuests,
+  ...dailyPlayQuests,
+  ...dailyComfortQuests,
+  ...dailyCalmQuests,
+  ...dailyLullabyQuests,
+  ...dailyCareDifferentQuests,
+  ...dailyTotalActionsQuests
+]
 
-export const reachCoinsQuests: QuestDefinition[] = [
+const reachCoinsAchievements: QuestDefinition[] = [
   {
     id: 'achievement_coins_500',
     type: 'achievement',
@@ -140,11 +163,7 @@ export const reachCoinsQuests: QuestDefinition[] = [
   }
 ]
 
-/**
- * Succès (Achievements) - Objectifs permanents
- * Objectifs plus difficiles, récompenses importantes pour encourager l'engagement long terme
- */
-export const achievements: QuestDefinition[] = [
+const ownAchievements: QuestDefinition[] = [
   {
     id: 'achievement_own_5',
     type: 'achievement',
@@ -174,7 +193,10 @@ export const achievements: QuestDefinition[] = [
     title: 'Maître éleveur',
     description: 'Posséder 15 monstres',
     icon: '👑'
-  },
+  }
+]
+
+const feedAchievements: QuestDefinition[] = [
   {
     id: 'achievement_feed_250',
     type: 'achievement',
@@ -204,7 +226,10 @@ export const achievements: QuestDefinition[] = [
     title: 'Grand banquet',
     description: 'Nourrir 1000 fois vos monstres',
     icon: '🍖'
-  },
+  }
+]
+
+const playAchievements: QuestDefinition[] = [
   {
     id: 'achievement_play_250',
     type: 'achievement',
@@ -234,7 +259,10 @@ export const achievements: QuestDefinition[] = [
     title: 'Maître du jeu',
     description: 'Jouer 1000 fois avec vos monstres',
     icon: '🎪'
-  },
+  }
+]
+
+const comfortAchievements: QuestDefinition[] = [
   {
     id: 'achievement_comfort_250',
     type: 'achievement',
@@ -264,7 +292,10 @@ export const achievements: QuestDefinition[] = [
     title: 'Maître des câlins',
     description: 'Réconforter 1000 fois vos monstres',
     icon: '💝'
-  },
+  }
+]
+
+const calmAchievements: QuestDefinition[] = [
   {
     id: 'achievement_calm_250',
     type: 'achievement',
@@ -294,7 +325,10 @@ export const achievements: QuestDefinition[] = [
     title: 'Sage apaisement',
     description: 'Calmer 1000 fois vos monstres',
     icon: '☮️'
-  },
+  }
+]
+
+const lullabyAchievements: QuestDefinition[] = [
   {
     id: 'achievement_lullaby_250',
     type: 'achievement',
@@ -324,7 +358,10 @@ export const achievements: QuestDefinition[] = [
     title: 'Maître des rêves',
     description: 'Bercer 1000 fois vos monstres',
     icon: '⭐'
-  },
+  }
+]
+
+const totalActionsAchievements: QuestDefinition[] = [
   {
     id: 'achievement_total_actions_500',
     type: 'achievement',
@@ -354,7 +391,10 @@ export const achievements: QuestDefinition[] = [
     title: 'Légende vivante',
     description: 'Effectuer 2000 actions au total',
     icon: '🏅'
-  },
+  }
+]
+
+const levelUpAchievements: QuestDefinition[] = [
   {
     id: 'achievement_level_10',
     type: 'achievement',
@@ -374,8 +414,44 @@ export const achievements: QuestDefinition[] = [
     title: 'Maître entraîneur',
     description: 'Faire monter un monstre au niveau 20',
     icon: '🚀'
-  },
-  ...reachCoinsQuests
+  }
 ]
 
-export const allQuests = [...dailyQuests, ...achievements]
+/**
+ * Succès (Achievements) - Objectifs permanents
+ * Objectifs plus difficiles, récompenses importantes pour encourager l'engagement long terme
+ */
+export const achievements: QuestDefinition[] = [
+  ...feedAchievements,
+  ...playAchievements,
+  ...comfortAchievements,
+  ...calmAchievements,
+  ...lullabyAchievements,
+  ...ownAchievements,
+  ...totalActionsAchievements,
+  ...levelUpAchievements,
+  ...reachCoinsAchievements
+]
+
+export const allQuests: QuestDefinition[] = [...dailyQuests, ...achievements]
+
+export const questsObjectiveMap: Record<QuestObjective, QuestDefinition[]> = {
+  feed_monsters: [],
+  play_monsters: [],
+  comfort_monsters: [],
+  calm_monsters: [],
+  lullaby_monsters: [],
+  care_different_monsters: [],
+  own_monsters: [],
+  total_actions: [],
+  level_up_monster: [],
+  reach_coins: []
+}
+
+export const questsIdMap: Map<string, QuestDefinition> = new Map()
+
+// Indexation des quêtes par objectif et par ID pour un accès rapide
+for (const quest of allQuests) {
+  questsObjectiveMap[quest.objective].push(quest)
+  questsIdMap.set(quest.id, quest)
+}
