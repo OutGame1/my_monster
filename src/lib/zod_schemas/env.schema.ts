@@ -8,8 +8,13 @@ const envSchema = z.object({
 
   MONGODB_HOST: z.url(),
 
+  // OAuth GitHub
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+
+  // OAuth Google
+  GOOGLE_CLIENT_ID: z.string(),
+  GOOGLE_CLIENT_SECRET: z.string(),
 
   // Stripe
   STRIPE_SECRET_KEY: z.string(),
