@@ -40,6 +40,7 @@ This is a Next.js 16.0.0 project using the App Router architecture, built for a 
 - **Validation**: Zod for schema validation
 - **Fonts**: Jersey 10 & Geist Mono from Google Fonts
 - **Linting**: ts-standard for TypeScript linting
+- **Skeleton Loading**: react-loading-skeleton for loading states
 
 ## Development Workflow
 ```bash
@@ -65,8 +66,12 @@ npm run lint
 - `src/components/` - Reusable React components
   - `src/components/ui/` - Base UI components (Button, Card, Modal, Header, CoinBadge, CoinIcon, etc.)
   - `src/components/monster/` - Monster-specific components (Avatar, Display, Actions, LevelUpModal)
-  - `src/components/dashboard/` - Dashboard components (MonsterCard, MonstersGrid)
-  - `src/components/quests/` - Quest components (QuestCard, QuestsContent)
+  - `src/components/dashboard/` - Dashboard components (MonsterCard, MonstersGrid, DashboardContentWrapper)
+    - `src/components/dashboard/skeletons/` - Dashboard skeleton loading components
+  - `src/components/quests/` - Quest components (QuestCard, QuestsContent, QuestsContentWrapper)
+    - `src/components/quests/skeletons/` - Quest skeleton loading components
+  - `src/components/gallery/` - Gallery components (GalleryContent, GalleryGrid, GalleryContentWrapper)
+    - `src/components/gallery/skeletons/` - Gallery skeleton loading components
   - `src/components/shop/` - Shop components (CoinPackage, BuyCoinsContent)
   - `src/components/profile/` - Profile components (ProfileContent)
 - `src/actions/` - Server actions for data mutations
@@ -142,6 +147,29 @@ export default function Button ({
 - **Visual Variants**: Follow `primary | ghost | underline | outline` pattern
 - **Disabled States**: Always handle disabled styling separately from hover states
 - **Default Props**: Provide sensible defaults in destructuring
+
+### Skeleton Loading Pattern
+- **Library**: Use `react-loading-skeleton` for all loading states
+- **CSS Import**: Do NOT import the CSS file (`'react-loading-skeleton/dist/skeleton.css'`) - it's automatically imported by the component
+- **Organization**: Skeleton components are placed in a `skeletons/` subdirectory within the feature folder
+  - Example: `src/components/quests/skeletons/QuestCardSkeleton.tsx`
+  - NOT in a centralized `src/components/ui/skeletons/` folder
+- **Naming Convention**: `[ComponentName]Skeleton.tsx` (e.g., `QuestCardSkeleton`, `QuestsContentSkeleton`)
+- **No Index Files**: Do not create `index.ts` files for skeleton exports
+- **Documentation**: Do NOT document each new skeleton in README.md - just know they're in `skeletons/` folders
+- **Client-Side Data Fetching**: 
+  - Create a `[Feature]ContentWrapper.tsx` component that handles client-side data fetching
+  - Use `useState` and `useEffect` to load data asynchronously
+  - Show skeleton while `isLoading === true`
+  - Pass loaded data to the actual content component
+- **Page Structure**: Server components only handle authentication, then render the wrapper component
+- **Import Pattern**: 
+  ```tsx
+  import Skeleton from 'react-loading-skeleton'
+  // NO CSS IMPORT - automatic
+  import ComponentSkeleton from './skeletons/ComponentSkeleton'
+  // NOT from '@/components/ui/skeletons'
+  ```
 
 ### Color Usage Notes
 - **Primary brand color**: `blood-500` (`#ff2d34`) - Main brand red
