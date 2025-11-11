@@ -50,7 +50,7 @@ export default function ProfileContent ({ session, wallet }: ProfileContentProps
   }
 
   return (
-    <div className='min-h-screen bg-gradient-to-br from-tolopea-50 via-aqua-forest-50 to-blood-50'>
+    <div className='min-h-screen'>
       <div className='mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8'>
         {/* Section Title */}
         <SectionTitle

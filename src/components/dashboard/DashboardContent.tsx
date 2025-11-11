@@ -1,38 +1,63 @@
 'use client'
 
-import { useEffect, useState, type ReactNode } from 'react'
+import { useCallback, useEffect, useState, type ReactNode } from 'react'
 import { useSearchParams, useRouter } from 'next/navigation'
 import MonstersGrid from './MonstersGrid'
 import Modal from '@/components/ui/Modal'
 import CreateMonsterForm from './CreateMonsterForm'
 import SectionTitle from '@/components/ui/SectionTitle'
-import { createMonster } from '@/actions/monsters.actions'
+import { createMonster, getMonsters } from '@/actions/monsters.actions'
 import { PlusCircle } from 'lucide-react'
 import { useWallet } from '@/contexts/WalletContext'
 import { useMonster } from '@/contexts/MonsterContext'
 import { toast } from 'react-toastify'
-import CoinIcon from '../ui/CoinIcon'
-
-interface DashboardContentProps {
-  initialCreationCost: number
-}
+import CoinIcon from '@components/ui/CoinIcon'
+import Skeleton from '@components/ui/Skeleton'
+import MonsterCardSkeleton from './skeletons/MonsterCardSkeleton'
+import { calculateMonsterCreationCost } from '@/config/monsters.config'
 
 /**
  * Main dashboard content component
- * Orchestrates all dashboard sections: header, stats, and monsters grid
- * Manages monster creation modal
+ * Handles data fetching, loading states, and monster management
+ * Shows skeleton while loading, then displays content
  */
-export default function DashboardContent ({ initialCreationCost }: DashboardContentProps): ReactNode {
+export default function DashboardContent (): ReactNode {
   const { removeBalance } = useWallet()
-  const { refreshMonsters } = useMonster()
+  const { setMonsters } = useMonster()
   const searchParams = useSearchParams()
   const router = useRouter()
 
+  const [isLoading, setIsLoading] = useState(true)
+  const [creationCost, setCreationCost] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [monsterName, setMonsterName] = useState('')
   const [isCreating, setIsCreating] = useState(false)
 
-  const isFirstMonster = initialCreationCost === 0
+  const isFirstMonster = creationCost === 0
+
+  const fetchMonsters = useCallback(async (): Promise<void> => {
+    try {
+      const fetchedMonsters = await getMonsters()
+      setMonsters(fetchedMonsters)
+      const cost = calculateMonsterCreationCost(fetchedMonsters.length)
+      setCreationCost(cost)
+    } catch (error) {
+      console.error('Erreur lors du chargement du dashboard:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }, [setMonsters])
+
+  // Chargement des monstres initiaux et périodique
+  useEffect(() => {
+    void fetchMonsters()
+
+    const interval = setInterval(() => {
+      void fetchMonsters()
+    }, 10000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   // Détection du retour après paiement Stripe
   useEffect(() => {
@@ -44,14 +69,6 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
       router.replace('/app')
     }
   }, [searchParams, router])
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      void refreshMonsters()
-    }, 10000)
-
-    return () => clearInterval(interval)
-  }, [])
 
   const handleOpenModal = (): void => {
     setIsModalOpen(true)
@@ -80,7 +97,7 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
         removeBalance(creationCost)
       }
 
-      await refreshMonsters()
+      await fetchMonsters()
     } catch (error) {
       console.error('Error creating monster:', error)
     } finally {
@@ -90,7 +107,7 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
 
   return (
     <>
-      <div className='min-h-screen bg-gradient-to-br from-tolopea-50 via-aqua-forest-50 to-blood-50'>
+      <div className='min-h-screen'>
         <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
           {/* Section Title */}
           <SectionTitle
@@ -100,27 +117,43 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
 
           {/* Create Monster Button */}
           <div className='mb-8 flex'>
-            <button
-              onClick={handleOpenModal}
-              className='group relative overflow-hidden rounded-2xl bg-gradient-to-r from-tolopea-500 via-blood-500 to-aqua-forest-500 p-1 shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl'
-            >
-              <div className='flex items-center gap-3 rounded-xl bg-white px-8 py-4 transition-all duration-300 group-hover:bg-opacity-90'>
-                <PlusCircle className='h-8 w-8 text-tolopea-600' />
-                <div className='text-left'>
-                  <p className='text-xl font-black text-tolopea-800'>
-                    {isFirstMonster ? 'Créer mon premier monstre' : 'Créer un nouveau monstre'}
-                  </p>
-                  <p className='flex items-center gap-1 text-sm font-semibold text-tolopea-600'>
-                    {isFirstMonster ? 'Gratuit ! 🎉' : `${initialCreationCost}`}
-                    <CoinIcon className='h-4 w-4' />
-                  </p>
-                </div>
-              </div>
-            </button>
+            {isLoading
+              ? (
+                <Skeleton width={320} height={80} borderRadius={16} />
+                )
+              : (
+                <button
+                  onClick={handleOpenModal}
+                  className='group relative overflow-hidden rounded-2xl bg-gradient-to-r from-tolopea-500 via-blood-500 to-aqua-forest-500 p-1 shadow-2xl transition-all duration-300 hover:scale-105 hover:shadow-3xl'
+                >
+                  <div className='flex items-center gap-3 rounded-xl bg-white px-8 py-4 transition-all duration-300 group-hover:bg-opacity-90'>
+                    <PlusCircle className='h-8 w-8 text-tolopea-600' />
+                    <div className='text-left'>
+                      <p className='text-xl font-black text-tolopea-800'>
+                        {isFirstMonster ? 'Créer mon premier monstre' : 'Créer un nouveau monstre'}
+                      </p>
+                      <p className='flex items-center gap-1 text-sm font-semibold text-tolopea-600'>
+                        {isFirstMonster ? 'Gratuit ! 🎉' : `${creationCost}`}
+                        <CoinIcon className='h-4 w-4' />
+                      </p>
+                    </div>
+                  </div>
+                </button>
+                )}
           </div>
 
           {/* Monsters Collection Grid Section */}
-          <MonstersGrid onCreateMonster={handleOpenModal} />
+          {isLoading
+            ? (
+              <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <MonsterCardSkeleton key={i} />
+                ))}
+              </div>
+              )
+            : (
+              <MonstersGrid onCreateMonster={handleOpenModal} />
+              )}
         </div>
       </div>
 
@@ -133,7 +166,7 @@ export default function DashboardContent ({ initialCreationCost }: DashboardCont
           ? 'Création...'
           : (
             <>
-              Créer {isFirstMonster ? '0' : initialCreationCost} <CoinIcon className='inline h-4 w-4' />
+              Créer {isFirstMonster ? '0' : creationCost} <CoinIcon className='inline h-4 w-4' />
             </>
             )}
         onConfirm={() => { void handleCreateMonster() }}

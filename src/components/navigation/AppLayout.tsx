@@ -1,12 +1,21 @@
 import type { PropsWithChildren, ReactNode } from 'react'
 import { getSession } from '@/lib/auth'
+import { redirect } from 'next/navigation'
 import Header from '@/components/ui/Header'
 import Footer from '@/components/ui/Footer'
 import { getWallet } from '@/actions/wallet.actions'
 import { WalletProvider } from '@/contexts/WalletContext'
 
-export default async function AppLayout ({ children }: PropsWithChildren): Promise<ReactNode> {
+interface AppLayoutProps extends PropsWithChildren {
+  protectedRoute?: boolean
+}
+
+export default async function AppLayout ({ children, protectedRoute = false }: AppLayoutProps): Promise<ReactNode> {
   const session = await getSession()
+
+  if (protectedRoute && session === null) {
+    redirect('/sign-in')
+  }
 
   const wallet = session === null
     ? null
@@ -14,9 +23,9 @@ export default async function AppLayout ({ children }: PropsWithChildren): Promi
 
   return (
     <WalletProvider initialWallet={wallet}>
-      <div className='min-h-screen flex flex-col bg-white text-gray-900'>
+      <div className='min-h-screen flex flex-col text-gray-900'>
         <Header session={session} />
-        <main className='flex-1 flex flex-col'>
+        <main className='flex-1 flex flex-col bg-gradient-to-br from-tolopea-200 via-aqua-forest-200 to-blood-200'>
           {children}
         </main>
         <Footer />

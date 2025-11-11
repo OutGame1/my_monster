@@ -15,7 +15,7 @@ export default function GalleryGrid ({ monsters }: GalleryGridProps): ReactNode 
     return (
       <div className='flex min-h-[400px] items-center justify-center rounded-2xl border-2 border-dashed border-tolopea-200 bg-tolopea-50/30 p-12'>
         <div className='text-center'>
-          <p className='text-2xl font-bold text-tolopea-600'>🎨 Galerie vide</p>
+          <p className='text-2xl font-bold text-tolopea-600'>Galerie vide</p>
           <p className='mt-2 text-gray-600'>
             Aucun monstre public pour le moment. Soyez le premier à partager votre création !
           </p>

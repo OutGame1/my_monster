@@ -1,7 +1,5 @@
 import type { ReactNode } from 'react'
-import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth'
-import GalleryContentWrapper from '@/components/gallery/GalleryContentWrapper'
+import GalleryContent from '@/components/gallery/GalleryContent'
 import AppLayout from '@/components/navigation/AppLayout'
 
 /**
@@ -9,16 +7,10 @@ import AppLayout from '@/components/navigation/AppLayout'
  * Displays all public monsters from all users in an art gallery style
  * Uses infinite scroll and filters for better performance and UX
  */
-export default async function GalleryPage (): Promise<ReactNode> {
-  const session = await getSession()
-
-  if (session === null) {
-    redirect('/sign-in')
-  }
-
+export default function GalleryPage (): ReactNode {
   return (
-    <AppLayout>
-      <GalleryContentWrapper />
+    <AppLayout protectedRoute>
+      <GalleryContent />
     </AppLayout>
   )
 }

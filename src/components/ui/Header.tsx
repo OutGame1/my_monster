@@ -18,7 +18,7 @@ export default function Header ({ session }: HeaderProps): ReactNode {
   const isActive = (path: string): boolean => pathname === path
 
   return (
-    <header className='sticky top-0 z-50 border-b border-tolopea-100 bg-tolopea-50 backdrop-blur-sm'>
+    <header className='sticky top-0 z-50 border-b border-tolopea-100 bg-tolopea-50 backdrop-blur-sm shadow-xl'>
       <div className='mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6'>
         {/* Left - Logo */}
         <Link
