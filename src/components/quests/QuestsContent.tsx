@@ -12,6 +12,7 @@ import cn from 'classnames'
 interface QuestsContentProps {
   dailyQuests: QuestWithProgress[]
   achievements: QuestWithProgress[]
+  onQuestClaimed: () => Promise<void>
 }
 
 /**
@@ -25,7 +26,7 @@ const claimable = (q: QuestWithProgress): boolean => q.progress.completedAt !== 
  * Quests content component
  * Displays daily quests and achievements with progress tracking
  */
-export default function QuestsContent ({ dailyQuests, achievements }: QuestsContentProps): ReactNode {
+export default function QuestsContent ({ dailyQuests, achievements, onQuestClaimed }: QuestsContentProps): ReactNode {
   const [activeTab, setActiveTab] = useState<QuestType>('daily')
 
   const currentQuests = activeTab === 'daily' ? dailyQuests : achievements
@@ -92,6 +93,7 @@ export default function QuestsContent ({ dailyQuests, achievements }: QuestsCont
             <QuestCard
               key={quest.definition.id}
               quest={quest}
+              onQuestClaimed={onQuestClaimed}
             />
           ))}
         </div>

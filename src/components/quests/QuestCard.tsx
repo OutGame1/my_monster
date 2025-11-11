@@ -8,20 +8,19 @@ import type { QuestWithProgress } from '@/types/quests'
 import { claimQuestReward } from '@/actions/quests.actions'
 import { Check, Lock } from 'lucide-react'
 import { toast } from 'react-toastify'
-import { useRouter } from 'next/navigation'
 import { useWallet } from '@/contexts/WalletContext'
 import cn from 'classnames'
 
 interface QuestCardProps {
   quest: QuestWithProgress
+  onQuestClaimed: () => Promise<void>
 }
 
 /**
  * Quest card component
  * Displays a single quest with progress bar and claim button
  */
-export default function QuestCard ({ quest }: QuestCardProps): ReactNode {
-  const router = useRouter()
+export default function QuestCard ({ quest, onQuestClaimed }: QuestCardProps): ReactNode {
   const { addBalance } = useWallet()
 
   const [isClaiming, setIsClaiming] = useState(false)
@@ -56,7 +55,8 @@ export default function QuestCard ({ quest }: QuestCardProps): ReactNode {
         autoClose: 3000
       })
 
-      router.refresh()
+      // Recharger les quêtes pour mettre à jour l'état
+      await onQuestClaimed()
     } catch (error) {
       toast.error(
         error instanceof Error ? error.message : 'Erreur lors de la réclamation',

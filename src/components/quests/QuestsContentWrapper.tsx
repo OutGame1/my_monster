@@ -1,6 +1,6 @@
 'use client'
 
-import { type ReactNode, useEffect, useState } from 'react'
+import { type ReactNode, useEffect, useState, useCallback } from 'react'
 import type { QuestWithProgress } from '@/types/quests'
 import { getQuestsWithProgress } from '@/actions/quests.actions'
 import QuestsContent from './QuestsContent'
@@ -15,25 +15,25 @@ export default function QuestsContentWrapper (): ReactNode {
   const [achievements, setAchievements] = useState<QuestWithProgress[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  useEffect(() => {
-    const fetchQuests = async (): Promise<void> => {
-      try {
-        const { daily, achievement } = await getQuestsWithProgress()
-        setDailyQuests(daily)
-        setAchievements(achievement)
-      } catch (error) {
-        console.error('Erreur lors du chargement des quêtes:', error)
-      } finally {
-        setIsLoading(false)
-      }
+  const fetchQuests = useCallback(async (): Promise<void> => {
+    try {
+      const { daily, achievement } = await getQuestsWithProgress()
+      setDailyQuests(daily)
+      setAchievements(achievement)
+    } catch (error) {
+      console.error('Erreur lors du chargement des quêtes:', error)
+    } finally {
+      setIsLoading(false)
     }
-
-    void fetchQuests()
   }, [])
+
+  useEffect(() => {
+    void fetchQuests()
+  }, [fetchQuests])
 
   if (isLoading) {
     return <QuestsContentSkeleton />
   }
 
-  return <QuestsContent dailyQuests={dailyQuests} achievements={achievements} />
+  return <QuestsContent dailyQuests={dailyQuests} achievements={achievements} onQuestClaimed={fetchQuests} />
 }
