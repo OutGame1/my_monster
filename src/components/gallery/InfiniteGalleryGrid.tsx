@@ -5,17 +5,32 @@ import { useInView } from 'react-intersection-observer'
 import GalleryMonsterCard from './GalleryMonsterCard'
 import { getPublicMonstersPaginated } from '@/actions/monsters.actions'
 import { useInfiniteScroll } from '@/hooks/useInfiniteScroll'
-import type { InfiniteGalleryGridProps } from '@/types/gallery'
+import type { ISerializedPublicMonster } from '@/lib/serializers/monster.serializer'
+import type { GetPublicMonstersPaginatedResult } from '@/types/gallery'
+
+/**
+ * Props du composant InfiniteGalleryGrid
+ */
+interface InfiniteGalleryGridProps {
+  initialResult: GetPublicMonstersPaginatedResult
+  fetchMore?: (cursor: string) => Promise<{
+    data: ISerializedPublicMonster[]
+    nextCursor: string | null
+    hasMore: boolean
+  }>
+}
 
 /**
  * Composant client pour la grille de galerie avec infinite scroll
  * Utilise react-intersection-observer pour détecter quand charger plus de monstres
  */
 export default function InfiniteGalleryGrid ({
-  initialMonsters,
-  initialCursor,
-  initialHasMore,
-  totalCount,
+  initialResult: {
+    monsters: initialMonsters,
+    nextCursor: initialCursor,
+    hasMore: initialHasMore,
+    total: totalCount
+  },
   fetchMore: customFetchMore
 }: InfiniteGalleryGridProps): ReactNode {
   // Fonction de fetch par défaut (sans filtres)
@@ -53,7 +68,7 @@ export default function InfiniteGalleryGrid ({
     return (
       <div className='flex min-h-[400px] items-center justify-center rounded-2xl border-2 border-dashed border-tolopea-200 bg-tolopea-50/30 p-12'>
         <div className='text-center'>
-          <p className='text-2xl font-bold text-tolopea-600'>🎨 Galerie vide</p>
+          <p className='text-2xl font-bold text-tolopea-600'>Galerie vide</p>
           <p className='mt-2 text-gray-600'>
             Aucun monstre public pour le moment. Soyez le premier à partager votre création !
           </p>
@@ -95,7 +110,7 @@ export default function InfiniteGalleryGrid ({
       {/* Message de fin */}
       {!hasMore && monsters.length > 0 && (
         <div className='flex justify-center py-8 text-sm text-gray-500'>
-          ✨ Vous avez vu tous les {totalCount} monstres publics
+          Vous avez vu tous les {totalCount} monstres publics
         </div>
       )}
     </div>

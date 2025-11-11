@@ -43,40 +43,6 @@ export interface GetPublicMonstersPaginatedResult {
 }
 
 /**
- * Props du composant GalleryContent
- */
-export interface GalleryContentProps {
-  initialMonsters: ISerializedPublicMonster[]
-  initialCursor: string | null
-  initialHasMore: boolean
-  initialTotal: number
-}
-
-/**
- * Props du composant GalleryFiltersBar
- */
-export interface GalleryFiltersBarProps {
-  filters: GalleryFilters
-  onFiltersChange: (filters: GalleryFilters) => void
-  totalCount: number
-}
-
-/**
- * Props du composant InfiniteGalleryGrid
- */
-export interface InfiniteGalleryGridProps {
-  initialMonsters: ISerializedPublicMonster[]
-  initialCursor: string | null
-  initialHasMore: boolean
-  totalCount: number
-  fetchMore?: (cursor: string) => Promise<{
-    data: ISerializedPublicMonster[]
-    nextCursor: string | null
-    hasMore: boolean
-  }>
-}
-
-/**
  * Configuration d'une option de tri pour l'UI
  */
 export interface SortOption {

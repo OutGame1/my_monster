@@ -5,37 +5,16 @@ import { createContext, useContext, useState, type PropsWithChildren, type React
 
 interface MonsterContextType {
   monsters: ISerializedMonster[]
-  refreshMonsters: () => Promise<void>
+  setMonsters: React.Dispatch<React.SetStateAction<ISerializedMonster[]>>
 }
 
 const MonsterContext = createContext<MonsterContextType | null>(null)
 
-interface MonsterProviderProps extends PropsWithChildren {
-  initialMonsters: ISerializedMonster[]
-}
-
-export function MonsterProvider ({ children, initialMonsters }: MonsterProviderProps): ReactNode {
-  const [monsters, setMonsters] = useState<ISerializedMonster[]>(initialMonsters)
-
-  const refreshMonsters = async (): Promise<void> => {
-    try {
-      const response = await fetch('/api/monsters')
-
-      if (!response.ok) {
-        console.error(`Failed to fetch monsters: ${response.status} ${response.statusText}`)
-        return
-      }
-
-      const updatedMonsters = await response.json()
-      setMonsters(updatedMonsters)
-    } catch (error) {
-      console.error('Error fetching monsters updates:', error)
-      // Continue polling despite errors - temporary network issues shouldn't stop updates
-    }
-  }
+export function MonsterProvider ({ children }: PropsWithChildren): ReactNode {
+  const [monsters, setMonsters] = useState<ISerializedMonster[]>([])
 
   return (
-    <MonsterContext.Provider value={{ monsters, refreshMonsters }}>
+    <MonsterContext.Provider value={{ monsters, setMonsters }}>
       {children}
     </MonsterContext.Provider>
   )

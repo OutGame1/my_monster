@@ -2,7 +2,7 @@
  * Constantes pour la feature Galerie
  */
 
-import type { MonsterStateOption, SortOption } from '@/types/gallery'
+import type { GallerySortBy, MonsterStateOption, SortOption } from '@/types/gallery'
 
 /**
  * Nombre de monstres par page dans la galerie
@@ -35,7 +35,7 @@ export const SORT_OPTIONS: SortOption[] = [
 /**
  * Tri par défaut
  */
-export const DEFAULT_SORT: SortOption['value'] = 'newest'
+export const DEFAULT_SORT: GallerySortBy = 'newest'
 
 /**
  * Plage de niveaux min/max

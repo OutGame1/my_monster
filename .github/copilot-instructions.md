@@ -133,6 +133,7 @@ export default function Button ({
     ```
 - **Responsive Design**: Mobile-first approach with `sm:` breakpoints
 - **Animations**: Custom keyframe animations for monster interactions (wave-arms, wiggle-arms, shake-arms-hungry, chomp-mouth, gaming-eyes, bounce-body, tears)
+- **🚨 NO EMOJIS IN COMPONENTS**: Avoid using emojis directly in component JSX (except for monster state emojis from data). Use Lucide React icons instead for decorative elements.
 
 ### Import Patterns
 - Use `@/` alias for src imports: `import Button from '@/components/button'`

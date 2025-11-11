@@ -1,6 +1,4 @@
 import type { ReactNode } from 'react'
-import { redirect } from 'next/navigation'
-import { getSession } from '@/lib/auth'
 import AppLayout from '@/components/navigation/AppLayout'
 import QuestsContentWrapper from '@/components/quests/QuestsContentWrapper'
 
@@ -10,15 +8,9 @@ import QuestsContentWrapper from '@/components/quests/QuestsContentWrapper'
  *
  * @returns {Promise<ReactNode>} Contenu JSX rendu côté serveur pour les quêtes.
  */
-export default async function QuestsPage (): Promise<ReactNode> {
-  const session = await getSession()
-
-  if (session === null) {
-    redirect('/sign-in')
-  }
-
+export default function QuestsPage (): ReactNode {
   return (
-    <AppLayout>
+    <AppLayout protectedRoute>
       <QuestsContentWrapper />
     </AppLayout>
   )

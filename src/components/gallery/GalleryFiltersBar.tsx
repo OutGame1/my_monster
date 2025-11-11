@@ -2,8 +2,8 @@
 
 import type { ReactNode } from 'react'
 import cn from 'classnames'
-import Button from '../ui/Button'
-import type { GalleryFilters, GalleryFiltersBarProps } from '@/types/gallery'
+import Button from '@components/ui/Button'
+import type { GalleryFilters } from '@/types/gallery'
 import type { MonsterState } from '@/db/models/monster.model'
 import {
   MONSTER_STATE_OPTIONS,
@@ -13,6 +13,15 @@ import {
   MAX_MONSTER_LEVEL
 } from '@/config/gallery.config'
 import { count } from '@/lib/utils'
+
+/**
+ * Props du composant GalleryFiltersBar
+ */
+interface GalleryFiltersBarProps {
+  filters: GalleryFilters
+  onFiltersChange: (filters: GalleryFilters) => void
+  totalCount: number
+}
 
 /**
  * Barre de filtres pour la galerie
