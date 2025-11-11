@@ -339,6 +339,63 @@ export default function Component({
 }
 ```
 
+## Système de chargement progressif
+
+Le projet utilise un système de skeleton loading pour améliorer l'expérience utilisateur :
+
+### Principes
+
+- **Bibliothèque** : `react-loading-skeleton` pour les effets de chargement
+- **Architecture** : Les skeletons sont organisés par fonctionnalité
+- **Pattern** : Chargement des données côté client avec affichage instantané de la page
+
+### Organisation des fichiers
+
+Les composants skeleton sont placés dans un dossier `skeletons/` au sein de chaque fonctionnalité :
+
+```
+src/components/quests/
+├── QuestCard.tsx
+├── QuestsContent.tsx
+├── QuestsContentWrapper.tsx    # Gère le chargement client
+└── skeletons/
+    ├── QuestCardSkeleton.tsx
+    └── QuestsContentSkeleton.tsx
+```
+
+### Implémentation
+
+1. **Composant Skeleton** : Réplique la structure visuelle du composant réel
+2. **Wrapper Component** : Composant client qui gère le fetch des données
+3. **Page Component** : Serveur component qui vérifie l'auth et affiche le wrapper
+
+```tsx
+// QuestsContentWrapper.tsx
+'use client'
+
+export default function QuestsContentWrapper() {
+  const [data, setData] = useState([])
+  const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    fetchData().then(result => {
+      setData(result)
+      setIsLoading(false)
+    })
+  }, [])
+
+  if (isLoading) return <QuestsContentSkeleton />
+  return <QuestsContent data={data} />
+}
+```
+
+### Avantages
+
+- Affichage instantané de la page
+- Feedback visuel pendant le chargement
+- Possibilité de cache statique
+- Meilleure perception de performance
+
 ## Déploiement
 
 ### Vercel (recommandé)
