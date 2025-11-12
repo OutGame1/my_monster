@@ -12,7 +12,28 @@ import { useSession } from '@/contexts/SessionContext'
 import { useWallet } from '@/contexts/WalletContext'
 
 /**
- * Component displaying user profile information and account management options.
+ * Composant d'affichage du profil utilisateur complet avec gestion du compte
+ *
+ * Sections affichées:
+ * 1. **Informations du compte**:
+ *    - Photo de profil avec possibilité de modification (ProfileImageUploader)
+ *    - Nom d'utilisateur
+ *    - Email
+ *    - Date d'inscription (formatée en français)
+ *
+ * 2. **Statistiques du portefeuille**:
+ *    - Solde actuel en pièces (depuis WalletContext)
+ *    - Total cumulé de pièces gagnées (totalEarned)
+ *
+ * 3. **Gestion du compte**:
+ *    - Bouton de déconnexion avec état de chargement
+ *    - Redirection vers la page d'accueil après déconnexion
+ *
+ * Contextes utilisés:
+ * - `SessionContext`: Récupération des données utilisateur (nom, email, date de création)
+ * - `WalletContext`: Récupération des données de portefeuille (balance, totalEarned)
+ *
+ * @returns {ReactNode} Page de profil complète avec 3 sections en Card
  */
 export default function ProfileContent (): ReactNode {
   const session = useSession()

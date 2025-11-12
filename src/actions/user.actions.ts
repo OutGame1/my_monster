@@ -8,8 +8,35 @@ import cloudinary, { isCloudinaryConnected } from '@/lib/cloudinary'
 /**
  * Met à jour la photo de profil de l'utilisateur en utilisant Cloudinary
  *
- * @param {string} dataUrl - Image au format data URL (base64)
- * @returns {Promise<string>} L'URL de l'image
+ * Workflow:
+ * 1. Validation du type de données reçu (doit être une string data URL)
+ * 2. Vérification de la disponibilité du service Cloudinary
+ * 3. Authentification de l'utilisateur via session Better Auth
+ * 4. Upload de l'image sur Cloudinary avec transformations automatiques:
+ *    - Recadrage intelligent centré sur le visage (96x96px)
+ *    - Optimisation qualité/format automatique
+ *    - Stockage dans le dossier `my_monster/profile_pictures`
+ * 5. Mise à jour du champ `image` de l'utilisateur via Better Auth API
+ *
+ * @param {string | ArrayBuffer | null} dataUrl - Image au format data URL (base64) obtenue depuis FileReader
+ * @returns {Promise<string>} L'URL sécurisée de l'image uploadée sur Cloudinary
+ * @throws {Error} Si le format de données est invalide
+ * @throws {Error} Si le service Cloudinary n'est pas disponible
+ * @throws {Error} Si l'utilisateur n'est pas authentifié
+ * @throws {Error} Si l'upload ou la mise à jour échoue
+ *
+ * @example
+ * // Dans un composant React avec FileReader
+ * const reader = new FileReader()
+ * reader.onloadend = async () => {
+ *   try {
+ *     const imageUrl = await updateProfileImage(reader.result)
+ *     console.log('Image uploadée:', imageUrl)
+ *   } catch (error) {
+ *     console.error('Erreur upload:', error)
+ *   }
+ * }
+ * reader.readAsDataURL(file)
  */
 export async function updateProfileImage (dataUrl: string | ArrayBuffer | null): Promise<string> {
   try {
