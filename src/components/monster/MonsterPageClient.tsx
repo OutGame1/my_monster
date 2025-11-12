@@ -85,7 +85,10 @@ export default function MonsterPageClient ({ initialMonster }: MonsterPageClient
       {/* Two Column Layout */}
       <div className='grid grid-cols-1 gap-8 lg:grid-cols-2'>
         {/* Left Column - Monster Display */}
-        <MonsterDisplay monster={monster} />
+        <MonsterDisplay
+          monster={monster}
+          onBackgroundChanged={() => { void fetchAndUpdateMonster() }}
+        />
 
         {/* Right Column - Info & Actions */}
         <div className='space-y-6'>
@@ -93,7 +96,7 @@ export default function MonsterPageClient ({ initialMonster }: MonsterPageClient
           <MonsterStateInfo monster={monster} />
 
           {/* XP Bar */}
-          <MonsterXPBar currentXP={monster.xp} maxXP={monster.maxXp} />
+          <MonsterXPBar monster={monster} />
 
           {/* Action Buttons */}
           <MonsterActions

@@ -80,7 +80,7 @@ export default function InfiniteGalleryGrid ({
   return (
     <div className='space-y-8'>
       {/* Grille de monstres */}
-      <div className='grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+      <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
         {monsters.map(monster => (
           <GalleryMonsterCard key={monster._id} monster={monster} />
         ))}

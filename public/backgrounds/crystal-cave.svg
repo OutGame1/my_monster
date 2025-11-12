@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="caveGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e1b4b;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#312e81;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4c1d95;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="crystalGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#a78bfa;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <rect width="600" height="600" fill="url(#caveGrad)"/>
+  
+  <g opacity="0.9">
+    <polygon points="150,350 180,250 210,350" fill="#8b5cf6"/>
+    <ellipse cx="180" cy="250" rx="20" ry="20" fill="url(#crystalGlow)"/>
+  </g>
+  
+  <g opacity="0.85">
+    <polygon points="400,400 450,280 500,400" fill="#a78bfa"/>
+    <ellipse cx="450" cy="280" rx="25" ry="25" fill="url(#crystalGlow)"/>
+  </g>
+  
+  <g opacity="0.9">
+    <polygon points="250,480 300,360 350,480" fill="#7c3aed"/>
+    <ellipse cx="300" cy="360" rx="22" ry="22" fill="url(#crystalGlow)"/>
+  </g>
+  
+  <polygon points="80,420 100,370 120,420" fill="#a78bfa" opacity="0.7"/>
+  <polygon points="480,450 510,390 540,450" fill="#8b5cf6" opacity="0.7"/>
+  <polygon points="180,550 210,500 240,550" fill="#7c3aed" opacity="0.8"/>
+  <polygon points="380,530 420,470 460,530" fill="#a78bfa" opacity="0.75"/>
+  
+  <path d="M 0 550 Q 200 530 400 550 T 600 560 L 600 600 L 0 600 Z" fill="#1e1b4b" opacity="0.6"/>
+</svg>

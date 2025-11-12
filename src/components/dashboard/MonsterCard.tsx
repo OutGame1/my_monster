@@ -3,6 +3,7 @@
 import type { ReactNode } from 'react'
 import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
+import MonsterBackgroundDisplay from '@/components/backgrounds/MonsterBackgroundDisplay'
 import { stateInfoMap } from './monster-state.utils'
 import { useRouter } from 'next/navigation'
 import cn from 'classnames'
@@ -31,21 +32,25 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
   return (
     <div
       onClick={handleCardClick}
-      className='group relative cursor-pointer overflow-hidden rounded-2xl border border-tolopea-200 bg-white/90 p-6 shadow-xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl'
+      className='group relative cursor-pointer overflow-hidden rounded-2xl border border-tolopea-200 bg-white/90 shadow-xl backdrop-blur-sm transition-all duration-300 hover:scale-105 hover:shadow-2xl'
     >
-      {/* Monster Avatar - Center Display */}
-      <div className='mb-4 flex justify-center'>
-        <div className='rounded-full bg-gradient-to-br from-tolopea-50 to-aqua-forest-50 p-4'>
+      {/* Monster Avatar with Background */}
+      <div className='mb-4'>
+        <MonsterBackgroundDisplay
+          monsterId={monster._id}
+          monsterName={monster.name}
+          backgroundId={monster.backgroundId}
+        >
           <MonsterAvatar
             traits={monster.traits}
             state={monster.state}
             size={180}
           />
-        </div>
+        </MonsterBackgroundDisplay>
       </div>
 
       {/* Monster Information */}
-      <div className='text-center'>
+      <div className='px-6 pb-6 text-center'>
         <h3 className='mb-2 text-2xl font-bold text-tolopea-800'>{monster.name}</h3>
 
         {/* Level Badge */}

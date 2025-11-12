@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="citySky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1e3a8a;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#3b82f6;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="600" height="600" fill="url(#citySky)"/>
+  
+  <rect x="80" y="300" width="80" height="300" fill="#424242"/>
+  <rect x="90" y="320" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  <rect x="110" y="350" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  <rect x="90" y="380" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  
+  <rect x="200" y="200" width="90" height="400" fill="#616161"/>
+  <rect x="210" y="230" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  <rect x="235" y="260" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  <rect x="260" y="290" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  
+  <rect x="330" y="250" width="85" height="350" fill="#757575"/>
+  <rect x="340" y="280" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  <rect x="365" y="310" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  
+  <rect x="450" y="320" width="75" height="280" fill="#424242"/>
+  <rect x="460" y="350" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+  <rect x="485" y="380" width="15" height="20" fill="#ffd54f" opacity="0.8"/>
+</svg>

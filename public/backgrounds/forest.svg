@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="forestSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#81c784;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#66bb6a;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="600" height="600" fill="url(#forestSky)"/>
+  
+  <polygon points="150,350 200,250 250,350" fill="#2e7d32" opacity="0.8"/>
+  <rect x="190" y="350" width="20" height="60" fill="#5d4037"/>
+  
+  <polygon points="350,320 420,200 490,320" fill="#388e3c" opacity="0.8"/>
+  <rect x="410" y="320" width="20" height="80" fill="#5d4037"/>
+  
+  <polygon points="80,380 130,280 180,380" fill="#1b5e20" opacity="0.9"/>
+  <rect x="120" y="380" width="20" height="60" fill="#4e342e"/>
+  
+  <polygon points="420,370 480,260 540,370" fill="#43a047" opacity="0.8"/>
+  <rect x="470" y="370" width="20" height="70" fill="#5d4037"/>
+  
+  <polygon points="250,340 310,230 370,340" fill="#2e7d32" opacity="0.85"/>
+  <rect x="300" y="340" width="20" height="70" fill="#4e342e"/>
+  
+  <rect x="0" y="450" width="600" height="150" fill="#558b2f" opacity="0.9"/>
+</svg>

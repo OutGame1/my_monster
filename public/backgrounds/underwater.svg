@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="waterGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1098ad;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#0c8599;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0b7285;stop-opacity:1" />
+    </linearGradient>
+    <radialGradient id="lightRays" cx="50%" cy="0%" r="100%">
+      <stop offset="0%" style="stop-color:#74c0fc;stop-opacity:0.4" />
+      <stop offset="100%" style="stop-color:#1098ad;stop-opacity:0" />
+    </radialGradient>
+  </defs>
+  
+  <rect width="600" height="600" fill="url(#waterGrad)"/>
+  
+  <ellipse cx="300" cy="-50" rx="200" ry="300" fill="url(#lightRays)"/>
+  
+  <circle cx="150" cy="150" r="8" fill="#74c0fc" opacity="0.6"/>
+  <circle cx="380" cy="130" r="6" fill="#74c0fc" opacity="0.5"/>
+  <circle cx="220" cy="220" r="5" fill="#74c0fc" opacity="0.7"/>
+  <circle cx="450" cy="200" r="7" fill="#74c0fc" opacity="0.6"/>
+  <circle cx="100" cy="280" r="6" fill="#74c0fc" opacity="0.5"/>
+  <circle cx="500" cy="310" r="5" fill="#74c0fc" opacity="0.6"/>
+  
+  <g opacity="0.7">
+    <circle cx="130" cy="380" r="50" fill="#ff6b6b"/>
+    <circle cx="140" cy="370" r="15" fill="#ffa94d" opacity="0.8"/>
+    <circle cx="115" cy="385" r="12" fill="#ffa94d" opacity="0.8"/>
+  </g>
+  
+  <g opacity="0.7">
+    <circle cx="420" cy="430" r="40" fill="#ffd43b"/>
+    <circle cx="428" cy="422" r="12" fill="#ffa94d" opacity="0.8"/>
+    <circle cx="405" cy="435" r="10" fill="#ffa94d" opacity="0.8"/>
+  </g>
+  
+  <g opacity="0.7">
+    <circle cx="280" cy="500" r="55" fill="#ff8787"/>
+    <circle cx="290" cy="490" r="16" fill="#ffa94d" opacity="0.8"/>
+    <circle cx="262" cy="505" r="13" fill="#ffa94d" opacity="0.8"/>
+  </g>
+  
+  <ellipse cx="150" cy="560" rx="100" ry="40" fill="#4c6ef5" opacity="0.4"/>
+  <ellipse cx="450" cy="570" rx="120" ry="45" fill="#4c6ef5" opacity="0.4"/>
+</svg>

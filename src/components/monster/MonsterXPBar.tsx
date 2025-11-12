@@ -1,23 +1,26 @@
 import type { ReactNode } from 'react'
+import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 
 interface MonsterXPBarProps {
-  currentXP: number
-  maxXP: number
+  monster: ISerializedMonster
 }
 
 /**
  * Monster XP progress bar component
  * Displays the monster's experience points progress
  */
-export default function MonsterXPBar ({ currentXP, maxXP }: MonsterXPBarProps): ReactNode {
-  const percentage = (currentXP / maxXP) * 100
+export default function MonsterXPBar ({ monster }: MonsterXPBarProps): ReactNode {
+  const percentage = (monster.xp / monster.maxXp) * 100
 
   return (
     <div className='rounded-2xl border border-tolopea-200 bg-white/90 p-6 shadow-xl backdrop-blur-sm'>
       <div className='mb-3 flex items-center justify-between'>
         <h3 className='text-lg font-semibold text-tolopea-800'>Expérience</h3>
+        <span className='rounded-full bg-blood-100 px-6 text-xl font-semibold text-blood-700'>
+          Niveau {monster.level}
+        </span>
         <span className='text-sm font-medium text-tolopea-600'>
-          {currentXP} / {maxXP} XP
+          {monster.xp} / {monster.maxXp} XP
         </span>
       </div>
 

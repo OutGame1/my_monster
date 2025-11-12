@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <radialGradient id="starCore" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffd43b;stop-opacity:1" />
+      <stop offset="30%" style="stop-color:#fab005;stop-opacity:0.9" />
+      <stop offset="60%" style="stop-color:#f76707;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#fd7e14;stop-opacity:0.3" />
+    </radialGradient>
+    <radialGradient id="starGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" style="stop-color:#ffe066;stop-opacity:0.8" />
+      <stop offset="100%" style="stop-color:#ffd43b;stop-opacity:0" />
+    </radialGradient>
+    <linearGradient id="lightRay" x1="50%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" style="stop-color:#ffd43b;stop-opacity:0.7" />
+      <stop offset="100%" style="stop-color:#ffd43b;stop-opacity:0" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="600" height="600" fill="#0a0a1e"/>
+  
+  <circle cx="300" cy="180" r="80" fill="url(#starCore)"/>
+  <circle cx="300" cy="180" r="100" fill="url(#starGlow)"/>
+  
+  <polygon points="300,180 285,500 315,500" fill="url(#lightRay)" opacity="0.4"/>
+  <polygon points="300,180 270,500 300,500" fill="url(#lightRay)" opacity="0.3"/>
+  <polygon points="300,180 315,500 345,500" fill="url(#lightRay)" opacity="0.3"/>
+  <polygon points="300,180 255,500 285,500" fill="url(#lightRay)" opacity="0.25"/>
+  <polygon points="300,180 330,500 360,500" fill="url(#lightRay)" opacity="0.25"/>
+  
+  <circle cx="120" cy="380" r="30" fill="#4c6ef5" opacity="0.85"/>
+  <circle cx="115" cy="375" r="8" fill="#364fc7" opacity="0.6"/>
+  
+  <circle cx="480" cy="440" r="35" fill="#ff6b6b" opacity="0.85"/>
+  <circle cx="475" cy="435" r="10" fill="#fa5252" opacity="0.6"/>
+  
+  <circle cx="420" cy="320" r="25" fill="#51cf66" opacity="0.85"/>
+  <circle cx="415" cy="315" r="7" fill="#37b24d" opacity="0.6"/>
+  
+  <circle cx="80" cy="110" r="2" fill="white" opacity="0.9"/>
+  <circle cx="170" cy="80" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="450" cy="100" r="2.5" fill="white" opacity="0.9"/>
+  <circle cx="520" cy="140" r="1.5" fill="white" opacity="0.8"/>
+  <circle cx="100" cy="520" r="2" fill="white" opacity="0.9"/>
+  <circle cx="490" cy="550" r="2.5" fill="white" opacity="0.8"/>
+  <circle cx="180" cy="560" r="1.5" fill="white" opacity="0.9"/>
+  <circle cx="420" cy="580" r="2" fill="white" opacity="0.8"/>
+</svg>

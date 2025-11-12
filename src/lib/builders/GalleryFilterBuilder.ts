@@ -11,6 +11,7 @@ interface GalleryMatchFilter {
   _id?: { $lt: Types.ObjectId } | { $gt: Types.ObjectId }
   level?: { $gte?: number, $lte?: number }
   state?: MonsterState
+  backgroundId?: { $ne: null }
 }
 
 /**
@@ -74,6 +75,14 @@ export default class GalleryFilterBuilder {
   }
 
   /**
+   * Ajoute un filtre pour n'afficher que les monstres avec un arrière-plan
+   */
+  public withBackground (): this {
+    this.filter.backgroundId = { $ne: null }
+    return this
+  }
+
+  /**
    * Ajoute un filtre de cursor pour la pagination
    * @param cursor - ID du dernier monstre de la page précédente
    * @param isReversedSort - true pour tri croissant (oldest, level-asc), false pour décroissant
@@ -101,6 +110,11 @@ export default class GalleryFilterBuilder {
     // Filtre par état
     if (filters.state !== undefined) {
       this.withState(filters.state)
+    }
+
+    // Filtre par arrière-plan
+    if (filters.hasBackground === true) {
+      this.withBackground()
     }
 
     return this

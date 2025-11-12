@@ -1,38 +1,31 @@
 import type { ReactNode } from 'react'
 import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
+import MonsterBackgroundDisplay from '@/components/backgrounds/MonsterBackgroundDisplay'
 
 interface MonsterDisplayProps {
   monster: ISerializedMonster
+  onBackgroundChanged?: () => void
 }
 
 /**
  * Monster display component
- * Shows the monster's avatar and name
+ * Shows the monster's avatar with background and name
  */
-export default function MonsterDisplay ({ monster }: MonsterDisplayProps): ReactNode {
+export default function MonsterDisplay ({ monster, onBackgroundChanged }: MonsterDisplayProps): ReactNode {
   return (
-    <div className='sticky top-8 rounded-2xl border border-tolopea-200 bg-white/90 p-8 shadow-xl backdrop-blur-sm'>
-      {/* Monster Avatar */}
-      <div className='mb-6 flex justify-center'>
-        <div className='rounded-full bg-gradient-to-br from-tolopea-50 to-aqua-forest-50 p-8'>
-          <MonsterAvatar
-            traits={monster.traits}
-            state={monster.state}
-            size={320}
-          />
-        </div>
-      </div>
-
-      {/* Monster Name */}
-      <h1 className='text-center text-4xl font-bold text-tolopea-800'>{monster.name}</h1>
-
-      {/* Level Badge */}
-      <div className='mt-4 flex justify-center'>
-        <span className='rounded-full bg-blood-100 px-6 py-2 text-xl font-semibold text-blood-700'>
-          Niveau {monster.level}
-        </span>
-      </div>
-    </div>
+    <MonsterBackgroundDisplay
+      monsterId={monster._id}
+      monsterName={monster.name}
+      backgroundId={monster.backgroundId}
+      onBackgroundChanged={onBackgroundChanged}
+      showChangeButton
+    >
+      <MonsterAvatar
+        traits={monster.traits}
+        state={monster.state}
+        size={200}
+      />
+    </MonsterBackgroundDisplay>
   )
 }

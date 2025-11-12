@@ -58,7 +58,8 @@ export default function GalleryContent (): ReactNode {
       minLevel: newFilters.minLevel,
       maxLevel: newFilters.maxLevel,
       state: newFilters.state === 'all' ? undefined : newFilters.state,
-      sortBy: newFilters.sortBy
+      sortBy: newFilters.sortBy,
+      hasBackground: newFilters.hasBackground
     }
 
     try {
@@ -78,7 +79,8 @@ export default function GalleryContent (): ReactNode {
       minLevel: filters.minLevel,
       maxLevel: filters.maxLevel,
       state: filters.state === 'all' ? undefined : filters.state,
-      sortBy: filters.sortBy
+      sortBy: filters.sortBy,
+      hasBackground: filters.hasBackground
     }
 
     const result = await getPublicMonstersPaginated(currentCursor, GALLERY_PAGE_SIZE, apiFilters)
@@ -130,7 +132,7 @@ export default function GalleryContent (): ReactNode {
         {/* Grille avec infinite scroll */}
         {!isLoading && (
           <InfiniteGalleryGrid
-            key={`${filters.sortBy ?? 'newest'}-${filters.state ?? 'all'}-${filters.minLevel ?? 0}-${filters.maxLevel ?? 0}`}
+            key={`${filters.sortBy ?? 'newest'}-${filters.state ?? 'all'}-${filters.minLevel ?? 0}-${filters.maxLevel ?? 0}-${String(filters.hasBackground ?? false)}`}
             initialResult={result}
             fetchMore={fetchMore}
           />

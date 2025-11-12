@@ -21,6 +21,7 @@ export interface GalleryFilters {
   maxLevel?: number
   state?: GalleryStateFilter
   sortBy?: GallerySortBy
+  hasBackground?: boolean
 }
 
 /**
@@ -32,6 +33,7 @@ export interface GalleryFiltersParams {
   maxLevel?: number
   state?: MonsterState
   sortBy?: GallerySortBy
+  hasBackground?: boolean
 }
 
 /**

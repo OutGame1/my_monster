@@ -42,6 +42,7 @@ export interface ISerializedMonster {
   maxXp: number
   traits: ISerializedMonsterTraits
   state: MonsterState
+  backgroundId: string | null
   isPublic: boolean
   ownerId: string
   createdAt: string
@@ -57,6 +58,7 @@ export function monsterSerializer (rawMonster: IMonsterDocument): ISerializedMon
     maxXp: rawMonster.maxXp,
     traits: monsterTraitsSerializer(rawMonster.traits),
     state: rawMonster.state,
+    backgroundId: rawMonster.backgroundId,
     isPublic: rawMonster.isPublic,
     ownerId: rawMonster.ownerId.toString(),
     createdAt: rawMonster.createdAt.toISOString(),
@@ -72,6 +74,7 @@ export interface ISerializedPublicMonster {
   level: number
   traits: ISerializedMonsterTraits
   state: MonsterState
+  backgroundId: string | null
   createdAt: string
   ownerName: string
 }
@@ -83,6 +86,7 @@ export function publicMonsterSerializer (rawMonster: IPublicMonsterDocument): IS
     level: rawMonster.level,
     traits: monsterTraitsSerializer(rawMonster.traits),
     state: rawMonster.state,
+    backgroundId: rawMonster.backgroundId,
     createdAt: rawMonster.createdAt.toISOString(),
     ownerName: rawMonster.ownerName
   }
