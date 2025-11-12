@@ -1,6 +1,6 @@
 import { Types } from 'mongoose'
 import type { MonsterState } from '@/db/models/monster.model'
-import type { ISerializedMonster } from '../serializers/monster.serializer'
+import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import type { GalleryFiltersParams, GallerySortBy } from '@/types/gallery'
 
 /**

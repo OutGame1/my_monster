@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Metadata, Viewport } from 'next'
+import { getSession } from '@/lib/auth'
+import { getWallet } from '@/actions/wallet.actions'
 import AppLayout from '@/components/navigation/AppLayout'
 import GettingStartedSection from '@/components/home/GettingStartedSection'
 import HeroSection from '@/components/home/HeroSection'
@@ -108,12 +110,16 @@ export const metadata: Metadata = {
 
 /**
  * Page d'accueil publique affichant les sections marketing principales.
- *
- * @returns {ReactNode} Structure de mise en page avec sections héro, points forts et démarrage.
  */
-export default function Home (): ReactNode {
+export default async function Home (): Promise<ReactNode> {
+  const session = await getSession()
+
+  const wallet = session === null
+    ? null
+    : await getWallet(session.user.id)
+
   return (
-    <AppLayout>
+    <AppLayout session={session} wallet={wallet}>
       <HeroSection />
       <HighlightsSection />
       <GettingStartedSection />

@@ -1,9 +1,9 @@
 import type { ReactNode } from 'react'
-import { getMonsterById } from '@/actions/monsters.actions'
-import { notFound } from 'next/navigation'
-import AppLayout from '@/components/navigation/AppLayout'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import ProtectedAppLayout from '@/components/navigation/ProtectedAppLayout'
 import MonsterPageClient from '@/components/monster/MonsterPageClient'
+import { getMonsterById } from '@/actions/monsters.actions'
 
 interface MonsterPageProps {
   params: Promise<{
@@ -26,7 +26,7 @@ export default async function MonsterPage ({ params }: MonsterPageProps): Promis
   }
 
   return (
-    <AppLayout protectedRoute>
+    <ProtectedAppLayout>
       <div className='mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8'>
         {/* Bouton de retour */}
         <Link
@@ -41,6 +41,6 @@ export default async function MonsterPage ({ params }: MonsterPageProps): Promis
 
         <MonsterPageClient initialMonster={monster} />
       </div>
-    </AppLayout>
+    </ProtectedAppLayout>
   )
 }

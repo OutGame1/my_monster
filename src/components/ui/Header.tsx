@@ -1,11 +1,12 @@
 'use client'
 
 import type { ReactNode } from 'react'
-import Link from 'next/link'
-import type { Session } from '@/lib/auth-client'
 import { usePathname } from 'next/navigation'
-import CoinBadge from './CoinBadge'
+import Link from 'next/link'
 import cn from 'classnames'
+import type { Session } from '@/lib/auth-client'
+import CoinBadge from './CoinBadge'
+import ProfileImage from '@/components/profile/ProfileImage'
 
 interface HeaderProps {
   session: Session | null
@@ -81,9 +82,13 @@ export default function Header ({ session }: HeaderProps): ReactNode {
                 <div className='group relative'>
                   <Link
                     href='/profile'
-                    className='flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br from-tolopea-500 to-blood-500 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-110'
+                    className='flex items-center justify-center rounded-full bg-gradient-to-br from-tolopea-500 to-blood-500 text-lg font-bold text-white shadow-lg transition-all duration-300 hover:shadow-xl hover:scale-110 overflow-hidden'
                   >
-                    {session.user.name.charAt(0).toUpperCase()}
+                    <ProfileImage
+                      session={session}
+                      width={40}
+                      height={40}
+                    />
                   </Link>
                   {/* Tooltip on hover */}
                   <div className='absolute right-0 top-12 hidden group-hover:block'>

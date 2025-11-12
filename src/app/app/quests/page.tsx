@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import AppLayout from '@/components/navigation/AppLayout'
+import ProtectedAppLayout from '@/components/navigation/ProtectedAppLayout'
 import QuestsContentWrapper from '@/components/quests/QuestsContentWrapper'
 
 /**
@@ -10,8 +10,8 @@ import QuestsContentWrapper from '@/components/quests/QuestsContentWrapper'
  */
 export default function QuestsPage (): ReactNode {
   return (
-    <AppLayout protectedRoute>
+    <ProtectedAppLayout>
       <QuestsContentWrapper />
-    </AppLayout>
+    </ProtectedAppLayout>
   )
 }

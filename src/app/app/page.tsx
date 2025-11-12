@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import DashboardContent from '@/components/dashboard/DashboardContent'
-import AppLayout from '@/components/navigation/AppLayout'
-import { MonsterProvider } from '@/contexts/MonsterContext'
+import ProtectedAppLayout from '@/components/navigation/ProtectedAppLayout'
 
 /**
  * Page dashboard authentifiée affichant la gestion des monstres de l'utilisateur.
@@ -9,10 +8,8 @@ import { MonsterProvider } from '@/contexts/MonsterContext'
  */
 export default function DashboardPage (): ReactNode {
   return (
-    <AppLayout protectedRoute>
-      <MonsterProvider>
-        <DashboardContent />
-      </MonsterProvider>
-    </AppLayout>
+    <ProtectedAppLayout>
+      <DashboardContent />
+    </ProtectedAppLayout>
   )
 }

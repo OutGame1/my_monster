@@ -9,12 +9,12 @@ import SectionTitle from '@/components/ui/SectionTitle'
 import { createMonster, getMonsters } from '@/actions/monsters.actions'
 import { PlusCircle } from 'lucide-react'
 import { useWallet } from '@/contexts/WalletContext'
-import { useMonster } from '@/contexts/MonsterContext'
 import { toast } from 'react-toastify'
 import CoinIcon from '@components/ui/CoinIcon'
 import Skeleton from '@components/ui/Skeleton'
 import MonsterCardSkeleton from './skeletons/MonsterCardSkeleton'
 import { calculateMonsterCreationCost } from '@/config/monsters.config'
+import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 
 /**
  * Main dashboard content component
@@ -23,10 +23,10 @@ import { calculateMonsterCreationCost } from '@/config/monsters.config'
  */
 export default function DashboardContent (): ReactNode {
   const { removeBalance } = useWallet()
-  const { setMonsters } = useMonster()
   const searchParams = useSearchParams()
   const router = useRouter()
 
+  const [monsters, setMonsters] = useState<ISerializedMonster[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [creationCost, setCreationCost] = useState(0)
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -152,7 +152,10 @@ export default function DashboardContent (): ReactNode {
               </div>
               )
             : (
-              <MonstersGrid onCreateMonster={handleOpenModal} />
+              <MonstersGrid
+                monsters={monsters}
+                onCreateMonster={handleOpenModal}
+              />
               )}
         </div>
       </div>

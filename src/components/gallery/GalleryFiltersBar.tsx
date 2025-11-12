@@ -3,8 +3,7 @@
 import type { ReactNode } from 'react'
 import cn from 'classnames'
 import Button from '@components/ui/Button'
-import type { GalleryFilters } from '@/types/gallery'
-import type { MonsterState } from '@/db/models/monster.model'
+import type { GalleryFilters, GallerySortBy, GalleryStateFilter } from '@/types/gallery'
 import {
   MONSTER_STATE_OPTIONS,
   SORT_OPTIONS,
@@ -32,7 +31,7 @@ export default function GalleryFiltersBar ({
   onFiltersChange,
   totalCount
 }: GalleryFiltersBarProps): ReactNode {
-  const handleStateChange = (state: MonsterState | 'all'): void => {
+  const handleStateChange = (state: GalleryStateFilter): void => {
     onFiltersChange({
       ...filters,
       state: state === 'all' ? undefined : state
@@ -42,22 +41,17 @@ export default function GalleryFiltersBar ({
   const handleSortChange = (sortBy: string): void => {
     onFiltersChange({
       ...filters,
-      sortBy: sortBy as GalleryFilters['sortBy']
+      sortBy: sortBy as GallerySortBy
     })
   }
 
-  const handleLevelChange = (type: 'min' | 'max', value: string): void => {
-    const numValue = value === '' ? undefined : parseInt(value, 10)
+  const handleLevelChange = (type: 'minLevel' | 'maxLevel', rawValue: string): void => {
+    const value = parseInt(rawValue, 10)
 
-    if (type === 'min') {
+    if (!isNaN(value)) {
       onFiltersChange({
         ...filters,
-        minLevel: numValue
-      })
-    } else {
-      onFiltersChange({
-        ...filters,
-        maxLevel: numValue
+        [type]: value
       })
     }
   }
@@ -71,11 +65,7 @@ export default function GalleryFiltersBar ({
   // compte le nombre de filtre actif (true)
   const activeFiltersCount = count(activeFilters, active => active)
 
-  const handleResetFilters = (): void => {
-    onFiltersChange({
-      sortBy: DEFAULT_SORT
-    })
-  }
+  const handleResetFilters = (): void => onFiltersChange({ sortBy: DEFAULT_SORT })
 
   return (
     <div className='mb-8 space-y-6'>
@@ -113,7 +103,7 @@ export default function GalleryFiltersBar ({
                 min={MIN_MONSTER_LEVEL}
                 max={MAX_MONSTER_LEVEL}
                 value={filters.minLevel ?? ''}
-                onChange={(e) => handleLevelChange('min', e.target.value)}
+                onChange={(e) => handleLevelChange('minLevel', e.target.value)}
                 placeholder={MIN_MONSTER_LEVEL.toString()}
                 className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-tolopea-500 focus:outline-none focus:ring-2 focus:ring-tolopea-200'
               />
@@ -126,7 +116,7 @@ export default function GalleryFiltersBar ({
                 min={MIN_MONSTER_LEVEL}
                 max={MAX_MONSTER_LEVEL}
                 value={filters.maxLevel ?? ''}
-                onChange={(e) => handleLevelChange('max', e.target.value)}
+                onChange={(e) => handleLevelChange('maxLevel', e.target.value)}
                 placeholder={MAX_MONSTER_LEVEL.toString()}
                 className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-tolopea-500 focus:outline-none focus:ring-2 focus:ring-tolopea-200'
               />
@@ -141,20 +131,19 @@ export default function GalleryFiltersBar ({
             État
           </h4>
           <div className='flex flex-wrap gap-2'>
-            {MONSTER_STATE_OPTIONS.map(({ value, label, emoji }) => {
+            {MONSTER_STATE_OPTIONS.map(({ value, label }, index) => {
               const isActive = (filters.state ?? 'all') === value
               return (
                 <button
-                  key={value}
+                  key={index}
                   onClick={() => handleStateChange(value)}
                   className={cn(
                     'rounded-lg px-3 py-2 text-sm font-medium transition-all',
                     isActive
                       ? 'bg-tolopea-500 text-white shadow-md'
-                      : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                      : 'bg-gray-300 text-gray-700 hover:bg-gray-200'
                   )}
                 >
-                  <span className='mr-1'>{emoji}</span>
                   {label}
                 </button>
               )
@@ -173,8 +162,8 @@ export default function GalleryFiltersBar ({
             onChange={(e) => handleSortChange(e.target.value)}
             className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-tolopea-500 focus:outline-none focus:ring-2 focus:ring-tolopea-200'
           >
-            {SORT_OPTIONS.map(({ value, label }) => (
-              <option key={value} value={value}>
+            {SORT_OPTIONS.map(({ value, label }, index) => (
+              <option key={index} value={value}>
                 {label}
               </option>
             ))}
