@@ -10,6 +10,8 @@ import type { ISerializedPublicMonster } from '@/lib/serializers/monster.seriali
  */
 export type GallerySortBy = 'newest' | 'oldest' | 'level-asc' | 'level-desc'
 
+export type GalleryStateFilter = MonsterState | 'all'
+
 /**
  * Filtres de la galerie (utilisés dans l'UI)
  * Permet de filtrer et trier les monstres publics
@@ -17,7 +19,7 @@ export type GallerySortBy = 'newest' | 'oldest' | 'level-asc' | 'level-desc'
 export interface GalleryFilters {
   minLevel?: number
   maxLevel?: number
-  state?: MonsterState | 'all'
+  state?: GalleryStateFilter
   sortBy?: GallerySortBy
 }
 
@@ -54,7 +56,6 @@ export interface SortOption {
  * Configuration d'un état de monstre pour l'UI
  */
 export interface MonsterStateOption {
-  value: MonsterState | 'all'
+  value: GalleryStateFilter
   label: string
-  emoji: string
 }

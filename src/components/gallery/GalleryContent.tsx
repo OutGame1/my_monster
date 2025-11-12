@@ -10,7 +10,6 @@ import {
   type GalleryFilters,
   type GalleryFiltersParams
 } from '@/types/gallery'
-import type { ISerializedPublicMonster } from '@/lib/serializers/monster.serializer'
 import GalleryContentSkeleton from './skeletons/GalleryContentSkeleton'
 import SectionTitle from '@/components/ui/SectionTitle'
 
@@ -116,7 +115,7 @@ export default function GalleryContent (): ReactNode {
         {/* Barre de filtres */}
         <GalleryFiltersBar
           filters={filters}
-          onFiltersChange={(newFilters) => void handleFiltersChange(newFilters) }
+          onFiltersChange={(newFilters) => { void handleFiltersChange(newFilters) }}
           totalCount={result.total}
         />
 

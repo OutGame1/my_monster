@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import GalleryContent from '@/components/gallery/GalleryContent'
-import AppLayout from '@/components/navigation/AppLayout'
+import ProtectedAppLayout from '@/components/navigation/ProtectedAppLayout'
 
 /**
  * Gallery page
@@ -9,8 +9,8 @@ import AppLayout from '@/components/navigation/AppLayout'
  */
 export default function GalleryPage (): ReactNode {
   return (
-    <AppLayout protectedRoute>
+    <ProtectedAppLayout>
       <GalleryContent />
-    </AppLayout>
+    </ProtectedAppLayout>
   )
 }

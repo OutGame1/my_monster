@@ -13,13 +13,13 @@ export const GALLERY_PAGE_SIZE = 12
  * Options d'états de monstres disponibles dans les filtres
  */
 export const MONSTER_STATE_OPTIONS: MonsterStateOption[] = [
-  { value: 'all', label: 'Tous', emoji: '🌟' },
-  { value: 'happy', label: 'Heureux', emoji: '😊' },
-  { value: 'sad', label: 'Triste', emoji: '😢' },
-  { value: 'gamester', label: 'Joueur', emoji: '🎮' },
-  { value: 'angry', label: 'En colère', emoji: '😠' },
-  { value: 'hungry', label: 'Affamé', emoji: '🍕' },
-  { value: 'sleepy', label: 'Endormi', emoji: '😴' }
+  { value: 'all', label: 'Tous' },
+  { value: 'happy', label: 'Heureux' },
+  { value: 'sad', label: 'Triste' },
+  { value: 'gamester', label: 'Joueur' },
+  { value: 'angry', label: 'En colère' },
+  { value: 'hungry', label: 'Affamé' },
+  { value: 'sleepy', label: 'Endormi' }
 ]
 
 /**

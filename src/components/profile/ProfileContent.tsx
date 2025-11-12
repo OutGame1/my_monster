@@ -1,27 +1,22 @@
 'use client'
 
 import { useState, type ReactNode } from 'react'
-import type { Session } from '@/lib/auth-client'
-import type { ISerializedWallet } from '@/lib/serializers/wallet.serializer'
+import { useRouter } from 'next/navigation'
+import { User, Mail, Calendar, LogOut, Loader2, Coins, TrendingUp } from 'lucide-react'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import SectionTitle from '@/components/ui/SectionTitle'
+import ProfileImageUploader from './ProfileImageUploader'
 import { authClient } from '@/lib/auth-client'
-import { useRouter } from 'next/navigation'
-import { User, Mail, Calendar, LogOut, Loader2, Coins, TrendingUp } from 'lucide-react'
-
-interface ProfileContentProps {
-  session: Session
-  wallet: ISerializedWallet
-}
+import { useSession } from '@/contexts/SessionContext'
+import { useWallet } from '@/contexts/WalletContext'
 
 /**
  * Component displaying user profile information and account management options.
- *
- * @param {ProfileContentProps} props - Session data and wallet information for the current user
- * @returns {ReactNode} Profile content with user information and logout
  */
-export default function ProfileContent ({ session, wallet }: ProfileContentProps): ReactNode {
+export default function ProfileContent (): ReactNode {
+  const session = useSession()
+  const wallet = useWallet()
   const router = useRouter()
   const [isSigningOut, setIsSigningOut] = useState(false)
 
@@ -70,9 +65,7 @@ export default function ProfileContent ({ session, wallet }: ProfileContentProps
           <div className='space-y-6'>
             {/* User Name */}
             <div className='flex items-start gap-4'>
-              <div className='flex h-12 w-12 items-center justify-center rounded-full bg-gradient-to-br from-tolopea-500 to-blood-500 text-xl font-bold text-white shadow-lg'>
-                {session.user.name.charAt(0).toUpperCase()}
-              </div>
+              <ProfileImageUploader />
               <div className='flex-1'>
                 <p className='text-sm font-semibold text-tolopea-600'>Nom d'utilisateur</p>
                 <p className='text-lg font-bold text-tolopea-900'>{session.user.name}</p>

@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react'
-import AppLayout from '@/components/navigation/AppLayout'
+import ProtectedAppLayout from '@/components/navigation/ProtectedAppLayout'
 import BuyCoinsContent from '@/components/shop/BuyCoinsContent'
 
 /**
@@ -7,8 +7,8 @@ import BuyCoinsContent from '@/components/shop/BuyCoinsContent'
  */
 export default function BuyCoinsPage (): ReactNode {
   return (
-    <AppLayout protectedRoute>
+    <ProtectedAppLayout>
       <BuyCoinsContent />
-    </AppLayout>
+    </ProtectedAppLayout>
   )
 }
