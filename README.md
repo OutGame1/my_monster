@@ -9,6 +9,7 @@ Application web de type Tamagotchi développée dans le cadre d'un projet scolai
 - **Styling** : Tailwind CSS 4 avec palette de couleurs personnalisée
 - **Base de données** : MongoDB avec Mongoose ODM
 - **Authentification** : Better Auth
+- **Upload d'images** : Cloudinary pour les photos de profil
 - **Paiements** : Stripe Checkout
 - **UI/UX** : Framer Motion, Lucide React, React Toastify
 - **Validation** : Zod
@@ -18,8 +19,9 @@ Application web de type Tamagotchi développée dans le cadre d'un projet scolai
 
 - Node.js 22+ et npm
 - MongoDB (MongoDB Atlas ou instance locale) pour la base de données
-- Compte Stripe pour les paiements)
-- Compte Better Auth pour l'authentification)
+- Compte Cloudinary pour l'upload d'images de profil
+- Compte Stripe pour les paiements
+- Compte Better Auth pour l'authentification
 
 ## Installation
 
@@ -59,6 +61,11 @@ BETTER_AUTH_URL=http://localhost:3000
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 
+# Cloudinary (images de profil)
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+
 # URL de l'application
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
@@ -78,6 +85,14 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 - Créer un compte sur [Stripe Dashboard](https://dashboard.stripe.com)
 - Récupérer les clés API dans Developers > API Keys
 - Configurer le webhook (voir section Stripe ci-dessous)
+
+**Cloudinary** :
+- Créer un compte gratuit sur [Cloudinary](https://cloudinary.com)
+- Récupérer les identifiants depuis le Dashboard :
+  - Cloud Name
+  - API Key
+  - API Secret
+- Les transformations d'images sont automatiquement appliquées par l'application
 
 ## Scripts disponibles
 
@@ -111,7 +126,8 @@ src/
 │   ├── monster/         # Composants liés aux monstres
 │   ├── dashboard/       # Composants du dashboard
 │   ├── quests/          # Composants des quêtes
-│   └── shop/            # Composants de la boutique
+│   ├── shop/            # Composants de la boutique
+│   └── profile/         # Composants du profil
 ├── config/              # Fichiers de configuration
 │   └── ...
 ├── db/                  # Modèles et connexion MongoDB
@@ -120,6 +136,7 @@ src/
 ├── lib/                 # Utilitaires et helpers
 │   ├── serializers/     # Serializers pour MongoDB
 │   ├── utils.ts
+│   ├── cloudinary.ts    # Configuration Cloudinary
 │   └── stripe.ts
 └── types/               # Types TypeScript
 ```
@@ -395,6 +412,152 @@ export default function QuestsContentWrapper() {
 - Feedback visuel pendant le chargement
 - Possibilité de cache statique
 - Meilleure perception de performance
+
+## Gestion des photos de profil
+
+Le projet intègre un système complet d'upload et de gestion de photos de profil via Cloudinary.
+
+### Fonctionnalités
+
+**Interface utilisateur** :
+- Modification de la photo via la page `/profile`
+- Clic sur l'avatar pour sélectionner une nouvelle image
+- Overlay au hover indiquant la possibilité de modification
+- Badge caméra permanent dans le coin inférieur droit
+- Loader animé pendant l'upload
+
+**Validations côté client** :
+- Type de fichier : uniquement les images (MIME type `image/*`)
+- Taille maximale : 5 MB
+- Messages d'erreur explicites via toast notifications
+
+**Traitement d'image automatique** :
+- Recadrage intelligent centré sur le visage : 96x96 pixels
+- Optimisation automatique de la qualité et du format
+- Stockage organisé dans le dossier `my_monster/profile_pictures`
+
+**Gestion des erreurs** :
+- Fallback vers une icône User générique en cas d'échec
+- Notification utilisateur en cas d'erreur de chargement
+- État d'erreur persistant pour éviter les tentatives répétées
+
+### Architecture technique
+
+**Composants** :
+
+1. **`ProfileImageUploader`** (`src/components/profile/ProfileImageUploader.tsx`) :
+   - Composant principal de gestion de l'upload
+   - Gère la sélection de fichier via input caché
+   - Effectue les validations côté client
+   - Convertit le fichier en data URL via FileReader
+   - Appelle le server action `updateProfileImage()`
+   - Affiche les états de chargement et d'erreur
+
+2. **`ProfileImage`** (`src/components/profile/ProfileImage.tsx`) :
+   - Composant d'affichage de la photo de profil
+   - Gestion du fallback vers l'icône User
+   - Détection et signalement des erreurs de chargement
+   - Optimisé avec Next.js Image (eager loading)
+
+3. **`ProfileContent`** (`src/components/profile/ProfileContent.tsx`) :
+   - Page de profil complète intégrant ProfileImageUploader
+   - Affiche les informations du compte et statistiques du portefeuille
+
+**Server Action** :
+
+`updateProfileImage()` (`src/actions/user.actions.ts`) :
+- Reçoit l'image au format data URL (base64)
+- Vérifie la disponibilité du service Cloudinary
+- Authentifie l'utilisateur via session Better Auth
+- Upload l'image sur Cloudinary avec transformations
+- Met à jour le champ `image` de l'utilisateur via Better Auth API
+- Retourne l'URL sécurisée de l'image
+
+**Configuration Cloudinary** :
+
+`src/lib/cloudinary.ts` :
+- Configuration du SDK Cloudinary avec les identifiants d'environnement
+- Fonction `isCloudinaryConnected()` pour tester la connectivité
+- Export de l'instance configurée pour les uploads
+
+### Workflow d'upload
+
+1. L'utilisateur clique sur son avatar dans `/profile`
+2. Un input file caché s'ouvre pour sélectionner une image
+3. Validations côté client (type + taille)
+4. Conversion du fichier en data URL via FileReader
+5. Appel du server action `updateProfileImage(dataUrl)`
+6. Server action :
+   - Vérifie la connectivité Cloudinary
+   - Authentifie l'utilisateur
+   - Upload l'image avec transformations automatiques
+   - Met à jour le profil utilisateur
+7. Rafraîchissement de la page pour afficher la nouvelle image
+8. Toast de succès ou d'erreur selon le résultat
+
+### Sécurité
+
+- **Validations doubles** : client (UX) + serveur (sécurité)
+- **Authentification requise** : vérification de session avant tout upload
+- **Transformation côté serveur** : impossible pour le client de contourner le recadrage
+- **URLs sécurisées** : Cloudinary génère des URLs HTTPS avec CDN
+- **Limites de taille** : protection contre les uploads massifs
+
+### Configuration requise
+
+Variables d'environnement nécessaires dans `.env` :
+
+```bash
+CLOUDINARY_CLOUD_NAME=your-cloud-name
+CLOUDINARY_API_KEY=your-api-key
+CLOUDINARY_API_SECRET=your-api-secret
+```
+
+Pour obtenir ces identifiants :
+1. Créer un compte sur [Cloudinary](https://cloudinary.com)
+2. Accéder au Dashboard
+3. Copier les valeurs depuis la section "Account Details"
+
+### Transformations appliquées
+
+Lors de l'upload, Cloudinary applique automatiquement :
+
+```javascript
+{
+  folder: 'my_monster/profile_pictures',
+  transformation: [
+    { 
+      width: 96, 
+      height: 96, 
+      crop: 'fill', 
+      gravity: 'face' // Centrage intelligent sur le visage
+    },
+    { 
+      quality: 'auto',      // Optimisation qualité
+      fetch_format: 'auto'  // Format optimal (WebP si supporté)
+    }
+  ]
+}
+```
+
+### Gestion en production
+
+**Performance** :
+- CDN Cloudinary pour distribution mondiale rapide
+- Formats modernes (WebP) pour réduire la bande passante
+- Transformation au vol (pas de stockage multiples versions)
+- Cache-Control headers automatiques
+
+**Monitoring** :
+- Console logs des uploads (succès/échec)
+- Notifications toast pour feedback utilisateur
+- Cloudinary Dashboard pour statistiques d'utilisation
+
+**Quotas Cloudinary gratuit** :
+- 25 crédits/mois (largement suffisant pour un usage raisonnable)
+- Stockage : 25 GB
+- Bande passante : 25 GB
+- Transformations : illimitées
 
 ## Déploiement
 

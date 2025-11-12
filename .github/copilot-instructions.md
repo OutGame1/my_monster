@@ -34,6 +34,7 @@ This is a Next.js 16.0.0 project using the App Router architecture, built for a 
 - **UI Utilities**: `classnames` library for conditional CSS class management
 - **Database**: MongoDB with Mongoose ODM
 - **Authentication**: Better Auth for session management
+- **Image Upload**: Cloudinary for profile picture management
 - **Icons**: Lucide React for consistent iconography
 - **Animations**: Framer Motion for advanced animations
 - **Notifications**: React Toastify for user feedback
@@ -73,16 +74,18 @@ npm run lint
   - `src/components/gallery/` - Gallery components (GalleryContent, GalleryGrid, GalleryContentWrapper)
     - `src/components/gallery/skeletons/` - Gallery skeleton loading components
   - `src/components/shop/` - Shop components (CoinPackage, BuyCoinsContent)
-  - `src/components/profile/` - Profile components (ProfileContent)
+  - `src/components/profile/` - Profile components (ProfileContent, ProfileImage, ProfileImageUploader)
 - `src/actions/` - Server actions for data mutations
   - `monsters.actions.ts` - Monster CRUD and action handling
   - `wallet.actions.ts` - Wallet balance management
   - `quests.actions.ts` - Quest progress tracking and rewards
+  - `user.actions.ts` - User profile management (profile picture upload)
 - `src/db/` - Database models and connection
   - `src/db/models/` - Mongoose schemas (monster, wallet, quest)
 - `src/lib/` - Shared utilities and configurations
   - `src/lib/serializers/` - Data serializers for client transfer
   - `src/lib/utils.ts` - Utility functions (count, cn)
+  - `src/lib/cloudinary.ts` - Cloudinary SDK configuration and connectivity check
 - `src/config/` - Configuration files
   - `monsters.config.ts` - Monster generation parameters
   - `rewards.config.ts` - Reward calculation constants
@@ -324,6 +327,12 @@ Contains generic utility functions used across the application:
 - **Sign-in/Sign-up Protection**: Auth pages now redirect to `/app` if user is already logged in (prevents duplicate sessions)
 - **Profile Page**: Created comprehensive user profile with account info and logout functionality
 - **Header Navigation**: Updated with profile link and wallet display
+- **Profile Picture Upload**: Cloudinary integration for user avatar management
+  - Client-side validations (file type, 5MB max size)
+  - Automatic image transformation (96x96px, face-centered cropping)
+  - Hover overlay and loading states for UX feedback
+  - Fallback to User icon when no image or loading error
+  - Storage in `my_monster/profile_pictures` folder on Cloudinary
 
 ### Coin System & Shop
 - **Coin Icon**: Custom SVG icon component (`CoinIcon.tsx`) with coin.svg asset

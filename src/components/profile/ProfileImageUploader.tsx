@@ -10,7 +10,26 @@ import { useSession } from '@/contexts/SessionContext'
 
 /**
  * Composant permettant de modifier la photo de profil de l'utilisateur
- * Gère l'upload d'image via Cloudinary
+ * Gère l'upload d'image via Cloudinary avec validations côté client
+ *
+ * Fonctionnalités:
+ * - Sélection de fichier via input caché déclenché au clic sur l'avatar
+ * - Validations côté client:
+ *   - Type de fichier: doit commencer par `image/`
+ *   - Taille: maximum 5 MB
+ * - Conversion du fichier en data URL via FileReader
+ * - Affichage d'un loader pendant l'upload
+ * - Overlay au hover avec icône caméra pour indiquer l'action possible
+ * - Badge caméra permanent dans le coin inférieur droit
+ * - Rafraîchissement automatique de la page après upload réussi
+ * - Notifications toast en cas d'erreur (type invalide, taille excessive, échec upload)
+ *
+ * États visuels:
+ * - Normal: Avatar avec badge caméra
+ * - Hover: Overlay semi-transparent avec icône caméra agrandie
+ * - Upload: Loader animé avec fond sombre
+ *
+ * @returns {ReactNode} Interface de modification de photo de profil
  */
 export default function ProfileImageUploader (): ReactNode {
   const session = useSession()
