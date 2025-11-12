@@ -59,14 +59,14 @@ export async function updateWalletBalance (amount: number): Promise<number> {
 
   const session = await getSession()
   if (session === null) {
-    throw new Error('User not authenticated')
+    throw new Error('Non authentifié')
   }
 
   const wallet = await getWalletByOwnerId(session.user.id)
 
   const newBalance = wallet.balance + amount
   if (newBalance < 0) {
-    throw new Error('Insufficient balance')
+    throw new Error('Votre solde est insuffisant.')
   }
 
   wallet.balance = newBalance

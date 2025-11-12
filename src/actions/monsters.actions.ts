@@ -305,6 +305,7 @@ export async function getPublicMonstersPaginated (
           level: 1,
           traits: 1,
           state: 1,
+          backgroundId: 1,
           createdAt: 1,
           ownerName: {
             $ifNull: ['$owner.name', 'Anonyme']

@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
+import MonsterBackgroundDisplay from '@/components/backgrounds/MonsterBackgroundDisplay'
 import { User } from 'lucide-react'
 import type { ISerializedPublicMonster } from '@/lib/serializers/monster.serializer'
 
@@ -14,18 +15,23 @@ interface GalleryMonsterCardProps {
 export default function GalleryMonsterCard ({ monster }: GalleryMonsterCardProps): ReactNode {
   return (
     <div className='group relative overflow-hidden rounded-xl bg-white shadow-md transition-all duration-300 hover:shadow-2xl hover:-translate-y-2'>
-      {/* Monster Avatar - Frame Style */}
-      <div className='relative aspect-square bg-gradient-to-br from-tolopea-50 via-white to-aqua-forest-50 p-8'>
-        <div className='flex h-full items-center justify-center'>
+      {/* Monster Avatar with Background */}
+      <div className='relative'>
+        <MonsterBackgroundDisplay
+          monsterId={monster._id}
+          monsterName={monster.name}
+          backgroundId={monster.backgroundId}
+          showChangeButton={false}
+        >
           <MonsterAvatar
             traits={monster.traits}
             state={monster.state}
-            size={200}
+            size={240}
           />
-        </div>
+        </MonsterBackgroundDisplay>
 
         {/* Level Badge - Top Right Corner */}
-        <div className='absolute top-4 right-4'>
+        <div className='absolute top-4 right-4 z-10'>
           <span className='rounded-full bg-blood-500 px-3 py-1 text-sm font-bold text-white shadow-lg'>
             Niv. {monster.level}
           </span>

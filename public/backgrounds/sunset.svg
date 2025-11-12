@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600">
+  <defs>
+    <linearGradient id="sunsetSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#ff6b35;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#f7931e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#fdc830;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <rect width="600" height="600" fill="url(#sunsetSky)"/>
+  
+  <circle cx="300" cy="250" r="80" fill="#ffeb3b" opacity="0.9"/>
+  <circle cx="300" cy="250" r="100" fill="#ffa726" opacity="0.5"/>
+  
+  <ellipse cx="300" cy="420" rx="250" ry="40" fill="#ff8a65" opacity="0.7"/>
+  <ellipse cx="300" cy="450" rx="280" ry="50" fill="#ff7043" opacity="0.6"/>
+  <ellipse cx="300" cy="480" rx="300" ry="60" fill="#ff5722" opacity="0.5"/>
+  
+  <rect x="0" y="500" width="600" height="100" fill="#5d4037" opacity="0.8"/>
+</svg>

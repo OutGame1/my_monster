@@ -28,6 +28,7 @@ export interface IMonsterDocument extends Document {
   maxXp: number
   traits: IMonsterTraitsDocument
   state: MonsterState
+  backgroundId: string | null // ID du background équipé (référence au catalogue)
   isPublic: boolean
   ownerId: Types.ObjectId
   createdAt: Date
@@ -40,6 +41,7 @@ export interface IPublicMonsterDocument extends Document {
   level: number
   traits: IMonsterTraitsDocument
   state: MonsterState
+  backgroundId: string | null
   createdAt: Date
   ownerName: string // Nom de l'utilisateur propriétaire (jointure sur 'user')
 }
@@ -119,6 +121,12 @@ const monsterSchema = new Schema<IMonsterDocument>({
     required: true,
     enum: ['happy', 'sad', 'gamester', 'angry', 'hungry', 'sleepy'],
     default: 'happy'
+  },
+  backgroundId: {
+    type: String,
+    required: false,
+    default: null,
+    index: true
   },
   isPublic: {
     type: Boolean,

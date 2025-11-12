@@ -56,10 +56,18 @@ export default function GalleryFiltersBar ({
     }
   }
 
+  const handleBackgroundChange = (checked: boolean): void => {
+    onFiltersChange({
+      ...filters,
+      hasBackground: checked || undefined
+    })
+  }
+
   const activeFilters = [
     filters.minLevel !== undefined,
     filters.maxLevel !== undefined,
-    filters.state !== undefined && filters.state !== 'all'
+    filters.state !== undefined && filters.state !== 'all',
+    filters.hasBackground === true
   ]
 
   // compte le nombre de filtre actif (true)
@@ -101,8 +109,8 @@ export default function GalleryFiltersBar ({
               <input
                 type='number'
                 min={MIN_MONSTER_LEVEL}
-                max={MAX_MONSTER_LEVEL}
-                value={filters.minLevel ?? ''}
+                max={Math.min(filters.maxLevel ?? MAX_MONSTER_LEVEL, MAX_MONSTER_LEVEL)}
+                value={filters.minLevel ?? MIN_MONSTER_LEVEL}
                 onChange={(e) => handleLevelChange('minLevel', e.target.value)}
                 placeholder={MIN_MONSTER_LEVEL.toString()}
                 className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-tolopea-500 focus:outline-none focus:ring-2 focus:ring-tolopea-200'
@@ -113,9 +121,9 @@ export default function GalleryFiltersBar ({
               <label className='mb-1 block text-xs text-gray-600'>Max</label>
               <input
                 type='number'
-                min={MIN_MONSTER_LEVEL}
+                min={Math.max(filters.minLevel ?? MIN_MONSTER_LEVEL, MIN_MONSTER_LEVEL)}
                 max={MAX_MONSTER_LEVEL}
-                value={filters.maxLevel ?? ''}
+                value={filters.maxLevel ?? MAX_MONSTER_LEVEL}
                 onChange={(e) => handleLevelChange('maxLevel', e.target.value)}
                 placeholder={MAX_MONSTER_LEVEL.toString()}
                 className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-tolopea-500 focus:outline-none focus:ring-2 focus:ring-tolopea-200'
@@ -168,6 +176,21 @@ export default function GalleryFiltersBar ({
               </option>
             ))}
           </select>
+
+          {/* Checkbox arrière-plan */}
+          <div className='mt-4 pt-4 border-t border-gray-200'>
+            <label className='flex items-center gap-3 cursor-pointer group'>
+              <input
+                type='checkbox'
+                checked={filters.hasBackground ?? false}
+                onChange={(e) => handleBackgroundChange(e.target.checked)}
+                className='h-5 w-5 rounded border-gray-300 text-tolopea-500 focus:ring-2 focus:ring-tolopea-200 focus:ring-offset-0 cursor-pointer'
+              />
+              <span className='text-sm font-medium text-gray-700 group-hover:text-tolopea-600 transition-colors'>
+                Avec arrière-plan uniquement
+              </span>
+            </label>
+          </div>
         </div>
       </div>
     </div>
