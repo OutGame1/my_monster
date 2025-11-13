@@ -3,7 +3,7 @@ import { connectMongooseToDatabase } from '@/db'
 import Monster, { type IMonsterDocument } from '@/db/models/monster.model'
 import { MONSTER_STATES } from '@/config/monsters.config'
 import type { MonsterState } from '@/types/monsters'
-import env from '@/lib/env'
+import cronRoute from '@/lib/cron'
 
 const NON_HAPPY_STATES = MONSTER_STATES.filter(state => state !== 'happy')
 
@@ -51,14 +51,5 @@ async function handleCronJob (): Promise<void> {
  * Change aléatoirement l'état de tous les monstres
  */
 export async function POST (req: Request): Promise<Response> {
-  // Vérification du secret d'autorisation
-  if (req.headers.get('Authorization') !== `Bearer ${env.CRON_SECRET}`) {
-    return new Response('Unauthorized', {
-      status: 401
-    })
-  }
-
-  // Traitement asynchrone en arrière-plan
-  void handleCronJob()
-  return Response.json({ success: true })
+  return await cronRoute(req, handleCronJob)
 }
