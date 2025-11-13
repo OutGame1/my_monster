@@ -1,4 +1,3 @@
-import { NextResponse } from 'next/server'
 import type { AnyBulkWriteOperation, Types } from 'mongoose'
 import { connectMongooseToDatabase } from '@/db'
 import Monster, { type IMonsterDocument } from '@/db/models/monster.model'
@@ -48,16 +47,18 @@ async function handleCronJob (): Promise<void> {
 }
 
 /**
- * Webhook Vercel Cron - Exécuté toutes les 15 minutes
+ * Webhook Cron - Exécuté toutes les 15 minutes
  * Change aléatoirement l'état de tous les monstres
  */
-export async function GET (req: Request): Promise<Response> {
+export async function POST (req: Request): Promise<Response> {
   // Vérification du secret d'autorisation
   if (req.headers.get('Authorization') !== `Bearer ${env.CRON_SECRET}`) {
-    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+    return new Response('Unauthorized', {
+      status: 401
+    })
   }
 
   // Traitement asynchrone en arrière-plan
   void handleCronJob()
-  return NextResponse.json({ ok: true })
+  return Response.json({ success: true })
 }

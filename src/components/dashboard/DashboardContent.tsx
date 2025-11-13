@@ -48,16 +48,10 @@ export default function DashboardContent (): ReactNode {
     }
   }, [setMonsters])
 
-  // Chargement des monstres initiaux et périodique
+  // Chargement initial des monstres
   useEffect(() => {
     void fetchMonsters()
-
-    const interval = setInterval(() => {
-      void fetchMonsters()
-    }, 10000)
-
-    return () => clearInterval(interval)
-  }, [])
+  }, [fetchMonsters])
 
   // Détection du retour après paiement Stripe
   useEffect(() => {
@@ -99,7 +93,7 @@ export default function DashboardContent (): ReactNode {
 
       await fetchMonsters()
     } catch (error) {
-      console.error('Error creating monster:', error)
+      toast.error(error instanceof Error ? error.message : 'Erreur lors de la création du monstre')
     } finally {
       setIsCreating(false)
     }
