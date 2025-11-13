@@ -3,6 +3,9 @@ import { z } from 'zod'
 const envSchema = z.object({
   NEXT_PUBLIC_APP_URL: z.url(),
 
+  // Vercel Cron Job
+  CRON_SECRET: z.string(),
+
   BETTER_AUTH_SECRET: z.string(),
   BETTER_AUTH_URL: z.url(),
 
