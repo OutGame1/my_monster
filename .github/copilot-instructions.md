@@ -267,11 +267,11 @@ export default function Button ({
 ### `src/lib/utils.ts`
 Contains generic utility functions used across the application:
 
-- **`count<T>(array: T[], predicate: (item: T) => boolean, thisArg?: any): number`**
+- **`count<E, T = undefined> (array: E[], predicate: (this: T, item: E) => boolean, thisArg?: T): number`**
   - Counts elements in an array matching a predicate function
   - More efficient than `filter().length` as it doesn't create intermediate arrays
   - Example: `count(quests, q => q.progress.completed && !q.progress.claimed)`
-  - The `thisArg` parameter uses `any` type as it's a dynamic context that depends on user implementation
+  - The `thisArg` parameter uses a generic type as it's a dynamic context that depends on user implementation
 
 - **`cn(...classes)`** 
   - Re-export of `classnames` library for conditional CSS class management
