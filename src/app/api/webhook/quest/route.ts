@@ -1,5 +1,6 @@
+import type { AnyBulkWriteOperation } from 'mongoose'
 import { connectMongooseToDatabase } from '@/db'
-import Quest from '@/db/models/quest.model'
+import Quest, { type IQuestDocument } from '@/db/models/quest.model'
 import { dailyQuests } from '@/config/quests.config'
 import cronRoute from '@/lib/cron'
 
@@ -15,10 +16,15 @@ async function handleCronJob (): Promise<void> {
 
     console.log(`🗑️  Starting daily quests reset for ${dailyQuestIds.length} quest types`)
 
-    // Supprimer toutes les quêtes quotidiennes en une seule requête
-    const result = await Quest.deleteMany({
-      questId: { $in: dailyQuestIds }
-    }).exec()
+    // Préparer les opérations bulk de suppression
+    const bulkOps = dailyQuestIds.map<AnyBulkWriteOperation<IQuestDocument>>(questId => ({
+      deleteMany: {
+        filter: { questId }
+      }
+    }))
+
+    // Exécuter toutes les suppressions en batch
+    const result = await Quest.bulkWrite(bulkOps, { ordered: false })
 
     console.log('✅ Daily quests reset successful:', {
       deleted: result.deletedCount,
