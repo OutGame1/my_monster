@@ -31,6 +31,7 @@ export interface IMonsterDocument extends Document {
   backgroundId: string | null // ID du background équipé (référence au catalogue)
   isPublic: boolean
   ownerId: Types.ObjectId
+  lastCaredAt?: Date // Dernière fois qu'on s'est occupé du monstre (pour quête daily)
   createdAt: Date
   updatedAt: Date
 }
@@ -137,6 +138,10 @@ const monsterSchema = new Schema<IMonsterDocument>({
     type: Schema.Types.ObjectId,
     ref: 'user',
     required: true
+  },
+  lastCaredAt: {
+    type: Date,
+    required: false
   }
 }, {
   versionKey: false,

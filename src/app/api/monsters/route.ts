@@ -1,4 +1,3 @@
-import { connectMongooseToDatabase } from '@/db'
 import Monster from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { monsterSerializer } from '@/lib/serializers/monster.serializer'
@@ -9,8 +8,6 @@ import { monsterSerializer } from '@/lib/serializers/monster.serializer'
  * @returns {Promise<Response>} Réponse JSON contenant la collection sérialisée de monstres.
  */
 export async function GET (): Promise<Response> {
-  await connectMongooseToDatabase()
-
   const session = await getSession()
 
   if (session === null) {

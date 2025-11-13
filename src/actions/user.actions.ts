@@ -1,7 +1,6 @@
 'use server'
 
 import { headers } from 'next/headers'
-import { connectMongooseToDatabase } from '@/db'
 import { auth, getSession } from '@/lib/auth'
 import cloudinary, { isCloudinaryConnected } from '@/lib/cloudinary'
 
@@ -53,8 +52,6 @@ export async function updateProfileImage (dataUrl: string | ArrayBuffer | null):
     if (session === null) {
       throw new Error('Utilisateur non authentifié')
     }
-
-    await connectMongooseToDatabase()
 
     // Upload l'image sur Cloudinary
     const uploadResult = await cloudinary.uploader.upload(dataUrl, {

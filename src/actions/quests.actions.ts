@@ -131,6 +131,50 @@ export async function checkOwnershipQuests (): Promise<void> {
 }
 
 /**
+ * Vérifie et met à jour la progression de la quête "care_different_monsters".
+ * Compte le nombre de monstres uniques soignés aujourd'hui (lastCaredAt >= minuit).
+ */
+export async function checkCareDifferentMonstersProgress (): Promise<void> {
+  const session = await getSession()
+  if (session === null) {
+    return
+  }
+
+  // Calculer le début de la journée (minuit)
+  const startOfDay = new Date()
+  startOfDay.setHours(0, 0, 0, 0)
+
+  // Compter les monstres soignés aujourd'hui
+  const caredTodayCount = await Monster.countDocuments({
+    ownerId: session.user.id,
+    lastCaredAt: { $gte: startOfDay }
+  }).exec()
+
+  // Mettre à jour toutes les quêtes "care_different_monsters"
+  for (const questDef of questsObjectiveMap.care_different_monsters) {
+    const questData = {
+      userId: session.user.id,
+      questId: questDef.id
+    }
+
+    let quest = await Quest.findOne(questData).exec()
+
+    if (quest === null) {
+      quest = new Quest(questData)
+    }
+
+    // Mettre à jour avec le nombre réel de monstres différents soignés aujourd'hui
+    quest.progress = caredTodayCount
+
+    if (caredTodayCount >= questDef.target && quest.completedAt === undefined) {
+      quest.completedAt = new Date()
+    }
+
+    await quest.save()
+  }
+}
+
+/**
  * Réclame la récompense d'une quête complétée.
  *
  * @param {string} questId ID de la quête à réclamer.
