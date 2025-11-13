@@ -5,6 +5,20 @@
 
 import type { QuestDefinition, QuestObjective } from '@/types/quests'
 
+export const questObjectives = [
+  'feed_monsters', // Nourrir X fois
+  'play_monsters', // Jouer X fois
+  'comfort_monsters', // Réconforter X fois
+  'calm_monsters', // Calmer X fois
+  'lullaby_monsters', // Bercer X fois
+  'care_different_monsters', // S'occuper de X monstres différents
+  'own_monsters', // Posséder X monstres
+  'total_actions', // Effectuer X actions au total
+  'level_up_monster', // Faire monter un monstre au niveau X
+  'reach_coins', // Atteindre X pièces
+  'unlock_backgrounds' // Débloquer X arrière-plans
+] as const
+
 const dailyFeedQuests: QuestDefinition[] = [
   {
     id: 'daily_feed_3',
@@ -417,6 +431,49 @@ const levelUpAchievements: QuestDefinition[] = [
   }
 ]
 
+const unlockBackgroundsAchievements: QuestDefinition[] = [
+  {
+    id: 'achievement_backgrounds_7',
+    type: 'achievement',
+    objective: 'unlock_backgrounds',
+    target: 7,
+    reward: 15,
+    title: 'Décorateur amateur',
+    description: 'Débloquer 7 arrière-plans',
+    icon: '🎨'
+  },
+  {
+    id: 'achievement_backgrounds_15',
+    type: 'achievement',
+    objective: 'unlock_backgrounds',
+    target: 15,
+    reward: 40,
+    title: 'Collectionneur de décors',
+    description: 'Débloquer 15 arrière-plans',
+    icon: '🖼️'
+  },
+  {
+    id: 'achievement_backgrounds_30',
+    type: 'achievement',
+    objective: 'unlock_backgrounds',
+    target: 30,
+    reward: 100,
+    title: 'Maître décorateur',
+    description: 'Débloquer 30 arrière-plans',
+    icon: '🏛️'
+  },
+  {
+    id: 'achievement_backgrounds_50',
+    type: 'achievement',
+    objective: 'unlock_backgrounds',
+    target: 50,
+    reward: 200,
+    title: 'Architecte légendaire',
+    description: 'Débloquer 50 arrière-plans',
+    icon: '🏰'
+  }
+]
+
 /**
  * Succès (Achievements) - Objectifs permanents
  * Objectifs plus difficiles, récompenses importantes pour encourager l'engagement long terme
@@ -430,6 +487,7 @@ export const achievements: QuestDefinition[] = [
   ...ownAchievements,
   ...totalActionsAchievements,
   ...levelUpAchievements,
+  ...unlockBackgroundsAchievements,
   ...reachCoinsAchievements
 ]
 
@@ -445,6 +503,7 @@ export const questsObjectiveMap: Record<QuestObjective, QuestDefinition[]> = {
   own_monsters: [],
   total_actions: [],
   level_up_monster: [],
+  unlock_backgrounds: [],
   reach_coins: []
 }
 

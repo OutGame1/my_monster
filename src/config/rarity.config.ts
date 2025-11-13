@@ -1,5 +1,7 @@
 import type { Rarity, RarityConfig } from '@/types/accessories'
 
+export const rarities = ['common', 'uncommon', 'rare', 'epic', 'legendary'] as const
+
 export const commonRarity: RarityConfig = {
   name: 'Commun',
   priceMultiplier: 1,

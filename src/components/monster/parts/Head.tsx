@@ -4,7 +4,7 @@
 // Separate head component for better structure
 
 import type { ReactNode } from 'react'
-import type { MonsterBodyShape } from '@/db/models/monster.model'
+import type { MonsterBodyShape } from '@/types/monsters'
 
 interface HeadProps {
   bodyShape: MonsterBodyShape

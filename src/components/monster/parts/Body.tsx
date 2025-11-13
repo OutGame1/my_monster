@@ -4,7 +4,7 @@
 // Routes to specific body type sub-components
 
 import type { ReactNode } from 'react'
-import type { MonsterBodyShape, MonsterState } from '@/db/models/monster.model'
+import type { MonsterBodyShape, MonsterState } from '@/types/monsters'
 import RoundBody from './bodies/RoundBody'
 import PearBody from './bodies/PearBody'
 import TallBody from './bodies/TallBody'

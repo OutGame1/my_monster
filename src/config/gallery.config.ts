@@ -36,9 +36,3 @@ export const SORT_OPTIONS: SortOption[] = [
  * Tri par défaut
  */
 export const DEFAULT_SORT: GallerySortBy = 'newest'
-
-/**
- * Plage de niveaux min/max
- */
-export const MIN_MONSTER_LEVEL = 1
-export const MAX_MONSTER_LEVEL = 100

@@ -65,11 +65,11 @@ export default function BackgroundCard ({
         {/* Overlay si non possédé avec animation du cadenas */}
         {!owned && (
           <div className='absolute inset-0 bg-black/60 flex flex-col items-center justify-center gap-3 group-hover:bg-black/70 transition-all'>
-            <div className='relative bg-white/20 backdrop-blur-sm rounded-full p-4 transition-all group-hover:scale-110'>
+            <div className='relative bg-white/20 backdrop-blur-sm rounded-full p-4 transition-all group-hover:scale-110 flex items-center justify-center'>
               {/* Cadenas fermé par défaut */}
               <Lock className='w-8 h-8 text-white group-hover:opacity-0 transition-opacity duration-300' />
               {/* Cadenas ouvert au survol */}
-              <LockOpen className='w-8 h-8 text-white absolute inset-0 m-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
+              <LockOpen className='w-8 h-8 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
             </div>
             <div className='bg-black/80 px-3 py-1.5 rounded-full flex items-center gap-1.5'>
               <CoinIcon className='w-4 h-4' />

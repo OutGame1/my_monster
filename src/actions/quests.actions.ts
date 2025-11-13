@@ -20,8 +20,10 @@ export async function getQuestsWithProgress (): Promise<QuestsPayload> {
     throw new Error('User not authenticated')
   }
 
+  const userId = session.user.id
+
   // Récupération de toutes les progressions de l'utilisateur
-  const progressRecords = await Quest.find({ userId: session.user.id }).exec()
+  const progressRecords = await Quest.find({ userId }).exec()
 
   const progressMap = new Map<string, IQuestDocument>(
     progressRecords.map(pr => [pr.questId, pr])
@@ -30,14 +32,15 @@ export async function getQuestsWithProgress (): Promise<QuestsPayload> {
   const questsPayload: QuestsPayload = { daily: [], achievement: [] }
 
   for (const quest of allQuests) {
-    let progress = progressMap.get(quest.id)
+    const questId = quest.id
+    let progress = progressMap.get(questId)
 
     if (progress === undefined) {
-      progress = new Quest({
-        userId: session.user.id,
-        questId: quest.id
+      progress = await Quest.create({
+        userId,
+        questId,
+        questObjective: quest.objective
       })
-      await progress.save()
     }
 
     questsPayload[quest.type].push({
@@ -53,11 +56,11 @@ export async function getQuestsWithProgress (): Promise<QuestsPayload> {
  * Incrémente la progression d'une quête pour l'utilisateur connecté.
  * Crée l'enregistrement si nécessaire.
  *
- * @param {QuestObjective} objective Type d'objectif de la quête.
+ * @param {QuestObjective} questObjective Type d'objectif de la quête.
  * @param {number} amount Montant à ajouter à la progression.
  */
 export async function incrementQuestProgress (
-  objective: QuestObjective,
+  questObjective: QuestObjective,
   amount: number
 ): Promise<void> {
   const session = await getSession()
@@ -65,17 +68,20 @@ export async function incrementQuestProgress (
     return
   }
 
-  for (const questDef of questsObjectiveMap[objective]) {
-    const questData = {
-      userId: session.user.id,
-      questId: questDef.id
-    }
+  const userId = session.user.id
+
+  for (const questDef of questsObjectiveMap[questObjective]) {
+    const questId = questDef.id
 
     // Récupérer ou créer la progression
-    let quest = await Quest.findOne(questData).exec()
+    let quest = await Quest.findOne({ userId, questId }).exec()
 
     if (quest === null) {
-      quest = new Quest(questData)
+      quest = new Quest({
+        userId,
+        questId,
+        questObjective
+      })
     }
 
     // Ne pas incrémenter si déjà complété
@@ -84,12 +90,7 @@ export async function incrementQuestProgress (
     }
 
     // Incrémenter la progression
-    quest.progress = Math.min(quest.progress + amount, questDef.target)
-
-    // Marquer comme complété si l'objectif est atteint
-    if (quest.progress >= questDef.target) {
-      quest.completedAt = new Date()
-    }
+    quest.progress += amount
 
     await quest.save()
   }
@@ -104,27 +105,26 @@ export async function checkOwnershipQuests (): Promise<void> {
     return
   }
 
+  const userId = session.user.id
+
   // Compter les monstres possédés
-  const monsterCount = await Monster.countDocuments({ ownerId: session.user.id }).exec()
+  const monsterCount = await Monster.countDocuments({ ownerId: userId }).exec()
 
   for (const questDef of questsObjectiveMap.own_monsters) {
-    const questData = {
-      userId: session.user.id,
-      questId: questDef.id
-    }
+    const questId = questDef.id
 
-    let quest = await Quest.findOne(questData).exec()
+    let quest = await Quest.findOne({ userId, questId }).exec()
 
     if (quest === null) {
-      quest = new Quest(questData)
+      quest = new Quest({
+        userId,
+        questId,
+        questObjective: 'own_monsters'
+      })
     }
 
     // Mettre à jour avec le nombre réel
     quest.progress = monsterCount
-
-    if (monsterCount >= questDef.target && quest.completedAt === undefined) {
-      quest.completedAt = new Date()
-    }
 
     await quest.save()
   }
@@ -140,35 +140,34 @@ export async function checkCareDifferentMonstersProgress (): Promise<void> {
     return
   }
 
+  const userId = session.user.id
+
   // Calculer le début de la journée (minuit)
   const startOfDay = new Date()
   startOfDay.setHours(0, 0, 0, 0)
 
   // Compter les monstres soignés aujourd'hui
   const caredTodayCount = await Monster.countDocuments({
-    ownerId: session.user.id,
+    ownerId: userId,
     lastCaredAt: { $gte: startOfDay }
   }).exec()
 
   // Mettre à jour toutes les quêtes "care_different_monsters"
   for (const questDef of questsObjectiveMap.care_different_monsters) {
-    const questData = {
-      userId: session.user.id,
-      questId: questDef.id
-    }
+    const questId = questDef.id
 
-    let quest = await Quest.findOne(questData).exec()
+    let quest = await Quest.findOne({ userId, questId }).exec()
 
     if (quest === null) {
-      quest = new Quest(questData)
+      quest = new Quest({
+        userId,
+        questId,
+        questObjective: 'care_different_monsters'
+      })
     }
 
     // Mettre à jour avec le nombre réel de monstres différents soignés aujourd'hui
     quest.progress = caredTodayCount
-
-    if (caredTodayCount >= questDef.target && quest.completedAt === undefined) {
-      quest.completedAt = new Date()
-    }
 
     await quest.save()
   }
@@ -186,6 +185,8 @@ export async function claimQuestReward (questId: string): Promise<number> {
     throw new Error('User not authenticated')
   }
 
+  const userId = session.user.id
+
   const questDef = questsIdMap.get(questId)
   if (questDef === undefined) {
     throw new Error('Quest not found')
@@ -193,7 +194,7 @@ export async function claimQuestReward (questId: string): Promise<number> {
 
   // Récupérer la progression
   const progress = await Quest.findOne({
-    userId: session.user.id,
+    userId,
     questId
   }).exec()
 

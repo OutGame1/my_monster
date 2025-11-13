@@ -7,7 +7,7 @@ import type { ReactNode } from 'react'
 import StumpyLegs from './legs/StumpyLegs'
 import LongLegs from './legs/LongLegs'
 import BigFeetLegs from './legs/BigFeetLegs'
-import type { MonsterLegType, MonsterState } from '@/db/models/monster.model'
+import type { MonsterLegType, MonsterState } from '@/types/monsters'
 
 interface LegsProps {
   type: MonsterLegType

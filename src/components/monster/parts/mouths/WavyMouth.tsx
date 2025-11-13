@@ -3,7 +3,7 @@
 // ========================================
 
 import type { ReactNode } from 'react'
-import type { MonsterState } from '@/db/models/monster.model'
+import type { MonsterState } from '@/types/monsters'
 
 interface WavyMouthProps {
   outlineColor: string

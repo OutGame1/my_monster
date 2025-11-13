@@ -2,12 +2,17 @@
 
 import { useState, useEffect, type ReactNode } from 'react'
 import { toast } from 'react-toastify'
+import { Trash2 } from 'lucide-react'
+import cn from 'classnames'
 import { allBackgrounds } from '@/config/backgrounds.config'
 import { getMonsterBackgrounds, equipBackground, purchaseBackground } from '@/actions/backgrounds.actions'
+import { rarities, rarityMap } from '@/config/rarity.config'
 import Modal from '@/components/ui/Modal'
-import BackgroundSelectorSkeleton from './skeletons/BackgroundSelectorSkeleton'
+import Button from '@/components/ui/Button'
+import Skeleton from '@components/ui/Skeleton'
 import BackgroundCard from './BackgroundCard'
 import type { ISerializedBackground } from '@/lib/serializers/background.serializer'
+import type { Rarity } from '@/types/accessories'
 
 interface BackgroundSelectorProps {
   monsterId: string
@@ -33,6 +38,7 @@ export default function BackgroundSelector ({
   const [selectedId, setSelectedId] = useState<string | null>(currentBackgroundId)
   const [isSaving, setIsSaving] = useState(false)
   const [purchasingId, setPurchasingId] = useState<string | null>(null)
+  const [rarityFilter, setRarityFilter] = useState<Rarity | 'all'>('all')
 
   // Chargement des backgrounds possédés
   useEffect(() => {
@@ -92,6 +98,15 @@ export default function BackgroundSelector ({
     }
   }
 
+  const handleRemoveBackground = (): void => {
+    setSelectedId(null)
+  }
+
+  // Filtrer les backgrounds par rareté
+  const filteredBackgrounds = rarityFilter === 'all'
+    ? allBackgrounds
+    : allBackgrounds.filter(bg => bg.rarity === rarityFilter)
+
   if (!isOpen) return null
 
   return (
@@ -104,12 +119,62 @@ export default function BackgroundSelector ({
       onConfirm={() => { void handleSave() }}
       isConfirmDisabled={isSaving || selectedId === currentBackgroundId || isLoading}
     >
-      {isLoading
-        ? <BackgroundSelectorSkeleton />
-        : (
-          <div className='grid grid-cols-2 sm:grid-cols-3 gap-3'>
-            {/* Tous les backgrounds disponibles */}
-            {allBackgrounds.map(background => {
+      <div className='flex flex-col gap-4'>
+        {!isLoading && (
+          <div className='flex flex-wrap gap-2 items-center justify-between'>
+            {/* Filtres par rareté */}
+            <div className='flex flex-wrap items-center  gap-2'>
+              <button
+                onClick={() => setRarityFilter('all')}
+                className={cn(
+                  'rounded-lg px-3 py-2 text-sm font-medium transition-all',
+                  rarityFilter === 'all'
+                    ? 'bg-tolopea-500 text-white shadow-md'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                )}
+              >
+                Tous
+              </button>
+              {rarities.map((rarity) => {
+                const config = rarityMap[rarity]
+                const isActive = rarityFilter === rarity
+                return (
+                  <button
+                    key={rarity}
+                    onClick={() => setRarityFilter(rarity)}
+                    className={cn(
+                      'rounded-lg px-3 py-2 text-sm font-medium transition-all text-white',
+                      isActive ? 'shadow-md ring-2 ring-offset-2 ring-tolopea-500' : '',
+                      config.style.backgroundColor
+                    )}
+                  >
+                    {config.name}
+                  </button>
+                )
+              })}
+            </div>
+
+            {/* Bouton pour retirer l'arrière-plan */}
+            {currentBackgroundId !== null && (
+              <Button
+                onClick={handleRemoveBackground}
+                variant='tertiary'
+                width='fit'
+                disabled={selectedId === null}
+              >
+                <Trash2 className='w-4 h-4 mr-2' />
+                Retirer l&apos;arrière-plan
+              </Button>
+            )}
+          </div>
+        )}
+
+        <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3'>
+          {isLoading
+            ? Array.from({ length: 9 }).map((_, i) => (
+              <Skeleton key={i} height={180} className='rounded-lg' />
+            ))
+            : filteredBackgrounds.map(background => {
               const owned = isOwned(background.id)
               const selected = selectedId === background.id
               const isPurchasing = purchasingId === background.id
@@ -126,8 +191,8 @@ export default function BackgroundSelector ({
                 />
               )
             })}
-          </div>
-          )}
+        </div>
+      </div>
     </Modal>
   )
 }

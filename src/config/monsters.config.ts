@@ -1,3 +1,10 @@
+export const MONSTER_STATES = ['happy', 'sad', 'gamester', 'angry', 'hungry', 'sleepy'] as const
+export const BODY_SHAPES = ['round', 'pear', 'blocky'] as const
+export const EYE_TYPES = ['dot', 'round', 'star'] as const
+export const MOUTH_TYPES = ['simple', 'toothy', 'wavy'] as const
+export const ARM_TYPES = ['short', 'long', 'tiny'] as const
+export const LEG_TYPES = ['stumpy', 'long', 'feet'] as const
+
 /**
  * Capital d'expérience de base pour le calcul du seuil d'expérience.
  * Utilisé pour connaître le montant d'XP nécessaire pour atteindre le niveau supérieur.

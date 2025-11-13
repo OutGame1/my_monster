@@ -1,6 +1,6 @@
 'use server'
 
-import Monster, { type IPublicMonsterDocument, type MonsterState } from '@/db/models/monster.model'
+import Monster, { type IPublicMonsterDocument } from '@/db/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { Types } from 'mongoose'
@@ -15,7 +15,7 @@ import { calculateMaxXp, calculateMonsterCreationCost } from '@/config/monsters.
 import { BASE_COIN_REWARD, MATCHED_STATE_COIN_REWARD, XP_REWARD } from '@/config/rewards.config'
 import { checkOwnershipQuests, incrementQuestProgress, checkCareDifferentMonstersProgress } from './quests.actions'
 import type { GetPublicMonstersPaginatedResult, GalleryFiltersParams } from '@/types/gallery'
-import type { ActionType, PerformActionResult } from '@/types/monsters'
+import type { MonsterState, ActionType, PerformActionResult } from '@/types/monsters'
 import GalleryFilterBuilder from '@/lib/builders/GalleryFilterBuilder'
 
 /**
@@ -152,7 +152,7 @@ export async function performMonsterAction (
     }).exec()
 
     if (monster === null) {
-      throw new Error('Monster not found')
+      throw new Error('Le monstre n\'existe pas')
     }
 
     // Vérification de la correspondance action/état pour accorder le bonus
@@ -173,12 +173,11 @@ export async function performMonsterAction (
       currentMaxXp = calculateMaxXp(currentLevel)
     }
 
-    // Mise à jour du document monstre
     monster.xp = newXp
     monster.level = currentLevel
     monster.maxXp = currentMaxXp
     monster.state = 'happy'
-    monster.lastCaredAt = new Date() // Mise à jour de la date de dernier soin
+    monster.lastCaredAt = new Date()
     await monster.save()
 
     // Mise à jour du solde du portefeuille utilisateur

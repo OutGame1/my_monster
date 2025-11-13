@@ -10,7 +10,8 @@ import {
   type GalleryFilters,
   type GalleryFiltersParams
 } from '@/types/gallery'
-import GalleryContentSkeleton from './skeletons/GalleryContentSkeleton'
+import Skeleton from '@/components/ui/Skeleton'
+import GalleryMonsterCardSkeleton from './skeletons/GalleryMonsterCardSkeleton'
 import SectionTitle from '@/components/ui/SectionTitle'
 
 /**
@@ -51,6 +52,15 @@ export default function GalleryContent (): ReactNode {
   // Fonction pour recharger les données avec les nouveaux filtres
   const handleFiltersChange = useCallback(async (newFilters: GalleryFilters) => {
     setFilters(newFilters)
+
+    if (newFilters.minLevel !== undefined &&
+        newFilters.maxLevel !== undefined &&
+        newFilters.minLevel > newFilters.maxLevel) {
+      // Ne pas appliquer les filtres si la plage de niveaux est invalide
+      setResult(prev => ({ ...prev, monsters: [] }))
+      return
+    }
+
     setIsLoading(true)
 
     // Convertir les filtres UI en filtres API
@@ -91,11 +101,6 @@ export default function GalleryContent (): ReactNode {
     }
   }, [filters])
 
-  // Afficher le squelette pendant le chargement initial
-  if (isInitialLoading) {
-    return <GalleryContentSkeleton />
-  }
-
   const pluralMonsters = result.total > 1 ? 's' : ''
 
   return (
@@ -107,36 +112,69 @@ export default function GalleryContent (): ReactNode {
           subtitle='Découvrez les créations publiques de notre communauté de dresseurs'
         />
 
-        <div className='mb-8 flex items-center justify-center gap-8 text-sm text-gray-500'>
-          <div className='flex items-center gap-2'>
-            <div className='h-3 w-3 rounded-full bg-aqua-forest-400' />
-            <span>{result.total} monstre{pluralMonsters} public{pluralMonsters}</span>
-          </div>
-        </div>
+        {/* Stats */}
+        {isInitialLoading
+          ? (
+            <div className='mb-8 flex items-center justify-center gap-8'>
+              <div className='flex items-center gap-2'>
+                <Skeleton circle width={12} height={12} />
+                <Skeleton width={120} height={20} />
+              </div>
+            </div>
+            )
+          : (
+            <div className='mb-8 flex items-center justify-center gap-8 text-sm text-gray-500'>
+              <div className='flex items-center gap-2'>
+                <div className='h-3 w-3 rounded-full bg-aqua-forest-400' />
+                <span>{result.total} monstre{pluralMonsters} public{pluralMonsters}</span>
+              </div>
+            </div>
+            )}
 
         {/* Barre de filtres */}
-        <GalleryFiltersBar
-          filters={filters}
-          onFiltersChange={(newFilters) => { void handleFiltersChange(newFilters) }}
-          totalCount={result.total}
-        />
+        {isInitialLoading
+          ? (
+            <div className='mb-8 rounded-xl bg-white p-6 shadow-sm border border-gray-200'>
+              <div className='flex flex-wrap items-center gap-4'>
+                <Skeleton width={150} height={40} borderRadius={8} />
+                <Skeleton width={150} height={40} borderRadius={8} />
+                <Skeleton width={200} height={40} borderRadius={8} />
+                <div className='ml-auto'>
+                  <Skeleton width={100} height={40} borderRadius={8} />
+                </div>
+              </div>
+            </div>
+            )
+          : (
+            <GalleryFiltersBar
+              filters={filters}
+              onFiltersChange={(newFilters) => { void handleFiltersChange(newFilters) }}
+            />
+            )}
 
-        {/* Overlay de chargement lors du changement de filtres */}
-        {isLoading && (
-          <div className='mb-8 flex items-center justify-center gap-3 rounded-xl bg-tolopea-50 py-8 text-tolopea-600'>
-            <div className='h-6 w-6 animate-spin rounded-full border-4 border-tolopea-200 border-t-tolopea-600' />
-            <span className='font-medium'>Application des filtres...</span>
-          </div>
-        )}
-
-        {/* Grille avec infinite scroll */}
-        {!isLoading && (
-          <InfiniteGalleryGrid
-            key={`${filters.sortBy ?? 'newest'}-${filters.state ?? 'all'}-${filters.minLevel ?? 0}-${filters.maxLevel ?? 0}-${String(filters.hasBackground ?? false)}`}
-            initialResult={result}
-            fetchMore={fetchMore}
-          />
-        )}
+        {/* Grille avec infinite scroll ou squelettes */}
+        {isInitialLoading
+          ? (
+            <div className='grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+              {Array.from({ length: 12 }).map((_, i) => (
+                <GalleryMonsterCardSkeleton key={i} />
+              ))}
+            </div>
+            )
+          : isLoading
+            ? (
+              <div className='mb-8 flex items-center justify-center gap-3 rounded-xl bg-tolopea-50 py-8 text-tolopea-600'>
+                <div className='h-6 w-6 animate-spin rounded-full border-4 border-tolopea-200 border-t-tolopea-600' />
+                <span className='font-medium'>Application des filtres...</span>
+              </div>
+              )
+            : (
+              <InfiniteGalleryGrid
+                key={`${filters.sortBy ?? 'newest'}-${filters.state ?? 'all'}-${filters.minLevel ?? 0}-${filters.maxLevel ?? 0}-${String(filters.hasBackground ?? false)}`}
+                initialResult={result}
+                fetchMore={fetchMore}
+              />
+              )}
       </div>
     </div>
   )

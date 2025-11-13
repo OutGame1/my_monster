@@ -3,7 +3,21 @@
  * Inclut les actions, résultats d'actions et informations d'état
  */
 
-import type { MonsterState } from '@/db/models/monster.model'
+import type {
+  MONSTER_STATES,
+  BODY_SHAPES,
+  EYE_TYPES,
+  MOUTH_TYPES,
+  ARM_TYPES,
+  LEG_TYPES
+} from '@/config/monsters.config'
+
+export type MonsterState = typeof MONSTER_STATES[number]
+export type MonsterBodyShape = typeof BODY_SHAPES[number]
+export type MonsterEyeShape = typeof EYE_TYPES[number]
+export type MonsterMouthType = typeof MOUTH_TYPES[number]
+export type MonsterArmType = typeof ARM_TYPES[number]
+export type MonsterLegType = typeof LEG_TYPES[number]
 
 /**
  * Types d'actions possibles sur un monstre

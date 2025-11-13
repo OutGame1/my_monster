@@ -1,5 +1,4 @@
-import type { MonsterState } from '@/db/models/monster.model'
-import type { StateInfo } from '@/types/monsters'
+import type { MonsterState, StateInfo } from '@/types/monsters'
 
 export const stateInfoMap: Record<MonsterState, StateInfo> = {
   happy: {

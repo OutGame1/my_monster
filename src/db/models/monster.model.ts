@@ -1,12 +1,17 @@
 import { type Document, Schema, models, model, Types, Model } from 'mongoose'
-import { MONSTER_BASE_XP } from '@/config/monsters.config'
-
-export type MonsterState = 'happy' | 'sad' | 'gamester' | 'angry' | 'hungry' | 'sleepy'
-export type MonsterBodyShape = 'round' | 'pear' | 'blocky'
-export type MonsterEyeShape = 'dot' | 'round' | 'star'
-export type MonsterMouthType = 'simple' | 'toothy' | 'wavy'
-export type MonsterArmType = 'short' | 'long' | 'tiny'
-export type MonsterLegType = 'stumpy' | 'long' | 'feet'
+import {
+  MONSTER_STATES,
+  BODY_SHAPES,
+  EYE_TYPES,
+  MOUTH_TYPES,
+  ARM_TYPES,
+  LEG_TYPES,
+  MONSTER_BASE_XP
+} from '@/config/monsters.config'
+import type {
+  MonsterArmType, MonsterBodyShape, MonsterEyeShape,
+  MonsterLegType, MonsterMouthType, MonsterState
+} from '@/types/monsters'
 
 export interface IMonsterTraitsDocument extends Document {
   bodyShape: MonsterBodyShape
@@ -51,27 +56,27 @@ const monsterTraitsSchema = new Schema<IMonsterTraitsDocument>({
   bodyShape: {
     type: String,
     required: true,
-    enum: ['round', 'pear', 'blocky']
+    enum: BODY_SHAPES
   },
   eyeType: {
     type: String,
     required: true,
-    enum: ['dot', 'round', 'star']
+    enum: EYE_TYPES
   },
   mouthType: {
     type: String,
     required: true,
-    enum: ['simple', 'toothy', 'wavy']
+    enum: MOUTH_TYPES
   },
   armType: {
     type: String,
     required: true,
-    enum: ['short', 'long', 'tiny']
+    enum: ARM_TYPES
   },
   legType: {
     type: String,
     required: true,
-    enum: ['stumpy', 'long', 'feet']
+    enum: LEG_TYPES
   },
   primaryColor: {
     type: String,
@@ -120,7 +125,7 @@ const monsterSchema = new Schema<IMonsterDocument>({
   state: {
     type: String,
     required: true,
-    enum: ['happy', 'sad', 'gamester', 'angry', 'hungry', 'sleepy'],
+    enum: MONSTER_STATES,
     default: 'happy'
   },
   backgroundId: {

@@ -2,15 +2,10 @@
 
 import type { ReactNode } from 'react'
 import cn from 'classnames'
+import { AlertCircle } from 'lucide-react'
 import Button from '@components/ui/Button'
 import type { GalleryFilters, GallerySortBy, GalleryStateFilter } from '@/types/gallery'
-import {
-  MONSTER_STATE_OPTIONS,
-  SORT_OPTIONS,
-  DEFAULT_SORT,
-  MIN_MONSTER_LEVEL,
-  MAX_MONSTER_LEVEL
-} from '@/config/gallery.config'
+import { MONSTER_STATE_OPTIONS, SORT_OPTIONS, DEFAULT_SORT } from '@/config/gallery.config'
 import { count } from '@/lib/utils'
 
 /**
@@ -19,7 +14,6 @@ import { count } from '@/lib/utils'
 interface GalleryFiltersBarProps {
   filters: GalleryFilters
   onFiltersChange: (filters: GalleryFilters) => void
-  totalCount: number
 }
 
 /**
@@ -28,8 +22,7 @@ interface GalleryFiltersBarProps {
  */
 export default function GalleryFiltersBar ({
   filters,
-  onFiltersChange,
-  totalCount
+  onFiltersChange
 }: GalleryFiltersBarProps): ReactNode {
   const handleStateChange = (state: GalleryStateFilter): void => {
     onFiltersChange({
@@ -46,14 +39,14 @@ export default function GalleryFiltersBar ({
   }
 
   const handleLevelChange = (type: 'minLevel' | 'maxLevel', rawValue: string): void => {
-    const value = parseInt(rawValue, 10)
+    const numValue = parseInt(rawValue, 10)
 
-    if (!isNaN(value)) {
-      onFiltersChange({
-        ...filters,
-        [type]: value
-      })
-    }
+    const value = isNaN(numValue) ? undefined : Math.max(numValue, 1)
+
+    onFiltersChange({
+      ...filters,
+      [type]: value
+    })
   }
 
   const handleBackgroundChange = (checked: boolean): void => {
@@ -62,6 +55,10 @@ export default function GalleryFiltersBar ({
       hasBackground: checked || undefined
     })
   }
+
+  const invalidLevelRange = filters.minLevel !== undefined &&
+                            filters.maxLevel !== undefined &&
+                            filters.minLevel > filters.maxLevel
 
   const activeFilters = [
     filters.minLevel !== undefined,
@@ -98,34 +95,39 @@ export default function GalleryFiltersBar ({
 
       <div className='grid grid-cols-1 gap-6 lg:grid-cols-3'>
         {/* Filtre par niveau */}
-        <div className='rounded-xl bg-white p-6 shadow-sm border border-gray-200'>
-          <h4 className='mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+        <div className='flex flex-col gap-1 justify-between rounded-xl bg-white p-6 shadow-sm border border-gray-200'>
+          <h4 className='flex items-center gap-2 text-sm font-semibold text-gray-700'>
             <span>📊</span>
             Niveau
           </h4>
+
+          {/* Alerte de plage invalide */}
+          {invalidLevelRange && (
+            <p className='flex items-center gap-2 text-xs text-blood-700 font-medium'>
+              <AlertCircle className='w-4 h-4 text-blood-600 flex-shrink-0' />
+              Le niveau minimum est inférieur au niveau maximum
+            </p>
+          )}
+
           <div className='flex items-center gap-3'>
             <div className='flex-1'>
               <label className='mb-1 block text-xs text-gray-600'>Min</label>
               <input
                 type='number'
-                min={MIN_MONSTER_LEVEL}
-                max={Math.min(filters.maxLevel ?? MAX_MONSTER_LEVEL, MAX_MONSTER_LEVEL)}
-                value={filters.minLevel ?? MIN_MONSTER_LEVEL}
+                value={filters.minLevel ?? ''}
                 onChange={(e) => handleLevelChange('minLevel', e.target.value)}
-                placeholder={MIN_MONSTER_LEVEL.toString()}
+                placeholder='1'
                 className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-tolopea-500 focus:outline-none focus:ring-2 focus:ring-tolopea-200'
               />
             </div>
-            <span className='mt-6 text-gray-400'>-</span>
+            <span className='text-gray-400'>-</span>
             <div className='flex-1'>
               <label className='mb-1 block text-xs text-gray-600'>Max</label>
               <input
                 type='number'
-                min={Math.max(filters.minLevel ?? MIN_MONSTER_LEVEL, MIN_MONSTER_LEVEL)}
-                max={MAX_MONSTER_LEVEL}
-                value={filters.maxLevel ?? MAX_MONSTER_LEVEL}
+                value={filters.maxLevel ?? ''}
                 onChange={(e) => handleLevelChange('maxLevel', e.target.value)}
-                placeholder={MAX_MONSTER_LEVEL.toString()}
+                placeholder='100'
                 className='w-full rounded-lg border border-gray-300 px-3 py-2 text-sm focus:border-tolopea-500 focus:outline-none focus:ring-2 focus:ring-tolopea-200'
               />
             </div>
@@ -133,8 +135,8 @@ export default function GalleryFiltersBar ({
         </div>
 
         {/* Filtre par état */}
-        <div className='rounded-xl bg-white p-6 shadow-sm border border-gray-200'>
-          <h4 className='mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+        <div className='flex flex-col gap-1 justify-between rounded-xl bg-white p-6 shadow-sm border border-gray-200'>
+          <h4 className='flex items-center gap-2 text-sm font-semibold text-gray-700'>
             <span>😊</span>
             État
           </h4>
@@ -160,11 +162,12 @@ export default function GalleryFiltersBar ({
         </div>
 
         {/* Tri */}
-        <div className='rounded-xl bg-white p-6 shadow-sm border border-gray-200'>
-          <h4 className='mb-4 flex items-center gap-2 text-sm font-semibold text-gray-700'>
+        <div className='flex flex-col gap-1 justify-between rounded-xl bg-white p-6 shadow-sm border border-gray-200'>
+          <h4 className='flex items-center gap-2 text-sm font-semibold text-gray-700'>
             <span>🔄</span>
             Trier par
           </h4>
+
           <select
             value={filters.sortBy ?? DEFAULT_SORT}
             onChange={(e) => handleSortChange(e.target.value)}
@@ -178,19 +181,17 @@ export default function GalleryFiltersBar ({
           </select>
 
           {/* Checkbox arrière-plan */}
-          <div className='mt-4 pt-4 border-t border-gray-200'>
-            <label className='flex items-center gap-3 cursor-pointer group'>
-              <input
-                type='checkbox'
-                checked={filters.hasBackground ?? false}
-                onChange={(e) => handleBackgroundChange(e.target.checked)}
-                className='h-5 w-5 rounded border-gray-300 text-tolopea-500 focus:ring-2 focus:ring-tolopea-200 focus:ring-offset-0 cursor-pointer'
-              />
-              <span className='text-sm font-medium text-gray-700 group-hover:text-tolopea-600 transition-colors'>
-                Avec arrière-plan uniquement
-              </span>
-            </label>
-          </div>
+          <label className='flex items-center gap-3 cursor-pointer group'>
+            <input
+              type='checkbox'
+              checked={filters.hasBackground ?? false}
+              onChange={(e) => handleBackgroundChange(e.target.checked)}
+              className='h-5 w-5 rounded border-gray-300 text-tolopea-500 focus:ring-2 focus:ring-tolopea-200 focus:ring-offset-0 cursor-pointer'
+            />
+            <span className='text-sm font-medium text-gray-700 group-hover:text-tolopea-600 transition-colors'>
+              Avec arrière-plan uniquement
+            </span>
+          </label>
         </div>
       </div>
     </div>

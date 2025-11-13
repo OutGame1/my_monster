@@ -2,7 +2,7 @@
  * Types centralisés pour la feature Galerie
  */
 
-import type { MonsterState } from '@/db/models/monster.model'
+import type { MonsterState } from './monsters'
 import type { ISerializedPublicMonster } from '@/lib/serializers/monster.serializer'
 
 /**

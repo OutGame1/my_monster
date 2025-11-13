@@ -1,8 +1,8 @@
+import type { IMonsterDocument, IMonsterTraitsDocument, IPublicMonsterDocument } from '@/db/models/monster.model'
 import type {
-  IMonsterDocument, IMonsterTraitsDocument, IPublicMonsterDocument,
   MonsterState, MonsterArmType, MonsterBodyShape,
   MonsterEyeShape, MonsterLegType, MonsterMouthType
-} from '@/db/models/monster.model'
+} from '@/types/monsters'
 
 // Sérialisation des traits d'un monstre
 

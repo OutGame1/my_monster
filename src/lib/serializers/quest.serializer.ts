@@ -1,9 +1,11 @@
 import type { IQuestDocument } from '@/db/models/quest.model'
+import type { QuestObjective } from '@/types/quests'
 
 export interface ISerializedQuestProgress {
   id: string
   userId: string
   questId: string
+  questObjective: QuestObjective
   progress: number
   completedAt?: string
   claimedAt?: string
@@ -26,6 +28,7 @@ export default function questSerializer (
     id: questProgress._id.toString(),
     userId: questProgress.userId.toString(),
     questId: questProgress.questId,
+    questObjective: questProgress.questObjective,
     progress: questProgress.progress,
     completedAt: questProgress.completedAt?.toISOString(),
     claimedAt: questProgress.claimedAt?.toISOString(),

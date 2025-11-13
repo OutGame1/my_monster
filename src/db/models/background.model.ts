@@ -1,4 +1,6 @@
 import { type Document, Schema, models, model, Types, Model } from 'mongoose'
+import Quest from './quest.model'
+import { questsObjectiveMap } from '@/config/quests.config'
 
 /**
  * Interface pour un arrière-plan possédé par un utilisateur pour un monstre spécifique
@@ -59,6 +61,34 @@ backgroundSchema.index(
   { ownerId: 1, monsterId: 1, backgroundId: 1 },
   { unique: true }
 )
+
+/**
+ * Hook post-save: vérifie automatiquement la progression des quêtes
+ * d'arrière-plans après chaque création/mise à jour.
+ */
+backgroundSchema.post('save', async function ({ ownerId: userId }: IBackgroundDocument) {
+  try {
+    // Mettre à jour toutes les quêtes "unlock_backgrounds"
+    for (const questDef of questsObjectiveMap.unlock_backgrounds) {
+      const questId = questDef.id
+
+      await Quest.findOneAndUpdate(
+        { userId, questId },
+        {
+          $inc: { progress: 1 },
+          $setOnInsert: {
+            userId,
+            questId,
+            questObjective: 'unlock_backgrounds'
+          }
+        },
+        { upsert: true, new: true }
+      ).exec()
+    }
+  } catch (error) {
+    console.error('❌ Error updating unlock backgrounds quests after background save:', error)
+  }
+})
 
 const BackgroundModel: Model<IBackgroundDocument> = models.Background ?? model('Background', backgroundSchema)
 

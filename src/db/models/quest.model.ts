@@ -1,9 +1,12 @@
 import { type Document, Schema, Types, Model, models, model } from 'mongoose'
+import { questObjectives, questsIdMap } from '@/config/quests.config'
+import type { QuestObjective } from '@/types/quests'
 
 export interface IQuestDocument extends Document {
   _id: Types.ObjectId
   userId: Types.ObjectId
   questId: string // ID de la quête depuis la config
+  questObjective: QuestObjective // Type d'objectif de la quête
   progress: number // Progression actuelle
   completedAt?: Date // Date de complétion
   claimedAt?: Date // Date de réclamation
@@ -22,6 +25,11 @@ const questSchema = new Schema<IQuestDocument>({
   questId: {
     type: String,
     required: true
+  },
+  questObjective: {
+    type: String,
+    required: true,
+    enum: questObjectives
   },
   progress: {
     type: Number,
@@ -44,6 +52,27 @@ const questSchema = new Schema<IQuestDocument>({
 
 // Index composé pour retrouver rapidement les quêtes d'un utilisateur
 questSchema.index({ userId: 1, questId: 1 }, { unique: true })
+
+/**
+ * Hook pre-save : Marque automatiquement la quête comme complétée
+ * lorsque la progression atteint la cible
+ */
+questSchema.pre('save', function (next) {
+  const questDef = questsIdMap.get(this.questId)
+  if (questDef === undefined) {
+    return next(new Error(`Quest definition not found for questId: ${this.questId}`))
+  }
+
+  if (this.progress >= questDef.target) {
+    this.progress = questDef.target
+
+    if (this.completedAt === undefined) {
+      this.completedAt = new Date()
+    }
+  }
+
+  next()
+})
 
 const QuestModel: Model<IQuestDocument> = models.Quest ?? model('Quest', questSchema)
 

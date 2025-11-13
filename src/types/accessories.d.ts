@@ -2,10 +2,12 @@
  * Types et interfaces pour le système d'accessoires
  */
 
+import type { rarities } from '@/config/rarity.config'
+
 /**
  * Niveau de rareté d'un item (accessoire ou background)
  */
-export type Rarity = 'common' | 'uncommon' | 'rare' | 'epic' | 'legendary'
+export type Rarity = typeof rarities[number]
 
 export interface RarityStyle {
   backgroundColor: string

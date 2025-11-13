@@ -4,7 +4,7 @@
 // Routes to specific arm type sub-components
 
 import type { ReactNode } from 'react'
-import type { MonsterArmType, MonsterBodyShape, MonsterState } from '@/db/models/monster.model'
+import type { MonsterArmType, MonsterBodyShape, MonsterState } from '@/types/monsters'
 import ShortArms from './arms/ShortArms'
 import LongArms from './arms/LongArms'
 import TinyArms from './arms/TinyArms'

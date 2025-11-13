@@ -3,13 +3,13 @@
 // ========================================
 // Generates consistent, reproducible monster traits from a name seed
 
-import type {
-  MonsterBodyShape,
-  MonsterEyeShape,
-  MonsterMouthType,
-  MonsterArmType,
-  MonsterLegType
-} from '@/db/models/monster.model'
+import {
+  BODY_SHAPES,
+  EYE_TYPES,
+  MOUTH_TYPES,
+  ARM_TYPES,
+  LEG_TYPES
+} from '@/config/monsters.config'
 import type { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
 
 /**
@@ -40,16 +40,10 @@ function stringToSeed (str: string): number {
 /**
  * Pick random element from array using seeded RNG
  */
-function pickRandom<T> (array: T[], random: () => number): T {
+function pickRandom<T> (array: readonly T[], random: () => number): T {
   const index = Math.floor(random() * array.length)
   return array[index]
 }
-
-const BODY_SHAPES: MonsterBodyShape[] = ['round', 'pear', 'blocky']
-const EYE_TYPES: MonsterEyeShape[] = ['dot', 'round', 'star']
-const MOUTH_TYPES: MonsterMouthType[] = ['simple', 'toothy', 'wavy']
-const ARM_TYPES: MonsterArmType[] = ['short', 'long', 'tiny']
-const LEG_TYPES: MonsterLegType[] = ['stumpy', 'long', 'feet']
 
 // Undertale-inspired color palettes - vibrant, cartoonish colors
 const COLOR_PALETTES = [

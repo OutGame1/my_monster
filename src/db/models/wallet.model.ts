@@ -42,23 +42,20 @@ walletSchema.post('save', async function ({ ownerId: userId, totalEarned }: IWal
   try {
     // Itérer sur toutes les quêtes et filtrer par objectif "reach_coins"
     for (const coinsAchievement of questsObjectiveMap.reach_coins) {
-      const questData = {
-        userId,
-        questId: coinsAchievement.id
-      }
+      const questId = coinsAchievement.id
 
-      let quest = await Quest.findOne(questData).exec()
+      let quest = await Quest.findOne({ userId, questId }).exec()
 
       if (quest === null) {
-        quest = new Quest(questData)
+        quest = new Quest({
+          userId,
+          questId,
+          questObjective: 'reach_coins'
+        })
       }
 
       // Mettre à jour avec le total de pièces gagnées
       quest.progress = totalEarned
-
-      if (totalEarned >= coinsAchievement.target && quest.completedAt === undefined) {
-        quest.completedAt = new Date()
-      }
 
       await quest.save()
     }

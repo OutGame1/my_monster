@@ -4,10 +4,14 @@ import { type ReactNode, useState } from 'react'
 import { generateMonsterTraits } from '@/monster/generator'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import Card from '@/components/ui/Card'
+import {
+  BODY_SHAPES, ARM_TYPES,
+  LEG_TYPES, EYE_TYPES, MOUTH_TYPES
+} from '@/config/monsters.config'
 import type {
   MonsterArmType, MonsterBodyShape, MonsterEyeShape,
   MonsterLegType, MonsterState, MonsterMouthType
-} from '@/db/models/monster.model'
+} from '@/types/monsters'
 import type { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
 
 interface AnimationEntry {
@@ -26,12 +30,6 @@ const ANIMATIONS: AnimationEntry[] = [
   { state: 'sleepy', label: 'Dormir', emoji: '😴' },
   { state: 'sad', label: 'Triste', emoji: '😢' }
 ]
-
-const BODY_SHAPES: MonsterBodyShape[] = ['round', 'pear', 'blocky']
-const ARM_TYPES: MonsterArmType[] = ['short', 'long', 'tiny']
-const LEG_TYPES: MonsterLegType[] = ['stumpy', 'long', 'feet']
-const EYE_TYPES: MonsterEyeShape[] = ['dot', 'round', 'star']
-const MOUTH_TYPES: MonsterMouthType[] = ['simple', 'toothy', 'wavy']
 
 /**
  * Page client permettant de tester la génération et la personnalisation visuelle d'un monstre.

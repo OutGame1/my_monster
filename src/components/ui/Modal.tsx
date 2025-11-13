@@ -77,10 +77,10 @@ export default function Modal ({
         aria-labelledby='modal-title'
       >
         {/* Header */}
-        <div className='px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-10'>
+        <div className='px-6 py-4 border-b border-gray-200 sticky top-0 bg-white z-15'>
           <h2
             id='modal-title'
-            className='text-2xl font-bold text-tolopea-900'
+            className='text-xl sm:text-2xl font-bold text-tolopea-900'
           >
             {title}
           </h2>
@@ -93,7 +93,7 @@ export default function Modal ({
 
         {/* Footer avec boutons */}
         {(showCancel || onConfirm !== undefined) && (
-          <div className='px-6 py-4 border-t border-gray-200 flex gap-4 sticky bottom-0 bg-white'>
+          <div className='px-6 py-4 border-t border-gray-200 flex gap-4 sticky bottom-0 bg-white z-15'>
             {showCancel && (
               <Button
                 variant='secondary'

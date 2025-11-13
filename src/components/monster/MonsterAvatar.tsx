@@ -4,7 +4,7 @@
 // Main monster renderer composing all trait parts
 
 import type { ReactNode } from 'react'
-import type { MonsterState } from '@/db/models/monster.model'
+import type { MonsterState } from '@/types/monsters'
 import type { ISerializedMonsterTraits } from '@/lib/serializers/monster.serializer'
 import Body from './parts/Body'
 import Head from './parts/Head'

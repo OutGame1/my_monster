@@ -4,7 +4,7 @@
 // Routes to specific mouth type sub-components
 
 import type { ReactNode } from 'react'
-import type { MonsterState, MonsterMouthType } from '@/db/models/monster.model'
+import type { MonsterState, MonsterMouthType } from '@/types/monsters'
 import SimpleMouth from './mouths/SimpleMouth'
 import ToothyMouth from './mouths/ToothyMouth'
 import WavyMouth from './mouths/WavyMouth'
