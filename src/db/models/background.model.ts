@@ -72,18 +72,20 @@ backgroundSchema.post('save', async function ({ ownerId: userId }: IBackgroundDo
     for (const questDef of questsObjectiveMap.unlock_backgrounds) {
       const questId = questDef.id
 
-      await Quest.findOneAndUpdate(
-        { userId, questId },
-        {
-          $inc: { progress: 1 },
-          $setOnInsert: {
-            userId,
-            questId,
-            questObjective: 'unlock_backgrounds'
-          }
-        },
-        { upsert: true, new: true }
-      ).exec()
+      let quest = await Quest.findOne({ userId, questId }).exec()
+
+      if (quest === null) {
+        quest = new Quest({
+          userId,
+          questId,
+          questObjective: 'unlock_backgrounds'
+        })
+      }
+
+      // Mettre à jour avec le nombre réel de backgrounds débloqués
+      quest.progress++
+
+      await quest.save()
     }
   } catch (error) {
     console.error('❌ Error updating unlock backgrounds quests after background save:', error)

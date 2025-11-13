@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import { memo, type ReactNode } from 'react'
 import type { ISerializedMonster } from '@/lib/serializers/monster.serializer'
 import MonsterAvatar from '@/components/monster/MonsterAvatar'
 import MonsterBackgroundDisplay from '@/components/backgrounds/MonsterBackgroundDisplay'
@@ -16,8 +16,9 @@ interface MonsterCardProps {
  * Individual monster card component
  * Displays monster avatar, info, state badge and action buttons
  * Clickable to navigate to monster detail page
+ * Wrapped with React.memo to prevent unnecessary re-renders
  */
-export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
+function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
   const router = useRouter()
   const {
     label,
@@ -71,3 +72,6 @@ export default function MonsterCard ({ monster }: MonsterCardProps): ReactNode {
     </div>
   )
 }
+
+// Export avec React.memo pour optimiser les re-renders
+export default memo(MonsterCard)

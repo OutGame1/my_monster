@@ -2,12 +2,17 @@
 
 import type { ReactNode } from 'react'
 import { useState } from 'react'
+import dynamic from 'next/dynamic'
 import { Utensils, Gamepad2, Heart, Lightbulb, Moon } from 'lucide-react'
 import Button from '@/components/ui/Button'
-import LevelUpModal from './LevelUpModal'
 import { performMonsterAction } from '@/actions/monsters.actions'
 import type { ActionType } from '@/types/monsters'
 import { useRouter } from 'next/navigation'
+
+// Lazy loading du modal LevelUp car c'est un événement rare
+const LevelUpModal = dynamic(async () => await import('./LevelUpModal'), {
+  ssr: false
+})
 
 interface MonsterActionsProps {
   monsterId: string

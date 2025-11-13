@@ -1,6 +1,6 @@
 'use client'
 
-import type { ReactNode } from 'react'
+import { useMemo, type ReactNode } from 'react'
 import cn from 'classnames'
 import { AlertCircle } from 'lucide-react'
 import Button from '@components/ui/Button'
@@ -43,6 +43,11 @@ export default function GalleryFiltersBar ({
 
     const value = isNaN(numValue) ? undefined : Math.max(numValue, 1)
 
+    // Empêche de maintenir la touche bas enfoncée et de render inutilement
+    if (value === 1 && value === filters[type]) {
+      return
+    }
+
     onFiltersChange({
       ...filters,
       [type]: value
@@ -60,15 +65,16 @@ export default function GalleryFiltersBar ({
                             filters.maxLevel !== undefined &&
                             filters.minLevel > filters.maxLevel
 
-  const activeFilters = [
-    filters.minLevel !== undefined,
-    filters.maxLevel !== undefined,
-    filters.state !== undefined && filters.state !== 'all',
-    filters.hasBackground === true
-  ]
-
-  // compte le nombre de filtre actif (true)
-  const activeFiltersCount = count(activeFilters, active => active)
+  // Mémoïsation du comptage des filtres actifs pour éviter les recalculs inutiles
+  const activeFiltersCount = useMemo(() => {
+    const activeFilters = [
+      filters.minLevel !== undefined,
+      filters.maxLevel !== undefined,
+      filters.state !== undefined && filters.state !== 'all',
+      filters.hasBackground === true
+    ]
+    return count(activeFilters, active => active)
+  }, [filters.minLevel, filters.maxLevel, filters.state, filters.hasBackground])
 
   const handleResetFilters = (): void => onFiltersChange({ sortBy: DEFAULT_SORT })
 

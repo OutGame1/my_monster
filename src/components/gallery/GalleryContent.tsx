@@ -83,7 +83,7 @@ export default function GalleryContent (): ReactNode {
     }
   }, [])
 
-  // Convertir les filtres pour la fonction fetchMore
+  // Convertir les filtres pour la fonction fetchMore avec dépendances granulaires
   const fetchMore = useCallback(async (currentCursor: string) => {
     const apiFilters: GalleryFiltersParams = {
       minLevel: filters.minLevel,
@@ -99,7 +99,7 @@ export default function GalleryContent (): ReactNode {
       nextCursor: result.nextCursor,
       hasMore: result.hasMore
     }
-  }, [filters])
+  }, [filters.minLevel, filters.maxLevel, filters.state, filters.sortBy, filters.hasBackground])
 
   const pluralMonsters = result.total > 1 ? 's' : ''
 
