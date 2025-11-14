@@ -1,21 +1,9 @@
-import { type Document, Schema, Types, Model, models, model } from 'mongoose'
-import { questObjectives, questsIdMap } from '@/config/quests.config'
-import type { QuestObjective } from '@/types/quests'
+import { Schema, Types, models, model } from 'mongoose'
+import type { IQuestModel, IQuestSchema } from '@/types/models/quest.model'
+import { questObjectives, questsIdMap, questsObjectiveMap } from '@/config/quests.config'
+import type { QuestDefinition, QuestObjective } from '@/types/quests'
 
-export interface IQuestDocument extends Document {
-  _id: Types.ObjectId
-  userId: Types.ObjectId
-  questId: string // ID de la quête depuis la config
-  questObjective: QuestObjective // Type d'objectif de la quête
-  progress: number // Progression actuelle
-  completedAt?: Date // Date de complétion
-  claimedAt?: Date // Date de réclamation
-  lastResetAt?: Date // Pour les quêtes quotidiennes
-  createdAt: Date
-  updatedAt: Date
-}
-
-const questSchema = new Schema<IQuestDocument>({
+const questSchema: IQuestSchema = new Schema({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'user',
@@ -47,7 +35,62 @@ const questSchema = new Schema<IQuestDocument>({
   }
 }, {
   versionKey: false,
-  timestamps: true
+  timestamps: true,
+  methods: {
+    async claim (): Promise<void> {
+      if (this.completedAt === undefined) {
+        throw new Error('La quête n\'est pas encore complétée')
+      }
+
+      if (this.claimedAt !== undefined) {
+        throw new Error('Vous avez déjà réclamé cette récompense')
+      }
+
+      this.claimedAt = new Date()
+
+      await this.save()
+    }
+  },
+  statics: {
+    async updateQuests (
+      userId: string | Types.ObjectId,
+      questObjective: QuestObjective,
+      progress: number | ((progress: number) => number)
+    ): Promise<void> {
+      for (const { id: questId } of questsObjectiveMap[questObjective]) {
+        let quest = await QuestModel.findOne({ userId, questId }).exec()
+
+        if (quest === null) {
+          // On créer la quête si elle n'existe pas encore
+          quest = new QuestModel({
+            userId,
+            questId,
+            questObjective
+          })
+        }
+
+        // Ne pas mettre à jour si déjà complété
+        if (quest.completedAt !== undefined) {
+          continue
+        }
+
+        quest.progress = typeof progress === 'number' ? progress : progress(quest.progress)
+
+        await quest.save()
+      }
+    }
+  },
+  virtuals: {
+    quest: {
+      get (): QuestDefinition {
+        const quest = questsIdMap.get(this.questId)
+        if (quest === undefined) {
+          throw new Error(`Quest definition not found for questId: ${this.questId}`)
+        }
+        return quest
+      }
+    }
+  }
 })
 
 // Index composé pour retrouver rapidement les quêtes d'un utilisateur
@@ -58,15 +101,12 @@ questSchema.index({ userId: 1, questId: 1 }, { unique: true })
  * lorsque la progression atteint la cible
  */
 questSchema.pre('save', function (next) {
-  const questDef = questsIdMap.get(this.questId)
-  if (questDef === undefined) {
-    return next(new Error(`Quest definition not found for questId: ${this.questId}`))
-  }
-
-  if (this.progress >= questDef.target) {
-    this.progress = questDef.target
+  if (this.progress >= this.quest.target) {
+    // On ramène la progression à la cible maximale pour éviter que ça déborde
+    this.progress = this.quest.target
 
     if (this.completedAt === undefined) {
+      // Complétion de la quête
       this.completedAt = new Date()
     }
   }
@@ -74,6 +114,6 @@ questSchema.pre('save', function (next) {
   next()
 })
 
-const QuestModel: Model<IQuestDocument> = models.Quest ?? model('Quest', questSchema)
+const QuestModel: IQuestModel = models.Quest as IQuestModel ?? model('Quest', questSchema)
 
 export default QuestModel

@@ -9,8 +9,8 @@ interface CoinIconProps {
  * Coin icon component
  * Displays a custom SVG coin icon with golden colors and effects
  *
- * @param {CoinIconProps} props - Optional className for styling
- * @returns {ReactNode} SVG coin icon
+ * @param props - Optional className for styling
+ * @returns SVG coin icon
  */
 export default function CoinIcon ({ size, className }: CoinIconProps): ReactNode {
   return (

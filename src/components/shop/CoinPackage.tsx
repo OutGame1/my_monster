@@ -23,8 +23,8 @@ const iconMap: Record<string, ReactNode> = {
  * Coin package card component
  * Displays a purchasable coin package with icon, amount, price and buy button
  *
- * @param {CoinPackageProps} props - Package configuration and purchase handler
- * @returns {ReactNode} Card displaying coin package details
+ * @param props - Package configuration and purchase handler
+ * @returns Card displaying coin package details
  */
 export default function CoinPackage ({
   pkg,

@@ -1,4 +1,4 @@
-import type { IMonsterDocument, IMonsterTraitsDocument, IPublicMonsterDocument } from '@/db/models/monster.model'
+import type { IMonsterDocument, IMonsterTraitsDocument, IPublicMonsterDocument } from '@/types/models/monster.model'
 import type {
   MonsterState, MonsterArmType, MonsterBodyShape,
   MonsterEyeShape, MonsterLegType, MonsterMouthType

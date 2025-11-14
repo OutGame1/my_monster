@@ -36,8 +36,8 @@ export const metadata: Metadata = {
 /**
  * Layout racine de l'application Next.js, applique les fontes globales et le conteneur de toasts.
  *
- * @param {PropsWithChildren} props Propriétés contenant les enfants à rendre.
- * @returns {ReactNode} Structure HTML globale avec body configuré.
+ * @param props Propriétés contenant les enfants à rendre.
+ * @returns Structure HTML globale avec body configuré.
  */
 export default function RootLayout ({
   children

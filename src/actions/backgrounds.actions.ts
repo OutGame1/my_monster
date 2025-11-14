@@ -8,11 +8,11 @@ import { backgroundsIdMap, calculateFinalPrice } from '@/config/backgrounds.conf
 import { backgroundSerializer, type ISerializedBackground } from '@/lib/serializers/background.serializer'
 
 /**
- * Acheter un background pour un monstre spécifique
+ * Perme d'acheter un background pour un monstre spécifique
  *
- * @param {string} backgroundId - ID du background dans le catalogue
- * @param {string} monsterId - ID du monstre pour lequel acheter
- * @returns {Promise<ISerializedBackground>}
+ * @param backgroundId - ID du background dans le catalogue
+ * @param monsterId - ID du monstre pour lequel acheter
+ * @returns Renvoie l'arrière plan
  */
 export async function purchaseBackground (
   backgroundId: string,
@@ -33,10 +33,8 @@ export async function purchaseBackground (
     const ownerId = session.user.id
 
     // On vérifie que le monstre appartient à l'utilisateur
-    const monster = await Monster.exists({ _id: monsterId, ownerId }).lean()
-    if (monster === null) {
-      throw new Error('Ce monstre n\'existe pas ou ne vous appartient pas.')
-    }
+    await Monster.exists({ _id: monsterId, ownerId })
+      .orFail(new Error('Ce monstre n\'existe pas ou ne vous appartient pas.'))
 
     // On vérifie si le monstre possède déjà ce background
     const existingBackground = await Background.exists({
@@ -55,11 +53,13 @@ export async function purchaseBackground (
     await updateWalletBalance(-price)
 
     // Créer le background possédé
-    const newBackground = await Background.create({
+    const newBackground = new Background({
       backgroundId,
       ownerId,
       monsterId
     })
+
+    await newBackground.save()
 
     return backgroundSerializer(newBackground)
   } catch (error) {
@@ -71,9 +71,8 @@ export async function purchaseBackground (
 /**
  * Équiper un background sur un monstre
  *
- * @param {string} monsterId - ID du monstre
- * @param {string} backgroundId - ID du background à équiper
- * @returns {Promise<void>}
+ * @param monsterId - ID du monstre
+ * @param backgroundId - ID du background à équiper
  */
 export async function equipBackground (
   monsterId: string,
@@ -89,34 +88,18 @@ export async function equipBackground (
 
     // On vérifie que le monstre appartient à l'utilisateur
     const monster = await Monster.findOne({ _id: monsterId, ownerId })
-    if (monster === null) {
-      throw new Error('Ce monstre n\'existe pas ou ne vous appartient pas.')
-    }
+      .orFail(new Error('Ce monstre n\'existe pas ou ne vous appartient pas.'))
 
     if (backgroundId !== null) {
-      // On vérifie que l'arrière plan existe dans le catalogue
-      if (!backgroundsIdMap.has(backgroundId)) {
-        throw new Error('Cet arrière plan n\'existe pas dans le catalogue.')
-      }
-
       // On vérifie si le monstre possède déjà ce background
-      const existingBackground = await Background.exists({
-        ownerId,
-        monsterId,
-        backgroundId
-      }).lean()
-
-      if (existingBackground === null) {
-        throw new Error('Ce monstre ne possède pas cet arrière plan.')
-      }
+      await Background.exists({ ownerId, monsterId, backgroundId })
+        .orFail(new Error('Cet arrière plan n\'existe pas ou ce monstre ne possède pas cet arrière plan.'))
     }
 
     // On équipe le nouvel arrière plan
     monster.backgroundId = backgroundId
-    await monster.save()
 
-    // Note: On ne fait pas de revalidatePath ici pour éviter un rechargement complet
-    // Le MonsterPageClient poll déjà toutes les 10 secondes pour les mises à jour
+    await monster.save()
   } catch (error) {
     console.error('Error equipping background:', error)
     throw error
@@ -126,8 +109,8 @@ export async function equipBackground (
 /**
  * Récupérer tous les backgrounds possédés par un monstre
  *
- * @param {string} monsterId - ID du monstre
- * @returns {Promise<ISerializedBackground[]>}
+ * @param monsterId - ID du monstre
+ * @returns La liste des arrières plan du monstre
  */
 export async function getMonsterBackgrounds (
   monsterId: string
@@ -141,10 +124,8 @@ export async function getMonsterBackgrounds (
     const ownerId = session.user.id
 
     // On vérifie que le monstre appartient à l'utilisateur
-    const monster = await Monster.exists({ _id: monsterId, ownerId }).lean()
-    if (monster === null) {
-      throw new Error('Ce monstre n\'existe pas ou ne vous appartient pas.')
-    }
+    await Monster.exists({ _id: monsterId, ownerId })
+      .orFail(new Error('Ce monstre n\'existe pas ou ne vous appartient pas.'))
 
     // Récupérer tous les backgrounds possédés par ce monstre
     const backgrounds = await Background.find({

@@ -7,7 +7,7 @@ import type { Rarity } from './accessories'
 /**
  * Arrière-plan disponible dans le catalogue de configuration
  */
-export interface Background {
+export interface BackgroundDefinition {
   /** Identifiant unique du background */
   id: string
   /** Nom affiché */

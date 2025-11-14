@@ -1,8 +1,8 @@
 import { rarityMap } from './rarity.config'
 import type { Rarity } from '@/types/accessories'
-import type { Background } from '@/types/backgrounds'
+import type { BackgroundDefinition } from '@/types/backgrounds'
 
-export const commonBackgrounds: Background[] = [
+export const commonBackgrounds: BackgroundDefinition[] = [
   {
     id: 'bg-sunset',
     name: 'Coucher de Soleil',
@@ -29,7 +29,7 @@ export const commonBackgrounds: Background[] = [
   }
 ]
 
-const uncommonBackgrounds: Background[] = [
+const uncommonBackgrounds: BackgroundDefinition[] = [
   {
     id: 'bg-mountains',
     name: 'Montagnes Enneigées',
@@ -56,7 +56,7 @@ const uncommonBackgrounds: Background[] = [
   }
 ]
 
-const rareBackgrounds: Background[] = [
+const rareBackgrounds: BackgroundDefinition[] = [
   {
     id: 'bg-space',
     name: 'Espace Étoilé',
@@ -83,7 +83,7 @@ const rareBackgrounds: Background[] = [
   }
 ]
 
-const epicBackgrounds: Background[] = [
+const epicBackgrounds: BackgroundDefinition[] = [
   {
     id: 'bg-aurora',
     name: 'Aurore Boréale',
@@ -110,7 +110,7 @@ const epicBackgrounds: Background[] = [
   }
 ]
 
-const legendaryBackgrounds: Background[] = [
+const legendaryBackgrounds: BackgroundDefinition[] = [
   {
     id: 'bg-galaxy',
     name: 'Galaxie Spirale',
@@ -144,7 +144,7 @@ const legendaryBackgrounds: Background[] = [
  * Format recommandé: 512x512px ou 1024x1024px
  * Extensions acceptées: .jpg, .png, .webp
  */
-export const allBackgrounds: Background[] = [
+export const allBackgrounds: BackgroundDefinition[] = [
   ...commonBackgrounds,
   ...uncommonBackgrounds,
   ...rareBackgrounds,
@@ -152,7 +152,7 @@ export const allBackgrounds: Background[] = [
   ...legendaryBackgrounds
 ]
 
-export const backgroundsRarityMap: Record<Rarity, Background[]> = {
+export const backgroundsRarityMap: Record<Rarity, BackgroundDefinition[]> = {
   common: commonBackgrounds,
   uncommon: uncommonBackgrounds,
   rare: rareBackgrounds,
@@ -160,10 +160,10 @@ export const backgroundsRarityMap: Record<Rarity, Background[]> = {
   legendary: legendaryBackgrounds
 }
 
-export const backgroundsIdMap: Map<string, Background> = new Map(
+export const backgroundsIdMap: Map<string, BackgroundDefinition> = new Map(
   allBackgrounds.map(bg => [bg.id, bg])
 )
 
-export function calculateFinalPrice (background: Background): number {
+export function calculateFinalPrice (background: BackgroundDefinition): number {
   return Math.round(background.basePrice * rarityMap[background.rarity].priceMultiplier)
 }

@@ -7,14 +7,14 @@ import { Lock, LockOpen, Check } from 'lucide-react'
 import CoinIcon from '@/components/ui/CoinIcon'
 import { calculateFinalPrice } from '@/config/backgrounds.config'
 import { rarityMap } from '@/config/rarity.config'
-import type { Background } from '@/types/backgrounds'
+import type { BackgroundDefinition } from '@/types/backgrounds'
 
 interface BackgroundCardProps {
-  background: Background
+  background: BackgroundDefinition
   selected: boolean
   owned: boolean
   onSelect: () => void
-  onPurchase: () => void
+  onPurchase: (price: number) => void
   isPurchasing: boolean
 }
 
@@ -43,7 +43,7 @@ export default function BackgroundCard ({
           if (owned) {
             onSelect()
           } else if (!isPurchasing) {
-            onPurchase()
+            onPurchase(price)
           }
         }}
       >

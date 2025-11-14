@@ -205,6 +205,9 @@ export default function Button ({
 - **Pure Functions**: Prefer pure functions for utilities (see `getSize()` and `getVariant()` in Button)
 - **No Magic Numbers**: Use named constants for sizes, colors, and configuration values
 - **Consistent Formatting**: Follow ts-standard linting rules strictly
+- **JSDoc Comments**: Write JSDoc comments in French WITHOUT type annotations (TypeScript handles types)
+  - ❌ BAD: `@param {string} name - Le nom du monstre`
+  - ✅ GOOD: `@param name - Le nom du monstre`
 - **🚨 STRICT EQUALITY OPERATORS**: 
   - **ALWAYS use `===` and `!==`** for comparisons
   - **NEVER use `==` or `!=`** - these are FORBIDDEN
@@ -236,6 +239,110 @@ export default function Button ({
 - **Error Boundaries**: Implement proper error handling at component and service levels
 
 ### Database & Data Handling
+
+#### Mongoose Type System
+The project uses a structured type system for Mongoose models located in `src/types/models/*.model.d.ts`:
+
+**Type Structure Pattern** (3 layers):
+1. **`IXxxDocument`** - Interface for the Mongoose document
+   - Extends `Document<Types.ObjectId>` 
+   - Defines all document fields with their types
+   - Includes virtual properties (for reads)
+   - Example: `IMonsterDocument`, `IQuestDocument`
+
+2. **`IXxxModel`** - Type for the Mongoose model
+   - Extends `Model<IXxxDocument, QueryHelpers, InstanceMethods, Virtuals>`
+   - Includes static methods via intersection (`& StaticMethods`)
+   - Provides compile-time type safety for model operations
+   - Example: `IMonsterModel`, `IQuestModel`
+
+3. **`IXxxSchema`** - Type for the Mongoose schema
+   - Type alias: `Schema<IXxxDocument, IXxxModel, InstanceMethods, QueryHelpers, Virtuals, StaticMethods>`
+   - Used when defining the schema with `new Schema<...>()`
+   - Ensures schema definition matches document interface
+   - Example: `IMonsterSchema`, `IQuestSchema`
+
+**Additional Interfaces** (when needed):
+- **`IXxxInstanceMethods`** - Instance methods interface (e.g., `quest.claim()`)
+- **`IXxxStaticsMethods`** - Static methods interface (e.g., `Quest.updateQuests()`)
+- **`IXxxVirtuals`** - Virtual properties interface (e.g., `quest.quest`)
+- **`XxxBulkWriteOperation`** - Type for bulk write operations
+
+**Implementation Example**:
+```typescript
+// 1. Define the document interface
+export interface IMonsterDocument extends Document<Types.ObjectId> {
+  name: string
+  level: number
+  traits: IMonsterTraitsDocument
+  // ... other fields
+}
+
+// 2. Define the model type
+export type IMonsterModel = Model<IMonsterDocument>
+
+// 3. Define the schema type
+export type IMonsterSchema = Schema<IMonsterDocument, IMonsterModel>
+
+// 4. Use in the actual model file
+const monsterSchema: IMonsterSchema = new Schema({
+  name: { type: String, required: true },
+  level: { type: Number, default: 1 }
+})
+
+const MonsterModel: IMonsterModel = models.Monster ?? model('Monster', monsterSchema)
+```
+
+**Advanced Example with Methods & Virtuals** (Quest model):
+```typescript
+// Interfaces for methods
+interface IQuestInstanceMethods {
+  claim: () => Promise<void>
+}
+
+interface IQuestStaticsMethods {
+  updateQuests: (userId, objective, progress) => Promise<void>
+}
+
+interface IQuestVirtuals {
+  readonly quest: QuestDefinition
+}
+
+// Document interface
+export interface IQuestDocument extends Document<Types.ObjectId> {
+  userId: Types.ObjectId
+  questId: string
+  progress: number
+  // ...
+}
+
+// Model type with generics
+export type IQuestModel = Model<
+  IQuestDocument,
+  {}, // QueryHelpers
+  IQuestInstanceMethods,
+  IQuestVirtuals
+> & IQuestStaticsMethods
+
+// Schema type with all generics
+export type IQuestSchema = Schema<
+  IQuestDocument,
+  IQuestModel,
+  IQuestInstanceMethods,
+  {}, // QueryHelpers
+  IQuestVirtuals,
+  IQuestStaticsMethods
+>
+```
+
+**Benefits of This Approach**:
+- **Type Safety**: Full TypeScript inference for queries, updates, and methods
+- **Separation of Concerns**: Types separated from implementation
+- **Reusability**: Document interfaces can be used in serializers and actions
+- **Documentation**: Clear contract for each model's capabilities
+- **Maintainability**: Changes to schema structure require updating the type definition
+
+#### Data Handling Patterns
 - **Mongoose Queries**: Use `.lean()` method to convert Mongoose documents to plain JavaScript objects
 - **Serializers**: Use dedicated serializer functions in `src/lib/serializers/` for converting Mongoose documents to client-safe objects
   - `monster.serializer.ts` - Serializes monster documents with traits

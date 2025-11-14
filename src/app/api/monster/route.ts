@@ -6,7 +6,7 @@ import { NextRequest } from 'next/server'
 /**
  * Endpoint GET renvoyant un monstre appartenant à l'utilisateur authentifié via son identifiant.
  *
- * @param {NextRequest} request Requête HTTP entrante contenant le paramètre `id`.
+ * @param request Requête HTTP entrante contenant le paramètre `id`.
  * @returns {Promise<Response>} Réponse JSON avec le monstre ou code d'erreur approprié.
  */
 export async function GET (request: NextRequest): Promise<Response> {

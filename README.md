@@ -285,6 +285,9 @@ Chaque couleur possède 10 variantes (50 à 950) pour une flexibilité maximale.
 - Interfaces explicites pour tous les props
 - Annotations de type de retour explicites
 - Utilisation stricte de `===` et `!==` (jamais `==` ou `!=`)
+- **JSDoc sans annotations de type** : TypeScript gère déjà le typage, les JSDoc sont en français et décrivent uniquement la logique
+  - ❌ Incorrect : `@param {string} name - Le nom du monstre`
+  - ✅ Correct : `@param name - Le nom du monstre`
 
 ### Composants React
 
@@ -319,6 +322,110 @@ export default function Component({
 - Mises à jour via `updateWalletBalance()` avec tracking `totalEarned`
 
 ## Structure des données
+
+Le projet utilise un système de typage structuré pour les modèles Mongoose, avec une séparation claire entre les définitions de types (`src/types/models/`) et l'implémentation des modèles (`src/db/models/`).
+
+### Architecture des types Mongoose
+
+Chaque modèle est défini avec 3 types principaux dans `src/types/models/*.model.d.ts` :
+
+#### 1. `IXxxDocument` - Interface du document
+Interface principale qui étend `Document<Types.ObjectId>` et définit tous les champs du document :
+
+```typescript
+export interface IMonsterDocument extends Document<Types.ObjectId> {
+  name: string
+  level: number
+  xp: number
+  maxXp: number
+  traits: IMonsterTraitsDocument
+  state: MonsterState
+  ownerId: Types.ObjectId
+  createdAt: Date
+  updatedAt: Date
+}
+```
+
+#### 2. `IXxxModel` - Type du modèle
+Type qui étend `Model` et inclut les méthodes statiques via intersection :
+
+```typescript
+export type IMonsterModel = Model<IMonsterDocument>
+
+// Avec méthodes statiques (exemple Quest)
+export type IQuestModel = Model<
+  IQuestDocument,
+  {}, // QueryHelpers
+  IQuestInstanceMethods,
+  IQuestVirtuals
+> & IQuestStaticsMethods
+```
+
+#### 3. `IXxxSchema` - Type du schéma
+Alias de type utilisé lors de la définition du schéma avec `new Schema<...>()` :
+
+```typescript
+export type IMonsterSchema = Schema<IMonsterDocument, IMonsterModel>
+
+// Avec génériques complets (exemple Quest)
+export type IQuestSchema = Schema<
+  IQuestDocument,
+  IQuestModel,
+  IQuestInstanceMethods,
+  {}, // QueryHelpers
+  IQuestVirtuals,
+  IQuestStaticsMethods
+>
+```
+
+### Interfaces additionnelles (si nécessaire)
+
+Pour les modèles avec méthodes ou propriétés virtuelles :
+
+```typescript
+// Méthodes d'instance
+interface IQuestInstanceMethods {
+  claim: () => Promise<void>
+}
+
+// Méthodes statiques
+interface IQuestStaticsMethods {
+  updateQuests: (userId, objective, progress) => Promise<void>
+}
+
+// Propriétés virtuelles
+interface IQuestVirtuals {
+  readonly quest: QuestDefinition
+}
+```
+
+### Utilisation dans les modèles
+
+```typescript
+// src/db/models/monster.model.ts
+import type { IMonsterModel, IMonsterSchema } from '@/types/models/monster.model'
+
+const monsterSchema: IMonsterSchema = new Schema({
+  name: { type: String, required: true },
+  level: { type: Number, default: 1 }
+  // ...
+})
+
+const MonsterModel: IMonsterModel = 
+  models.Monster as IMonsterModel ?? model('Monster', monsterSchema)
+
+export default MonsterModel
+```
+
+### Avantages de cette architecture
+
+- **Sécurité des types** : Inférence TypeScript complète pour les requêtes et méthodes
+- **Séparation des responsabilités** : Types séparés de l'implémentation
+- **Réutilisabilité** : Interfaces utilisables dans les serializers et actions
+- **Documentation** : Contrat clair des capacités de chaque modèle
+- **Maintenabilité** : Changements de structure nécessitent une mise à jour explicite des types
+
+### Schémas de données
 
 ### Monster
 ```typescript

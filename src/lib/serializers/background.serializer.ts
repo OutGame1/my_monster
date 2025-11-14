@@ -1,4 +1,4 @@
-import type { IBackgroundDocument } from '@/db/models/background.model'
+import type { IBackgroundDocument } from '@/types/models/background.model'
 
 /**
  * Arrière-plan possédé par un utilisateur pour un monstre spécifique
@@ -24,8 +24,8 @@ export interface ISerializedBackground {
  * - Conversion des ObjectId en strings
  * - Préservation de la date acquiredAt
  *
- * @param {IBackgroundDocument} doc - Document Mongoose à sérialiser
- * @returns {ISerializedBackground} Objet sérialisé safe pour le client
+ * @param doc - Document Mongoose à sérialiser
+ * @returns Objet sérialisé safe pour le client
  *
  * @example
  * const backgrounds = await BackgroundModel.find({ ownerId }).lean()

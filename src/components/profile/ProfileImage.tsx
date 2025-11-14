@@ -36,8 +36,8 @@ interface ProfileImageProps {
  * - Loading eager pour affichage immédiat (photos de profil critiques)
  * - Object-cover pour maintenir le ratio d'aspect
  *
- * @param {ProfileImageProps} props - Props du composant
- * @returns {ReactNode} Image de profil ou icône de fallback
+ * @param props - Props du composant
+ * @returns Image de profil ou icône de fallback
  */
 export default function ProfileImage ({ session, width, height, onError }: ProfileImageProps): ReactNode {
   const src = session.user.image

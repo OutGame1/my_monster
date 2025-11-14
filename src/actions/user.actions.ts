@@ -17,8 +17,8 @@ import cloudinary, { isCloudinaryConnected } from '@/lib/cloudinary'
  *    - Stockage dans le dossier `my_monster/profile_pictures`
  * 5. Mise à jour du champ `image` de l'utilisateur via Better Auth API
  *
- * @param {string | ArrayBuffer | null} dataUrl - Image au format data URL (base64) obtenue depuis FileReader
- * @returns {Promise<string>} L'URL sécurisée de l'image uploadée sur Cloudinary
+ * @param dataUrl - Image au format data URL (base64) obtenue depuis FileReader
+ * @returns L'URL sécurisée de l'image uploadée sur Cloudinary
  * @throws {Error} Si le format de données est invalide
  * @throws {Error} Si le service Cloudinary n'est pas disponible
  * @throws {Error} Si l'utilisateur n'est pas authentifié

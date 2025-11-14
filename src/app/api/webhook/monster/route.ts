@@ -1,6 +1,7 @@
-import type { AnyBulkWriteOperation, Types } from 'mongoose'
+import type { Types } from 'mongoose'
 import { connectMongooseToDatabase } from '@/db'
-import Monster, { type IMonsterDocument } from '@/db/models/monster.model'
+import Monster from '@/db/models/monster.model'
+import type { MonsterBulkWriteOperation } from '@/types/models/monster.model'
 import { MONSTER_STATES } from '@/config/monsters.config'
 import type { MonsterState } from '@/types/monsters'
 import cronRoute from '@/lib/cron'
@@ -24,7 +25,7 @@ async function handleCronJob (): Promise<void> {
     console.log(`🔄 Starting monster state update for ${monsters.length} monsters`)
 
     // Prépare les opérations bulk
-    const bulkOps = monsters.map<AnyBulkWriteOperation<IMonsterDocument>>(monster => {
+    const bulkOps: MonsterBulkWriteOperation[] = monsters.map(monster => {
       return {
         updateOne: {
           filter: { _id: monster._id },

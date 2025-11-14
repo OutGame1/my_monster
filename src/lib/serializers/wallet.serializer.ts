@@ -1,4 +1,4 @@
-import type { IWalletDocument } from '@/db/models/wallet.model'
+import type { IWalletDocument } from '@/types/models/wallet.model'
 
 export interface ISerializedWallet {
   _id: string

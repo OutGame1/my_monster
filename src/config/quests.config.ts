@@ -318,7 +318,7 @@ const calmAchievements: QuestDefinition[] = [
     reward: 50,
     title: 'Pacificateur',
     description: 'Calmer 250 fois vos monstres',
-    icon: '�️'
+    icon: '😌'
   },
   {
     id: 'achievement_calm_500',

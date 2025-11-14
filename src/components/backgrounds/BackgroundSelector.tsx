@@ -7,6 +7,7 @@ import cn from 'classnames'
 import { allBackgrounds } from '@/config/backgrounds.config'
 import { getMonsterBackgrounds, equipBackground, purchaseBackground } from '@/actions/backgrounds.actions'
 import { rarities, rarityMap } from '@/config/rarity.config'
+import { useWallet } from '@/contexts/WalletContext'
 import Modal from '@/components/ui/Modal'
 import Button from '@/components/ui/Button'
 import Skeleton from '@components/ui/Skeleton'
@@ -33,6 +34,8 @@ export default function BackgroundSelector ({
   isOpen,
   onClose
 }: BackgroundSelectorProps): ReactNode {
+  const { removeBalance } = useWallet()
+
   const [ownedBackgrounds, setOwnedBackgrounds] = useState<ISerializedBackground[]>([])
   const [isLoading, setIsLoading] = useState(true)
   const [selectedId, setSelectedId] = useState<string | null>(currentBackgroundId)
@@ -67,11 +70,12 @@ export default function BackgroundSelector ({
   }
 
   // Acheter un background
-  const handlePurchase = async (backgroundId: string): Promise<void> => {
+  const handlePurchase = async (backgroundId: string, price: number): Promise<void> => {
     setPurchasingId(backgroundId)
 
     try {
       const newBackground = await purchaseBackground(backgroundId, monsterId)
+      removeBalance(price)
       setOwnedBackgrounds(prev => [...prev, newBackground])
       setSelectedId(backgroundId) // Sélectionner automatiquement après achat
       toast.success('Arrière-plan acheté avec succès !')
@@ -186,7 +190,7 @@ export default function BackgroundSelector ({
                   selected={selected}
                   owned={owned}
                   onSelect={() => setSelectedId(background.id)}
-                  onPurchase={() => { void handlePurchase(background.id) }}
+                  onPurchase={(price) => { void handlePurchase(background.id, price) }}
                   isPurchasing={isPurchasing}
                 />
               )

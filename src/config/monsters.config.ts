@@ -21,8 +21,8 @@ export const MONSTER_CREATION_BASE_COST = 100
  * Calcule le capital d'expérience maximum pour un niveau donné selon la formule
  * `monsterBaseXp * (level ^ 1.5)` et arrondit à l'entier inférieur.
  *
- * @param {number} level Niveau actuel du monstre.
- * @returns {number} Seuil d'expérience à atteindre pour le prochain niveau.
+ * @param level Niveau actuel du monstre.
+ * @returns Seuil d'expérience à atteindre pour le prochain niveau.
  */
 export function calculateMaxXp (level: number): number {
   return Math.floor(MONSTER_BASE_XP * Math.pow(level, 1.5))
@@ -40,8 +40,8 @@ export function calculateMaxXp (level: number): number {
  * - 4e monstre (3 existants) : 200 pièces
  * - 5e monstre (4 existants) : 232 pièces
  *
- * @param {number} currentMonsterCount Nombre de monstres déjà possédés par l'utilisateur.
- * @returns {number} Coût en pièces pour créer le prochain monstre.
+ * @param currentMonsterCount Nombre de monstres déjà possédés par l'utilisateur.
+ * @returns Coût en pièces pour créer le prochain monstre.
  */
 export function calculateMonsterCreationCost (currentMonsterCount: number): number {
   if (currentMonsterCount === 0) {

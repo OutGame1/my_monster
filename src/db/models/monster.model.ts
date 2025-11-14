@@ -1,58 +1,13 @@
-import { type Document, Schema, models, model, Types, Model } from 'mongoose'
+import { Schema, models, model } from 'mongoose'
+import Quest from './quest.model'
 import {
-  MONSTER_STATES,
-  BODY_SHAPES,
-  EYE_TYPES,
-  MOUTH_TYPES,
-  ARM_TYPES,
-  LEG_TYPES,
+  MONSTER_STATES, BODY_SHAPES, EYE_TYPES,
+  MOUTH_TYPES, ARM_TYPES, LEG_TYPES,
   MONSTER_BASE_XP
 } from '@/config/monsters.config'
-import type {
-  MonsterArmType, MonsterBodyShape, MonsterEyeShape,
-  MonsterLegType, MonsterMouthType, MonsterState
-} from '@/types/monsters'
+import type { IMonsterModel, IMonsterSchema, IMonsterTraitsSchema } from '@/types/models/monster.model'
 
-export interface IMonsterTraitsDocument extends Document {
-  bodyShape: MonsterBodyShape
-  eyeType: MonsterEyeShape
-  mouthType: MonsterMouthType
-  armType: MonsterArmType
-  legType: MonsterLegType
-  primaryColor: string // Hex color for body
-  secondaryColor: string // Hex color for accents/details
-  outlineColor: string // Hex color for outlines (usually dark)
-  size: number // 80-120 scale percentage
-}
-
-export interface IMonsterDocument extends Document {
-  _id: Types.ObjectId
-  name: string
-  level: number
-  xp: number
-  maxXp: number
-  traits: IMonsterTraitsDocument
-  state: MonsterState
-  backgroundId: string | null // ID du background équipé (référence au catalogue)
-  isPublic: boolean
-  ownerId: Types.ObjectId
-  lastCaredAt?: Date // Dernière fois qu'on s'est occupé du monstre (pour quête daily)
-  createdAt: Date
-  updatedAt: Date
-}
-
-export interface IPublicMonsterDocument extends Document {
-  _id: Types.ObjectId
-  name: string
-  level: number
-  traits: IMonsterTraitsDocument
-  state: MonsterState
-  backgroundId: string | null
-  createdAt: Date
-  ownerName: string // Nom de l'utilisateur propriétaire (jointure sur 'user')
-}
-
-const monsterTraitsSchema = new Schema<IMonsterTraitsDocument>({
+const monsterTraitsSchema: IMonsterTraitsSchema = new Schema({
   bodyShape: {
     type: String,
     required: true,
@@ -98,7 +53,7 @@ const monsterTraitsSchema = new Schema<IMonsterTraitsDocument>({
   }
 }, { _id: false })
 
-const monsterSchema = new Schema<IMonsterDocument>({
+const monsterSchema: IMonsterSchema = new Schema({
   name: {
     type: String,
     required: true
@@ -153,6 +108,29 @@ const monsterSchema = new Schema<IMonsterDocument>({
   timestamps: true
 })
 
-const MonsterModel: Model<IMonsterDocument> = models.Monster ?? model('Monster', monsterSchema)
+monsterSchema.post('save', async function ({ ownerId }) {
+  try {
+    // 1. Mettre à jour les quêtes de possession (own_monsters)
+    const monsterCount = await MonsterModel.countDocuments({ ownerId }).exec()
+    await Quest.updateQuests(ownerId, 'own_monsters', monsterCount)
+
+    // 2. Mettre à jour les quêtes de montée de niveau (level_up_monster)
+    // Trouver le niveau maximum parmi tous les monstres de l'utilisateur
+    const maxLevelMonster = await MonsterModel
+      .findOne({ ownerId })
+      .sort({ level: -1 })
+      .select('level')
+      .lean()
+      .exec()
+
+    if (maxLevelMonster !== null) {
+      await Quest.updateQuests(ownerId, 'level_up_monster', maxLevelMonster.level)
+    }
+  } catch (error) {
+    console.error('❌ Error in monster post-save hook:', error)
+  }
+})
+
+const MonsterModel: IMonsterModel = models.Monster as IMonsterModel ?? model('Monster', monsterSchema)
 
 export default MonsterModel

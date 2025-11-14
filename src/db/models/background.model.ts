@@ -1,32 +1,11 @@
-import { type Document, Schema, models, model, Types, Model } from 'mongoose'
+import { Schema, models, model } from 'mongoose'
 import Quest from './quest.model'
-import { questsObjectiveMap } from '@/config/quests.config'
-
-/**
- * Interface pour un arrière-plan possédé par un utilisateur pour un monstre spécifique
- *
- * Logique métier:
- * - Un background est acheté pour UN monstre spécifique
- * - Si l'utilisateur possède 2 monstres, il doit acheter le background 2 fois
- * - Chaque monster peut équiper uniquement les backgrounds qu'il a débloqués
- */
-export interface IBackgroundDocument extends Document {
-  /** ID unique du document MongoDB */
-  _id: Types.ObjectId
-  /** ID du background dans le catalogue de configuration (ex: 'bg-sunset') */
-  backgroundId: string
-  /** ID de l'utilisateur propriétaire */
-  ownerId: Types.ObjectId
-  /** ID du monstre qui a débloqué ce background */
-  monsterId: Types.ObjectId
-  /** Date d'acquisition du background */
-  acquiredAt: Date
-}
+import type { IBackgroundModel, IBackgroundSchema } from '@/types/models/background.model'
 
 /**
  * Schéma Mongoose pour les backgrounds possédés
  */
-const backgroundSchema = new Schema<IBackgroundDocument>({
+const backgroundSchema: IBackgroundSchema = new Schema({
   backgroundId: {
     type: String,
     required: true,
@@ -66,32 +45,14 @@ backgroundSchema.index(
  * Hook post-save: vérifie automatiquement la progression des quêtes
  * d'arrière-plans après chaque création/mise à jour.
  */
-backgroundSchema.post('save', async function ({ ownerId: userId }: IBackgroundDocument) {
+backgroundSchema.post('save', async function () {
   try {
-    // Mettre à jour toutes les quêtes "unlock_backgrounds"
-    for (const questDef of questsObjectiveMap.unlock_backgrounds) {
-      const questId = questDef.id
-
-      let quest = await Quest.findOne({ userId, questId }).exec()
-
-      if (quest === null) {
-        quest = new Quest({
-          userId,
-          questId,
-          questObjective: 'unlock_backgrounds'
-        })
-      }
-
-      // Mettre à jour avec le nombre réel de backgrounds débloqués
-      quest.progress++
-
-      await quest.save()
-    }
+    await Quest.updateQuests(this.ownerId, 'unlock_backgrounds', (progress) => progress + 1)
   } catch (error) {
     console.error('❌ Error updating unlock backgrounds quests after background save:', error)
   }
 })
 
-const BackgroundModel: Model<IBackgroundDocument> = models.Background ?? model('Background', backgroundSchema)
+const BackgroundModel: IBackgroundModel = models.Background as IBackgroundModel ?? model('Background', backgroundSchema)
 
 export default BackgroundModel

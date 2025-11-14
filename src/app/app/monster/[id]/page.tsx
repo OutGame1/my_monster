@@ -14,8 +14,8 @@ interface MonsterPageProps {
 /**
  * Page serveur affichant le détail d'un monstre identifié via le segment dynamique.
  *
- * @param {MonsterPageProps} props Propriétés contenant la promesse des paramètres de route.
- * @returns {Promise<ReactNode>} Vue détaillée du monstre ou redirection 404 si introuvable.
+ * @param props Propriétés contenant la promesse des paramètres de route.
+ * @returns Vue détaillée du monstre ou redirection 404 si introuvable.
  */
 export default async function MonsterPage ({ params }: MonsterPageProps): Promise<ReactNode> {
   const { id } = await params

@@ -1,6 +1,7 @@
 'use server'
 
-import Monster, { type IPublicMonsterDocument } from '@/db/models/monster.model'
+import Monster from '@/db/models/monster.model'
+import type { IPublicMonsterDocument } from '@/types/models/monster.model'
 import { getSession } from '@/lib/auth'
 import { revalidatePath } from 'next/cache'
 import { Types } from 'mongoose'
@@ -13,7 +14,7 @@ import { updateWalletBalance } from './wallet.actions'
 import { generateMonsterTraits } from '@/monster/generator'
 import { calculateMaxXp, calculateMonsterCreationCost } from '@/config/monsters.config'
 import { BASE_COIN_REWARD, MATCHED_STATE_COIN_REWARD, XP_REWARD } from '@/config/rewards.config'
-import { checkOwnershipQuests, incrementQuestProgress, checkCareDifferentMonstersProgress } from './quests.actions'
+import { incrementQuestProgress, checkCareDifferentMonstersProgress } from './quests.actions'
 import type { GetPublicMonstersPaginatedResult, GalleryFiltersParams } from '@/types/gallery'
 import type { MonsterState, ActionType, PerformActionResult } from '@/types/monsters'
 import GalleryFilterBuilder from '@/lib/builders/GalleryFilterBuilder'
@@ -23,8 +24,8 @@ import GalleryFilterBuilder from '@/lib/builders/GalleryFilterBuilder'
  * Orchestration : vérifie l'authentification, calcule le coût, met à jour le portefeuille,
  * crée le document dans MongoDB puis revalide le cache du tableau de bord.
  *
- * @param {string} monsterName Nom choisi pour le monstre à générer.
- * @returns {Promise<number>} Coût effectivement débité lors de la création.
+ * @param monsterName Nom choisi pour le monstre à générer.
+ * @returns Coût effectivement débité lors de la création.
  * @throws {Error} Si l'utilisateur est inconnu ou si le solde est insuffisant.
  */
 export async function createMonster (monsterName: string): Promise<number> {
@@ -51,9 +52,6 @@ export async function createMonster (monsterName: string): Promise<number> {
   })
 
   await monster.save()
-
-  // Vérifier les quêtes de possession
-  await checkOwnershipQuests()
 
   // Revalidation du cache pour rafraîchir le dashboard
   revalidatePath('/app')
@@ -88,8 +86,8 @@ export async function getMonsters (): Promise<ISerializedMonster[]> {
  * Récupère un monstre identifié par son ObjectId en vérifiant la propriété utilisateur.
  * Retourne `null` si l'identifiant est invalide ou que le monstre n'appartient pas à l'utilisateur.
  *
- * @param {string} _id Identifiant MongoDB du monstre recherché.
- * @returns {Promise<ISerializedMonster | null>} Monstre sérialisé ou `null` s'il est introuvable.
+ * @param _id Identifiant MongoDB du monstre recherché.
+ * @returns Monstre sérialisé ou `null` s'il est introuvable.
  */
 export async function getMonsterById (_id: string): Promise<ISerializedMonster | null> {
   try {
@@ -127,9 +125,9 @@ const actionStateMap: Record<ActionType, MonsterState> = {
  * Applique une action sur un monstre après validation de l'authentification et de la propriété.
  * Gère l'attribution d'XP, la montée en niveau, l'état du monstre et la récompense en pièces.
  *
- * @param {string} monsterId Identifiant du monstre ciblé.
- * @param {ActionType} actionType Type d'interaction réalisée (nourrir, jouer, etc.).
- * @returns {Promise<PerformActionResult>} Résultat agrégé contenant XP, niveau et gains.
+ * @param monsterId Identifiant du monstre ciblé.
+ * @param actionType Type d'interaction réalisée (nourrir, jouer, etc.).
+ * @returns Résultat agrégé contenant XP, niveau et gains.
  */
 export async function performMonsterAction (
   monsterId: string,
@@ -220,8 +218,7 @@ export async function performMonsterAction (
  * Bascule le statut public/privé d'un monstre.
  * Vérifie que le monstre appartient bien à l'utilisateur authentifié.
  *
- * @param {string} monsterId Identifiant du monstre à modifier
- * @returns {Promise<void>} Résultat de l'opération
+ * @param monsterId Identifiant du monstre à modifier
  */
 export async function toggleMonsterPublicStatus (monsterId: string): Promise<void> {
   const session = await getSession()

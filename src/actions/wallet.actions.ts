@@ -2,15 +2,16 @@
 
 import { Types } from 'mongoose'
 import { connectMongooseToDatabase } from '@/db'
-import Wallet, { type IWalletDocument } from '@/db/models/wallet.model'
+import Wallet from '@/db/models/wallet.model'
+import type { IWalletDocument } from '@/types/models/wallet.model'
 import { getSession } from '@/lib/auth'
 import walletSerializer, { type ISerializedWallet } from '@/lib/serializers/wallet.serializer'
 
 /**
  * Récupère le portefeuille associé à un propriétaire ou le crée s'il n'existe pas encore.
  *
- * @param {string} ownerId Identifiant MongoDB du propriétaire du portefeuille.
- * @returns {Promise<IWalletDocument>} Document Mongoose du portefeuille créé ou existant.
+ * @param ownerId Identifiant MongoDB du propriétaire du portefeuille.
+ * @returns Document Mongoose du portefeuille créé ou existant.
  */
 async function getWalletByOwnerId (ownerId: string): Promise<IWalletDocument> {
   // Recherche d'un portefeuille existant
@@ -29,8 +30,8 @@ async function getWalletByOwnerId (ownerId: string): Promise<IWalletDocument> {
  * Récupère ou crée un portefeuille pour l'utilisateur correspondant à l'identifiant fourni.
  * Valide le format de l'identifiant puis sérialise le document pour la couche de présentation.
  *
- * @param {string} ownerId Identifiant MongoDB de l'utilisateur propriétaire du portefeuille.
- * @returns {Promise<ISerializedWallet>} Portefeuille sous forme sérialisée.
+ * @param ownerId Identifiant MongoDB de l'utilisateur propriétaire du portefeuille.
+ * @returns Portefeuille sous forme sérialisée.
  * @throws {Error} Si l'identifiant fourni n'est pas un ObjectId valide.
  */
 export async function getWallet (ownerId: string): Promise<ISerializedWallet> {
@@ -48,8 +49,8 @@ export async function getWallet (ownerId: string): Promise<ISerializedWallet> {
  * Ajoute ou soustrait un montant après validation de l'authentification et du solde disponible.
  * Si le montant est positif (gain), il est aussi ajouté au total de pièces gagnées.
  *
- * @param {number} amount Montant à appliquer (positif pour créditer, négatif pour débiter).
- * @returns {Promise<number>} Nouveau solde disponible après mise à jour.
+ * @param amount Montant à appliquer (positif pour créditer, négatif pour débiter).
+ * @returns Nouveau solde disponible après mise à jour.
  * @throws {Error} Si l'utilisateur n'est pas authentifié ou si le solde deviendrait négatif.
  */
 export async function updateWalletBalance (amount: number): Promise<number> {

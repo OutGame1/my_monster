@@ -8,8 +8,8 @@ interface SectionTitleProps {
 /**
  * Reusable section title component with gradient text and decorative underline.
  *
- * @param {SectionTitleProps} props - Title and subtitle text
- * @returns {ReactNode} Centered section title with gradient styling
+ * @param props - Title and subtitle text
+ * @returns Centered section title with gradient styling
  */
 export default function SectionTitle ({ title, subtitle }: SectionTitleProps): ReactNode {
   return (
