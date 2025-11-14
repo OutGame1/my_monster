@@ -35,7 +35,7 @@ const questSchema: IQuestSchema = new Schema({
   }
 }, {
   versionKey: false,
-  timestamps: true,
+  timestamps: false,
   methods: {
     async claim (): Promise<void> {
       if (this.completedAt === undefined) {

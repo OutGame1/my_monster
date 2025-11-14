@@ -55,8 +55,6 @@ export interface IQuestDocument extends Document<Types.ObjectId> {
   completedAt?: Date // Date de complétion
   claimedAt?: Date // Date de réclamation
   lastResetAt?: Date // Pour les quêtes quotidiennes
-  createdAt: Date
-  updatedAt: Date
 }
 
 /**

@@ -10,8 +10,6 @@ export interface ISerializedQuestProgress {
   completedAt?: string
   claimedAt?: string
   lastResetAt?: string
-  createdAt: string
-  updatedAt: string
 }
 
 /**
@@ -32,8 +30,6 @@ export default function questSerializer (
     progress: questProgress.progress,
     completedAt: questProgress.completedAt?.toISOString(),
     claimedAt: questProgress.claimedAt?.toISOString(),
-    lastResetAt: questProgress.lastResetAt?.toISOString(),
-    createdAt: questProgress.createdAt.toISOString(),
-    updatedAt: questProgress.updatedAt.toISOString()
+    lastResetAt: questProgress.lastResetAt?.toISOString()
   }
 }
