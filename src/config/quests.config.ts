@@ -414,19 +414,29 @@ const levelUpAchievements: QuestDefinition[] = [
     type: 'achievement',
     objective: 'level_up_monster',
     target: 10,
-    reward: 100,
-    title: 'Entraîneur expert',
+    reward: 50,
+    title: 'Première évolution',
     description: 'Faire monter un monstre au niveau 10',
-    icon: '📈'
+    icon: '⬆️'
   },
   {
     id: 'achievement_level_20',
     type: 'achievement',
     objective: 'level_up_monster',
     target: 20,
+    reward: 100,
+    title: 'Entraîneur expert',
+    description: 'Faire monter un monstre au niveau 20',
+    icon: '📈'
+  },
+  {
+    id: 'achievement_level_30',
+    type: 'achievement',
+    objective: 'level_up_monster',
+    target: 30,
     reward: 200,
     title: 'Maître entraîneur',
-    description: 'Faire monter un monstre au niveau 20',
+    description: 'Faire monter un monstre au niveau 30',
     icon: '🚀'
   }
 ]
@@ -473,6 +483,20 @@ const unlockBackgroundsAchievements: QuestDefinition[] = [
     icon: '🏰'
   }
 ]
+
+export const achievementsObjectiveMap: Record<QuestObjective, QuestDefinition[]> = {
+  feed_monsters: feedAchievements,
+  play_monsters: playAchievements,
+  comfort_monsters: comfortAchievements,
+  calm_monsters: calmAchievements,
+  lullaby_monsters: lullabyAchievements,
+  care_different_monsters: [],
+  own_monsters: ownAchievements,
+  total_actions: totalActionsAchievements,
+  level_up_monster: levelUpAchievements,
+  unlock_backgrounds: unlockBackgroundsAchievements,
+  reach_coins: reachCoinsAchievements
+}
 
 /**
  * Succès (Achievements) - Objectifs permanents
